@@ -1,0 +1,14 @@
+Package: bcaboot
+Title: Bias Corrected Bootstrap Confidence Intervals 
+Version: 0.1
+Authors@R: c(person("Bradley", "Efron", role=c("aut"),
+	   	    email = "brad@stat.stanford.edu"),
+  	     person("Balasubramanian", "Narasimhan", role=c("aut", "cre"),
+	   	    email = "naras@stat.Stanford.EDU"))
+Description: Construct bias corrected bootstrap intervals in a blackbox fashion. 
+Depends: R (>= 3.5.0)
+URL: http://github.com/bnaras/bcaboot
+BugReports: http://github.com/bnaras/bcaboot/issues
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true

@@ -40,8 +40,8 @@
 #' @param B number of bootstrap replications. 'B' can also be a vector
 #'     of B bootstrap replications of the estimated parameter of
 #'     interest, computed separately.
-#' @param func function thetahat=func(x) computing estimate of the
-#'     parameter of interest; func(x*) should return a real value for
+#' @param func function \eqn{\hat{\theta}}=func(x) computing estimate of the
+#'     parameter of interest; func(x) should return a real value for
 #'     any n' x p matrix x', n' not necessarily equal to n.
 #' @param ... additional arguments for func.
 #' @param m integer m <= n; collects the n rows of x into m groups to
@@ -56,11 +56,10 @@
 #'     infinity. These are obtained from a second type of jackknifing,
 #'     taking an average of K separate jackknife estimates, each
 #'     randomly splitting the B bootstrap replications into J groups.
-#' @param J the number of groups
+#' @param J the number of groups into which the bootstrap replications are split
 #' @param alpha percentiles desired for the bca confidence limits.
 #' @param rou rounding parameter for the output.
-#' @param catj tracking indicator for the calculation of the B
-#'     bootstrap replications; catj=0 suppresses tracking.
+#' @param verbose logical for verbose messages
 #' @param sw switch that controls output, eg sw=5 returns the B
 #'     bootstrap replications as well as the bca output.
 #' @return a named list of several items:
@@ -91,20 +90,21 @@
 #' @references Efron B (1987). Better bootstrap confidence
 #'     intervals. JASA 82 171-200
 #'
+#'
+#' @import lars
 #' @export
 #' @examples
-#' library(lars)
-#' data(diabetes)
+#' data(diabetes, package = "lars")
 #' Xy <- cbind(diabetes$x, diabetes$y)
 #' rfun <- function(Xy) {
 #'   y <- Xy[, 11]
 #'   X <- Xy[, 1:10]
 #'   summary(lm(y~X) )$adj.r.squared
 #' }
-#' bcajack(x = Xy, B = 1000, func = rfun, m = 40, catj = 0)
+#' bcajack(x = Xy, B = 1000, func = rfun, m = 40)
 #'
 bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha = c(0.025,
-    0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975), rou = 3, catj = 100, sw = 0) {
+    0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),  verbose = TRUE, sw = 0) {
     ## x is nxp data matrix, func is statistic thetahat=func(x) can enter #bootsize B
     ## for bootsim vector tt (which is calculated)
 
@@ -156,15 +156,14 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
 
     if (ttind == 0) {
         tY. <- Y. <- rep(0, n)
+        if (verbose) pb <- txtProgressBar(style = 3)
         for (j in 1:B) {
             ij <- sample(n, n, T)
             Yj <- table(c(ij, 1:n)) - 1
             tt[j] <- func(x[ij, ], ...)
             tY. <- tY. + tt[j] * Yj
             Y. <- Y. + Yj
-            if (catj > 0)
-                if (j/catj == floor(j/catj))
-                  cat("{", j, "}", sep = "")
+            if (verbose) setTxtProgressBar(pb, j)
         }
 
         tt. <- mean(tt)
@@ -189,16 +188,19 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
     ooo <- pmin(pmax(ooo, 1), B)
     lims0 <- sort(tt)[ooo]
     standard <- t0 + sdboot0 * qnorm(alpha)
-    lims0 <- round(cbind(lims0, standard), rou)
+    ## lims0 <- round(cbind(lims0, standard), rou)
+    lims0 <- cbind(lims0, standard)
     dimnames(lims0) <- list(alpha, c("bcalims", "standard"))
-    stats0 <- round(c(t0, sdboot0, z00, a, sdjack), rou)
+    ## stats0 <- round(c(t0, sdboot0, z00, a, sdjack), rou)
+    stats0 <- c(t0, sdboot0, z00, a, sdjack)
     names(stats0) <- c("thet", "sdboot", "z0", "a", "sdjack")
     vl0 <- list(lims0 = lims0, stats0 = stats0, B.mean = B.mean, call = call)
     if (K == 0)
         return(vl0)
 
     pct <- rep(0, nal)
-    for (i in 1:nal) pct[i] <- round(sum(tt <= lims0[i, 1])/B, 3)
+    ##for (i in 1:nal) pct[i] <- round(sum(tt <= lims0[i, 1])/B, 3)
+    for (i in 1:nal) pct[i] <- sum(tt <= lims0[i, 1])/B
     Stand <- vl0$stats[1] + vl0$stats[2] * qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Statsd <- matrix(0, 5, K)
@@ -220,7 +222,8 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
             oo <- pmin(pmax(oo, 1), Bj)
             li <- sort(ttj)[oo]
             standard <- t0 + sdboot * qnorm(alpha)
-            sta <- round(c(t0, sdboot, z0, a, sdjack), rou)
+            ##sta <- round(c(t0, sdboot, z0, a, sdjack), rou)
+            sta <- c(t0, sdboot, z0, a, sdjack)
             names(sta) <- c("thet", "sdboot", "z0", "a", "sdjack")
             lims[, j] <- li
             stats[, j] <- sta
@@ -229,17 +232,21 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
             return(list(lims = lims, stats = stats))
         Limsd[, k] <- apply(lims, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
-        cat("{", k, "}", sep = "")
+        ##if (verbose) cat("{", k, "}", sep = "")
     }
     limsd <- rowMeans(Limsd, 1)
     statsd <- rowMeans(Statsd, 1)
-    limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct), rou)
+    ##limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct), rou)
+    limits <- cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct)
     dimnames(limits) <- list(alpha, c("bcalims", "jacksd", "standard", "pct"))
-    stats <- round(rbind(stats0, statsd), rou)
+    ##stats <- round(rbind(stats0, statsd), rou)
+    stats <- rbind(stats0, statsd)
     dimnames(stats) <- list(c("est", "jsd"), c("thet", "sdboot", "z0", "a", "sdjack"))
     vl <- list(call = call, lims = limits, stats = stats, B.mean = B.mean)
-    if (ttind == 0)
-        vl$ustats <- round(ustats, rou)
+    if (ttind == 0) {
+        ##vl$ustats <- round(ustats, rou)
+        vl$ustats <- ustats
+    }
     if (sw == 5) {
         vl$tt <- tt
         return(vl)

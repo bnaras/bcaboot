@@ -1,16 +1,14 @@
 ## Version of June 16, 2018
 
 #' @title Nonparametric bias-corrected and accelerated bootstrap
-#'     confidence limits allowing recomputations of original statistics
-#'
+#'     confidence limits
+
 #' @description \code{bcajack2} is a version of \code{bcajack} that allows
 #'     all the recomputations of the original statistic function
 #'     \code{func} to be carried out separately. This is an advantage
 #'     if \code{func} is time-consuming, in which case the B
 #'     replications for the nonparametric bca calculations might need
 #'     to be done on a distributed basis.
-#'
-#' @details
 #'
 #' To use bcajack2 in this mode, we first compute a list \code{Blist}
 #' via \code{Blist <- list(Y = Y,tt = tt,t0 = t0)}.  Here \code{tt} is
@@ -23,15 +21,16 @@
 #' invoked as \code{bcajack2(Blist)} without need to enter the
 #' function func.
 #'
+#' @inheritParams bcajack
+#'
 #' @export
-bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
+bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 12,
                      alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
-                     rou = 3, catj = 100, sw = 0) {
+                     verbose = TRUE, sw = 0) {
 
     call <- match.call()
 
-    qbca2 <- function(Y, tt, t0, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9,
-        0.95, 0.975), pct = 0.333, rou = 3, sw = 0) {
+    qbca2 <- function(Y, tt, t0, alpha, pct, sw = 0) {
         m <- ncol(Y)
         B <- nrow(Y)
         o1 <- rep(1, m)
@@ -55,7 +54,8 @@ bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
         zalpha <- qnorm(alpha)
         nal <- length(alpha)
         ustat <- 2 * t0 - s
-        s. <- m * .v(cov(tt, Y))
+        ##s. <- m * .v(cov(tt, Y))
+        s. <- m * as.vector(cov(tt, Y))
         u. <- 2 * ty. - s.
         sdu <- sum(u.^2)^0.5/m
         ustats <- c(ustat, sdu)
@@ -70,9 +70,10 @@ bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
         ooo <- pmin(pmax(ooo, 1), B)
         lims <- sort(tt)[ooo]
         standard <- t0 + sdboot * qnorm(alpha)
-        lims <- round(cbind(lims, standard), rou)
+        ##lims <- round(cbind(lims, standard), rou)
+        lims <- cbind(lims, standard)
         dimnames(lims) <- list(alpha, c("bcalims", "standard"))
-        stats <- round(c(t0, sdboot, z0, a, sdjack), rou)
+        stats <- c(t0, sdboot, z0, a, sdjack)
         names(stats) <- c("thet", "sdboot", "z0", "a", "sdjack")
         vl <- list(lims = lims, stats = stats, B.mean = B.mean, ustats = ustats)
         return(vl)
@@ -95,13 +96,12 @@ bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
             ii <- sample(1:n, n * B, T)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, n)
+            if (verbose) pb <- txtProgressBar(style = 3)
             for (k in 1:B) {
                 ik <- ii[k, ]
                 tt[k] <- func(x[ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:n)) - 1
-                if (catj > 0)
-                  if (k/catj == floor(k/catj))
-                    cat("{", k, "}", sep = "")
+                if (verbose) setTxtProgressBar(pb, k)
             }
             vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
         }
@@ -113,15 +113,14 @@ bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
             ii <- sample(1:m, m * B, T)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, m)
+            if (verbose) pb <- txtProgressBar(style = 3)
             for (k in 1:B) {
                 ik <- ii[k, ]
                 Ik <- c(t(Imat[ik, ]))
                 Ik <- c(Ik, Iout)
                 tt[k] <- func(x[Ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:m)) - 1
-                if (catj > 0)
-                  if (k/catj == floor(k/catj))
-                    cat("{", k, "}", sep = "")
+                if (verbose) setTxtProgressBar(pb, k)
             }
             vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
         }
@@ -133,7 +132,8 @@ bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
 
     nal <- length(alpha)
     Pct <- rep(0, nal)
-    for (i in 1:nal) Pct[i] <- round(sum(tt <= vl0$lims[i, 1])/B, 3)
+    ##for (i in 1:nal) Pct[i] <- round(sum(tt <= vl0$lims[i, 1])/B, rou)
+    for (i in 1:nal) Pct[i] <- sum(tt <= vl0$lims[i, 1])/B
     Stand <- vl0$stats[1] + vl0$stats[2] * qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Statsd <- matrix(0, 5, K)
@@ -161,18 +161,22 @@ bcajack2 <- function(B, x, func, ..., m = n, pct = 0.333, K = 2, J = 12,
             return(list(limbc = limbc, limst = limst, stats = stats))
         Limbcsd[, k] <- apply(limbc, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
-        if (catj >= 0)
-            cat("{", k, "}", sep = "")
+        ## if (verbose)
+        ##     cat("{", k, "}", sep = "")
         if (sw == 6)
             return(list(Limbcsd = Limbcsd, Statsd = Statsd))
     }
     limsd <- rowMeans(Limbcsd, 1)
     statsd <- rowMeans(Statsd, 1)
-    limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct), rou)
+    ##limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct), rou)
+    limits <- cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct)
     dimnames(limits) <- list(alpha, c("bcalims", "jacksd", "standard", "Pct"))
-    stats <- round(rbind(vl0$stats, statsd), rou)
-    ustats <- round(vl0$ustats, rou)
-    B.mean <- c(B, round(mean(tt), rou))
+    ##stats <- round(rbind(vl0$stats, statsd), rou)
+    stats <- rbind(vl0$stats, statsd)
+    ##ustats <- round(vl0$ustats, rou)
+    ustats <- vl0$ustats
+    ##B.mean <- c(B, round(mean(tt), rou))
+    B.mean <- c(B, mean(tt))
     dimnames(stats) <- list(c("est", "jsd"), c("thet", "sdboot", "z0", "a", "sdjack"))
     vll <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, ustats = ustats)
     if (sw == 5)

@@ -11,4 +11,6 @@ rfun <- function(Xy) {
     X <- Xy[, 1:10]
     summary(lm(y~X) )$adj.r.squared
 }
-bcajack(x = Xy, B = 1000, func = rfun, m = 40, catj = 0)
+bcajack(x = Xy, B = 2000, func = rfun)
+
+bcajack(x = Xy, B = 2000, func = rfun, m = 40, catj = 0)

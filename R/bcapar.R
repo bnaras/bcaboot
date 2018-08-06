@@ -1,7 +1,7 @@
 ## Version of May 30, 2018
-
+#' @export
 bcapar <- function(t0, tt, bb, al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95,
-    0.975), J = 10, K = 6, trun = 0.001, pct = 0.333, roun = 3, cd = 0, func) {
+    0.975), J = 10, K = 6, trun = 0.001, pct = 0.333, cd = 0, func) {
     # if(!missing(func)) adds abc limits and stats K=0 skips jackknifing computes
     # confidence density weights 'w' if cd=1
 
@@ -56,10 +56,12 @@ bcapar <- function(t0, tt, bb, al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.
     ust0 <- rbind(ust0, ustsd)
     ust0 <- cbind(ust0, c(B, 0))
     dimnames(ust0) <- list(c("est", "jsd"), c("ustat", "sdu", "B"))
-    lims <- round(lim0, roun)
-    th0 <- round(th0, roun)
-    sdm0 <- round(sdm0, roun)
-    ust0 <- round(ust0, roun)
+    ## lims <- round(lim0, roun)
+    ## th0 <- round(th0, roun)
+    ## sdm0 <- round(sdm0, roun)
+    ## ust0 <- round(ust0, roun)
+    lims <- lim0
+    th0 <- th0
     stats <- cbind(th0, sdm0)
     stats <- stats[, c(1, 6, 2, 5, 3, 4, 7, 8)]
 
@@ -81,8 +83,10 @@ bcapar <- function(t0, tt, bb, al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.
     if (!missing(func)) {
         vla <- abcpar(func, bb, alpha = al[al < 0.5])
         abclims <- vla$lims[, 1]
-        vl$lims <- round(cbind(vl$lims, abclims), roun)
-        abcstats <- round(vla$a.z0.cq[1:2], roun)
+        ## vl$lims <- round(cbind(vl$lims, abclims), roun)
+        ## abcstats <- round(vla$a.z0.cq[1:2], roun)
+        vl$lims <- cbind(vl$lims, abclims)
+        abcstats <- vla$a.z0.cq[1:2]
         names(abcstats) <- c("a", "z0")
         vl$abcstats <- abcstats
     }

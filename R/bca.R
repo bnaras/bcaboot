@@ -1,7 +1,8 @@
 ## Version May 30, 2018
 
-bca <- function(t0, tt, bb, ASL, al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95,
-    0.975), trun = 0.001, pct = 0.5, ttrun = 0.005, zc = 7.5, sw = 0) {
+bca <- function(t0, tt, bb, ASL,
+                al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
+                trun = 0.001, pct = 0.5, ttrun = 0.005, zc = 7.5, sw = 0) {
     ## this version of bca accepts trun=vector; also returns amat
 
     # if bb Bxp matrix of bootsims suff vector corresponding to tt then a is computed
@@ -62,8 +63,11 @@ bca <- function(t0, tt, bb, ASL, al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 
     lims <- rbind(lims, atil, Stand)
     dimnames(lims) <- list(c("bcalims", "%iles", "Stand"), al)
     lims <- t(lims)
-    if (missing(t0))
-        thetahat <- NA else thetahat <- t0
+    if (missing(t0)) {
+        thetahat <- NA
+    } else {
+        thetahat <- t0
+    }
 
     A <- NA
     if (!missing(bb)) {

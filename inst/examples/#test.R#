@@ -31,3 +31,5 @@ bcajack(x = Xy, B = 2000, func = rfun)
 bcajack(x = Xy, B = 2000, func = rfun, m = 40)
 
 bcajack2(x = Xy, B = 2000, func = rfun)
+
+r1 <- bcajack(x = Xy, B = 2000, func = rfun)

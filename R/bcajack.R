@@ -165,7 +165,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
             Y. <- Y. + Yj
             if (verbose) setTxtProgressBar(pb, j)
         }
-
+        if (verbose) cat("\n")
         tt. <- mean(tt)
         tY. <- tY./B
         Y. <- Y./B

@@ -23,6 +23,11 @@
 #'
 #' @inheritParams bcajack
 #'
+#' @param B number of bootstrap replications. 'B' can also be a vector
+#'     of B bootstrap replications of the estimated parameter of
+#'     interest, computed separately. If B is \code{Blist} as
+#'     explained above, x is not needed.
+#'
 #' @export
 bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 12,
                      alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
@@ -84,7 +89,8 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         tt <- B$tt
         t0 <- B$t0
         B <- length(tt)
-        vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
+        ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
+        vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
     } else {
         if (is.vector(x))
             x <- as.matrix(x)
@@ -103,7 +109,9 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
                 Y[k, ] <- table(c(ik, 1:n)) - 1
                 if (verbose) setTxtProgressBar(pb, k)
             }
-            vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
+            if (verbose) cat("\n")
+            ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
+            vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
         }
 
         if (m < n) {
@@ -122,7 +130,9 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
                 Y[k, ] <- table(c(ik, 1:m)) - 1
                 if (verbose) setTxtProgressBar(pb, k)
             }
-            vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
+            if (verbose) cat("\n")
+            ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
+            vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
         }
     }
     vl0$call <- call
@@ -151,7 +161,8 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             iij <- c(II[, -j])
             Yj <- Y[iij, ]
             ttj <- tt[iij]
-            vlj <- qbca2(Yj, ttj, t0, alpha, pct, rou)
+            ##vlj <- qbca2(Yj, ttj, t0, alpha, pct, rou)
+            vlj <- qbca2(Yj, ttj, t0, alpha, pct)
             limbc[, j] <- vlj$lims[, 1]
             limst[, j] <- vlj$lims[, 2]
             stats[, j] <- vlj$stats

@@ -1,4 +1,36 @@
+#' @title Plots of bca confidence limits
+#'
+#' @description \code{bcaplot} uses the output of \code{bcajack},
+#'     \code{bcajack2}, or \code{bcapar} to plot bca and standard
+#'     confidence limits for the parameter of interest.
+#'
+#' @param vl output of \code{bcajack}, \code{bcajack2}, or
+#'     \code{bcapar}
+#' @param main the main caption (can be empty)
+#' @param xlab x axis label (supplied if not specified)
+#' @param ylab y axis labels (supplied if not specified)
+#' @param two-sided coverages are \eqn{1-2\alpha},
+#'     e.g. \code{alpha=c(.025,.05)} plots intervals
+#'     \code{[.025,.975]} and \code{[.05,.95]}. Default is
+#'     \code{alpha=c(.025,.05,.1,.16)} giving coverages
+#'     .95,.90,.80,.68
+#' @param ylim y axis plot limits set automatically if not provided
+#' @param xlim x axis plot limits set automatically if not provided
+#' @param add \code{add=1} adds a new plot of bca limits (in red) to
+#'     an existing plot
+#' @param sub subtitle (can be empty)
+#' @param sw \code{sw=1} draws light vertical dashed lines showing the
+#'     bca intervals
+#' @param ... further args for plot
+#'
+#' @details confidence interval endpoints are plotted vertically versus
+#'     two-sided coverages \eqn{1-2\alpha}. Bca limits in black,
+#'     Standard limits in green (dashed.). If \code{vl$lims} includes
+#'     the column "jacksd" of jackknife internal standard deviations
+#'     then these are indicated by vertical red bars centered at the
+#'     bca limit points.
 #' @export
+#'
 bcaplot <- function(vl, main = " ", xlab = "coverage", ylab = "limits", alpha = c(0.025,
     0.05, 0.1, 0.16), ylim, xlim, add = 0, sub = "black=bca, green=standard", sw = 1,
     ...) {

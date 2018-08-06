@@ -16,7 +16,8 @@ then x can be a vector.]}
 
 \item{B}{number of bootstrap replications. 'B' can also be a vector
 of B bootstrap replications of the estimated parameter of
-interest, computed separately.}
+interest, computed separately. If B is \code{Blist} as
+explained above, x is not needed.}
 
 \item{func}{function \eqn{\hat{\theta}}=func(x) computing estimate of the
 parameter of interest; func(x) should return a real value for

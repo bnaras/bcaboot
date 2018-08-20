@@ -102,14 +102,14 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             ii <- sample(1:n, n * B, T)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, n)
-            if (verbose) pb <- txtProgressBar(style = 3)
+            if (verbose) pb <- txtProgressBar(min = 0, max = B, style = 3)
             for (k in 1:B) {
                 ik <- ii[k, ]
                 tt[k] <- func(x[ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:n)) - 1
                 if (verbose) setTxtProgressBar(pb, k)
             }
-            if (verbose) cat("\n")
+            if (verbose) close(pb)
             ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
             vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
         }
@@ -121,7 +121,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             ii <- sample(1:m, m * B, T)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, m)
-            if (verbose) pb <- txtProgressBar(style = 3)
+            if (verbose) pb <- txtProgressBar(min = 0, max = B, style = 3)
             for (k in 1:B) {
                 ik <- ii[k, ]
                 Ik <- c(t(Imat[ik, ]))
@@ -130,7 +130,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
                 Y[k, ] <- table(c(ik, 1:m)) - 1
                 if (verbose) setTxtProgressBar(pb, k)
             }
-            if (verbose) cat("\n")
+            if (verbose) close(pb)
             ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
             vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
         }

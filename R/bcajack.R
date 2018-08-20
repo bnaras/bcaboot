@@ -35,8 +35,8 @@
 #' of \code{a}, often a negligible error.
 #'
 #' @param x an nxp data matrix, rows are observed p-vectors, assumed
-#'     to be independently sampled from target population. [if p=1
-#'     then x can be a vector.]
+#'     to be independently sampled from target population. If `p` is 1
+#'     then x can be a vector.
 #' @param B number of bootstrap replications. 'B' can also be a vector
 #'     of B bootstrap replications of the estimated parameter of
 #'     interest, computed separately.
@@ -156,8 +156,8 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
 
     if (ttind == 0) {
         tY. <- Y. <- rep(0, n)
-        if (verbose) pb <- txtProgressBar(style = 3)
-        for (j in 1:B) {
+        if (verbose) pb <- txtProgressBar(min = 0, max = B, style = 3)
+        for (j in seq_len(B)) {
             ij <- sample(n, n, T)
             Yj <- table(c(ij, 1:n)) - 1
             tt[j] <- func(x[ij, ], ...)
@@ -165,7 +165,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha =
             Y. <- Y. + Yj
             if (verbose) setTxtProgressBar(pb, j)
         }
-        if (verbose) cat("\n")
+        if (verbose) close(pb)
         tt. <- mean(tt)
         tY. <- tY./B
         Y. <- Y./B

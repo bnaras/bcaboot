@@ -6,10 +6,10 @@
 #'
 #' @param vl output of \code{bcajack}, \code{bcajack2}, or
 #'     \code{bcapar}
-#' @param main the main caption (can be empty)
-#' @param xlab x axis label (supplied if not specified)
-#' @param ylab y axis labels (supplied if not specified)
-#' @param two-sided coverages are \eqn{1-2\alpha},
+#' @param main The main caption (can be empty)
+#' @param xlab The x axis label (supplied if not specified)
+#' @param ylab The y axis labels (supplied if not specified)
+#' @param alpha Coverages are \eqn{1-2\alpha},
 #'     e.g. \code{alpha=c(.025,.05)} plots intervals
 #'     \code{[.025,.975]} and \code{[.05,.95]}. Default is
 #'     \code{alpha=c(.025,.05,.1,.16)} giving coverages

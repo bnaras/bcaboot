@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Nonparametric bias-corrected and accelerated bootstrap
-    confidence limits — bcajack2 • bcaboot</title>
+confidence limits — bcajack2 • bcaboot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -32,14 +32,14 @@
 
 
 <meta property="og:title" content="Nonparametric bias-corrected and accelerated bootstrap
-    confidence limits — bcajack2" />
+confidence limits — bcajack2" />
 
 <meta property="og:description" content="bcajack2 is a version of bcajack that allows
-    all the recomputations of the original statistic function
-    func to be carried out separately. This is an advantage
-    if func is time-consuming, in which case the B
-    replications for the nonparametric bca calculations might need
-    to be done on a distributed basis.
+all the recomputations of the original statistic function
+func to be carried out separately. This is an advantage
+if func is time-consuming, in which case the B
+replications for the nonparametric bca calculations might need
+to be done on a distributed basis.
 To use bcajack2 in this mode, we first compute a list Blist
 via Blist &amp;lt;- list(Y = Y,tt = tt,t0 = t0).  Here tt is
 a vector of length B having i-th entry tt[i] &amp;lt;- func(x[Ii,],
@@ -115,7 +115,7 @@ function func." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Nonparametric bias-corrected and accelerated bootstrap
-    confidence limits</h1>
+confidence limits</h1>
     <small class="dont-index">Source: <a href='http://github.com/bnaras/bcaboot/blob/master/R/bcajack2.R'><code>R/bcajack2.R</code></a></small>
     <div class="hidden name"><code>bcajack2.Rd</code></div>
     </div>
@@ -123,11 +123,11 @@ function func." />
     <div class="ref-description">
     
     <p><code>bcajack2</code> is a version of <code>bcajack</code> that allows
-    all the recomputations of the original statistic function
-    <code>func</code> to be carried out separately. This is an advantage
-    if <code>func</code> is time-consuming, in which case the B
-    replications for the nonparametric bca calculations might need
-    to be done on a distributed basis.</p>
+all the recomputations of the original statistic function
+<code>func</code> to be carried out separately. This is an advantage
+if <code>func</code> is time-consuming, in which case the B
+replications for the nonparametric bca calculations might need
+to be done on a distributed basis.</p>
 <p>To use bcajack2 in this mode, we first compute a list <code>Blist</code>
 via <code>Blist &lt;- list(Y = Y,tt = tt,t0 = t0)</code>.  Here <code>tt</code> is
 a vector of length B having i-th entry <code>tt[i] &lt;- func(x[Ii,],
@@ -141,9 +141,9 @@ function func.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>bcajack2</span>(<span class='no'>x</span>, <span class='no'>B</span>, <span class='no'>func</span>, <span class='no'>...</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fu'>nrow</span>(<span class='no'>x</span>), <span class='no'>mr</span>, <span class='kw'>pct</span> <span class='kw'>=</span> <span class='fl'>0.333</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>J</span> <span class='kw'>=</span> <span class='fl'>12</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>, <span class='fl'>0.5</span>, <span class='fl'>0.84</span>, <span class='fl'>0.9</span>, <span class='fl'>0.95</span>, <span class='fl'>0.975</span>),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>sw</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>bcajack2</span>(<span class='no'>x</span>, <span class='no'>B</span>, <span class='no'>func</span>, <span class='no'>...</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fu'>nrow</span>(<span class='no'>x</span>), <span class='no'>mr</span>, <span class='kw'>pct</span> <span class='kw'>=</span> <span class='fl'>0.333</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>J</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>, <span class='fl'>0.5</span>, <span class='fl'>0.84</span>, <span class='fl'>0.9</span>, <span class='fl'>0.95</span>,
+  <span class='fl'>0.975</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>sw</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,8 +151,8 @@ function func.</p>
     <tr>
       <th>x</th>
       <td><p>an nxp data matrix, rows are observed p-vectors, assumed
-to be independently sampled from target population. [if p=1
-then x can be a vector.]</p></td>
+to be independently sampled from target population. If <code>p</code> is 1
+then x can be a vector.</p></td>
     </tr>
     <tr>
       <th>B</th>

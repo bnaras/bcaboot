@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • bcaboot</title>
+<title>Plots of bca confidence limits — ggbcaplot • bcaboot</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,12 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Plots of bca confidence limits — ggbcaplot" />
+
+<meta property="og:description" content="ggbcaplot uses the output of bcajack,
+bcajack2, or bcapar to plot bca and standard
+confidence limits for the parameter of interest." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -46,7 +51,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -92,68 +97,77 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Plots of bca confidence limits</h1>
+    <small class="dont-index">Source: <a href='http://github.com/bnaras/bcaboot/blob/master/R/gplot.R'><code>R/gplot.R</code></a></small>
+    <div class="hidden name"><code>ggbcaplot.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p><code>ggbcaplot</code> uses the output of <code>bcajack</code>,
+<code>bcajack2</code>, or <code>bcapar</code> to plot bca and standard
+confidence limits for the parameter of interest.</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="bcajack.html">bcajack()</a></code> </p>
-        </td>
-        <td><p>Nonparametric bias-corrected and accelerated bootstrap
-confidence limits</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bcajack2.html">bcajack2()</a></code> </p>
-        </td>
-        <td><p>Nonparametric bias-corrected and accelerated bootstrap
-confidence limits</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bcapar.html">bcapar()</a></code> </p>
-        </td>
-        <td><p>Compute parametric bootstrap confidence intervals</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bcaplot.html">bcaplot()</a></code> </p>
-        </td>
-        <td><p>Plots of bca confidence limits</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ggbcaplot.html">ggbcaplot()</a></code> </p>
-        </td>
-        <td><p>Plots of bca confidence limits</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>ggbcaplot</span>(<span class='no'>vl</span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"coverage"</span>, <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"limits"</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>), <span class='no'>...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>vl</th>
+      <td><p>output of <code>bcajack</code>, <code>bcajack2</code>, or
+<code>bcapar</code></p></td>
+    </tr>
+    <tr>
+      <th>main</th>
+      <td><p>the main caption (can be empty)</p></td>
+    </tr>
+    <tr>
+      <th>xlab</th>
+      <td><p>x axis label (supplied if not specified)</p></td>
+    </tr>
+    <tr>
+      <th>ylab</th>
+      <td><p>y axis labels (supplied if not specified)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>further args for ggplot</p></td>
+    </tr>
+    <tr>
+      <th>two-sided</th>
+      <td><p>coverages are \(1-2\alpha\),
+e.g. <code>alpha=c(.025,.05)</code> plots intervals
+<code>[.025,.975]</code> and <code>[.05,.95]</code>. Default is
+<code>alpha=c(.025,.05,.1,.16)</code> giving coverages
+.95,.90,.80,.68</p></td>
+    </tr>
     </table>
-  </div>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>confidence interval endpoints are plotted vertically versus
+two-sided coverages \(1-2\alpha\). Bca limits in black,
+Standard limits in green (dashed.). If <code>vl$lims</code> includes
+the column "jacksd" of jackknife internal standard deviations
+then these are indicated by vertical red bars centered at the
+bca limit points.</p>
+    
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
-    </ul>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
+
   </div>
 </div>
 

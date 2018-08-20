@@ -3,7 +3,7 @@
 \name{bcajack}
 \alias{bcajack}
 \title{Nonparametric bias-corrected and accelerated bootstrap
-    confidence limits}
+confidence limits}
 \usage{
 bcajack(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
   alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
@@ -11,8 +11,8 @@ bcajack(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
 }
 \arguments{
 \item{x}{an nxp data matrix, rows are observed p-vectors, assumed
-to be independently sampled from target population. [if p=1
-then x can be a vector.]}
+to be independently sampled from target population. If \code{p} is 1
+then x can be a vector.}
 
 \item{B}{number of bootstrap replications. 'B' can also be a vector
 of B bootstrap replications of the estimated parameter of
@@ -76,8 +76,8 @@ bootstrap replications theathat*.}
 }
 \description{
 \code{bcajack} computes nonparametric confidence
-    intervals for bootstrap estimates. For reproducibility, save or
-    set the random number state before calling this routine.
+intervals for bootstrap estimates. For reproducibility, save or
+set the random number state before calling this routine.
 }
 \details{
 Bootstrap confidence intervals depend on three elements:
@@ -118,8 +118,8 @@ bcajack(x = Xy, B = 1000, func = rfun, m = 40)
 }
 \references{
 DiCiccio T and Efron B (1996). Bootstrap confidence
-    intervals. Statistical Science 11, 189-228
+intervals. Statistical Science 11, 189-228
 
 Efron B (1987). Better bootstrap confidence
-    intervals. JASA 82 171-200
+intervals. JASA 82 171-200
 }

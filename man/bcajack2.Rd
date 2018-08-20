@@ -3,16 +3,16 @@
 \name{bcajack2}
 \alias{bcajack2}
 \title{Nonparametric bias-corrected and accelerated bootstrap
-    confidence limits}
+confidence limits}
 \usage{
-bcajack2(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 12,
-  alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
-  verbose = TRUE, sw = 0)
+bcajack2(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
+  J = 12, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95,
+  0.975), verbose = TRUE, sw = 0)
 }
 \arguments{
 \item{x}{an nxp data matrix, rows are observed p-vectors, assumed
-to be independently sampled from target population. [if p=1
-then x can be a vector.]}
+to be independently sampled from target population. If \code{p} is 1
+then x can be a vector.}
 
 \item{B}{number of bootstrap replications. 'B' can also be a vector
 of B bootstrap replications of the estimated parameter of
@@ -51,11 +51,11 @@ bootstrap replications as well as the bca output.}
 }
 \description{
 \code{bcajack2} is a version of \code{bcajack} that allows
-    all the recomputations of the original statistic function
-    \code{func} to be carried out separately. This is an advantage
-    if \code{func} is time-consuming, in which case the B
-    replications for the nonparametric bca calculations might need
-    to be done on a distributed basis.
+all the recomputations of the original statistic function
+\code{func} to be carried out separately. This is an advantage
+if \code{func} is time-consuming, in which case the B
+replications for the nonparametric bca calculations might need
+to be done on a distributed basis.
 
 To use bcajack2 in this mode, we first compute a list \code{Blist}
 via \code{Blist <- list(Y = Y,tt = tt,t0 = t0)}.  Here \code{tt} is

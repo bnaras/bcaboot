@@ -1,7 +1,7 @@
 ## Version May 30, 2018
 
 bca <- function(t0, tt, bb, ASL,
-                al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
+                alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
                 trun = 0.001, pct = 0.5, ttrun = 0.005, zc = 7.5, sw = 0) {
     ## this version of bca accepts trun=vector; also returns amat
 
@@ -51,17 +51,17 @@ bca <- function(t0, tt, bb, ASL,
     if (sw == 3)
         return(d)
 
-    Stand <- t0 + sd(tt) * qnorm(al)
+    Stand <- t0 + sd(tt) * qnorm(alpha)
     B <- length(tt)
     sd.mean.B <- c(sd(tt), sdd, mean(tt), B)
 
     z0 <- qnorm(mean(tt < t0))
-    Z <- z0 + qnorm(al)
+    Z <- z0 + qnorm(alpha)
 
     atil <- pnorm(z0 + Z/(1 - a * Z))
     lims <- quantile(tt, atil)
     lims <- rbind(lims, atil, Stand)
-    dimnames(lims) <- list(c("bcalims", "%iles", "Stand"), al)
+    dimnames(lims) <- list(c("bcalims", "%iles", "Stand"), alpha)
     lims <- t(lims)
     if (missing(t0)) {
         thetahat <- NA

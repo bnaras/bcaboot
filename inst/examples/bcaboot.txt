@@ -1,0 +1,54 @@
+bcajack
+-------
+args:
+
+bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10, alpha = c(0.025,
+    0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),  verbose = TRUE, sw = 0) 
+
+1. The helpfile does not describe what utstats is in the output.
+
+2. Switch only works for values 0 (default), 2, 3, 4, 5. CRAN requires
+  the output in each case to be described.  Also, in some cases, the
+  program short-circuits and returns, but in others it doesn't. Need
+  to make it consistent
+
+-   Values 0 and 3 produce same output form, but different values. We
+    need to describe these.
+-   Value 4 produces lims and stats only.
+-   Value 5 produces an additional output $tt that needs to be
+    described.
+
+bcajack2
+--------
+
+bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 12,
+                     alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
+                     verbose = TRUE, sw = 0)
+
+Descriptions needed for output.
+
+1. The switch values used here are: 0, 3, 4, 5, 6.
+
+- Value 3 returns ty.
+- Value 4 returns limbc, limst, stats
+- Value 5 returns tt
+- Value 6 returns Limbcsd, Statsd
+
+bcapar
+------
+
+bcapar <- function(t0, tt, bb, al = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95,
+    0.975), J = 10, K = 6, trun = 0.001, pct = 0.333, cd = 0, func) 
+
+Help file needed . Describe only things not described elsewhere, e.g,
+ignore al, J, K, if they are the same as for bcajack. I'll also rename
+al to alpha later.
+
+Also, do you have an example invocation like you did for bcajack?  I
+would like to add that to our examples. What you used for the paper
+will suit just fine.
+
+
+
+
+

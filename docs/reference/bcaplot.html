@@ -33,8 +33,8 @@
 <meta property="og:title" content="Plots of bca confidence limits — bcaplot" />
 
 <meta property="og:description" content="bcaplot uses the output of bcajack,
-    bcajack2, or bcapar to plot bca and standard
-    confidence limits for the parameter of interest." />
+bcajack2, or bcapar to plot bca and standard
+confidence limits for the parameter of interest." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,8 +107,8 @@
     <div class="ref-description">
     
     <p><code>bcaplot</code> uses the output of <code>bcajack</code>,
-    <code>bcajack2</code>, or <code>bcapar</code> to plot bca and standard
-    confidence limits for the parameter of interest.</p>
+<code>bcajack2</code>, or <code>bcapar</code> to plot bca and standard
+confidence limits for the parameter of interest.</p>
     
     </div>
 
@@ -126,15 +126,23 @@
     </tr>
     <tr>
       <th>main</th>
-      <td><p>the main caption (can be empty)</p></td>
+      <td><p>The main caption (can be empty)</p></td>
     </tr>
     <tr>
       <th>xlab</th>
-      <td><p>x axis label (supplied if not specified)</p></td>
+      <td><p>The x axis label (supplied if not specified)</p></td>
     </tr>
     <tr>
       <th>ylab</th>
-      <td><p>y axis labels (supplied if not specified)</p></td>
+      <td><p>The y axis labels (supplied if not specified)</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>Coverages are \(1-2\alpha\),
+e.g. <code>alpha=c(.025,.05)</code> plots intervals
+<code>[.025,.975]</code> and <code>[.05,.95]</code>. Default is
+<code>alpha=c(.025,.05,.1,.16)</code> giving coverages
+.95,.90,.80,.68</p></td>
     </tr>
     <tr>
       <th>ylim</th>
@@ -162,24 +170,16 @@ bca intervals</p></td>
       <th>...</th>
       <td><p>further args for plot</p></td>
     </tr>
-    <tr>
-      <th>two-sided</th>
-      <td><p>coverages are \(1-2\alpha\),
-e.g. <code>alpha=c(.025,.05)</code> plots intervals
-<code>[.025,.975]</code> and <code>[.05,.95]</code>. Default is
-<code>alpha=c(.025,.05,.1,.16)</code> giving coverages
-.95,.90,.80,.68</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>confidence interval endpoints are plotted vertically versus
-    two-sided coverages \(1-2\alpha\). Bca limits in black,
-    Standard limits in green (dashed.). If <code>vl$lims</code> includes
-    the column "jacksd" of jackknife internal standard deviations
-    then these are indicated by vertical red bars centered at the
-    bca limit points.</p>
+two-sided coverages \(1-2\alpha\). Bca limits in black,
+Standard limits in green (dashed.). If <code>vl$lims</code> includes
+the column "jacksd" of jackknife internal standard deviations
+then these are indicated by vertical red bars centered at the
+bca limit points.</p>
     
 
   </div>

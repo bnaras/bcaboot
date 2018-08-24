@@ -3,59 +3,108 @@
 #' @title Nonparametric bias-corrected and accelerated bootstrap
 #'     confidence limits
 
-#' @description \code{bcajack2} is a version of \code{bcajack} that allows
+#' @description This function is a version of `bcajack` that allows
 #'     all the recomputations of the original statistic function
-#'     \code{func} to be carried out separately. This is an advantage
-#'     if \code{func} is time-consuming, in which case the B
+#'     \eqn{f} to be carried out separately. This is an advantage
+#'     if \eqn{f} is time-consuming, in which case the B
 #'     replications for the nonparametric bca calculations might need
 #'     to be done on a distributed basis.
 #'
-#' To use bcajack2 in this mode, we first compute a list \code{Blist}
-#' via \code{Blist <- list(Y = Y,tt = tt,t0 = t0)}.  Here \code{tt} is
-#' a vector of length B having i-th entry \code{tt[i] <- func(x[Ii,],
-#' ...)}, where x is the n x p data matrix and \code{Ii <-
-#' sample(n,n,T)}, a bootstrap vector of indices. Y is a B x n "count"
-#' matrix, whose i-th row is the counts corresponding to Ii. For
-#' example if n = 5 and \code{Ii=(2,5,2,1,4)}, then \code{Yi =
-#' (1,2,0,1,1)}. Having computed \code{Blist}, \code{bcajack2} is
-#' invoked as \code{bcajack2(Blist)} without need to enter the
-#' function func.
+#' To use `bcajack2` in this mode, we first compute a list `Blist` via
+#' `Blist <- list(Y = Y, tt = tt, t0 = t0)`.  Here `tt` is a vector of
+#' length `B` having i-th entry `tt[i] <- func(x[Ii,], ...)`, where `x`
+#' is the \eqn{n \times p} data matrix and `Ii` is a bootstrap vector
+#' of (observation) indices. `Y` is a `B` by \eqn{n} count matrix,
+#' whose i-th row is the counts corresponding to `Ii`. For example if
+#' n = 5 and `Ii = (2, 5, 2, 1, 4)`, then `Yi = (1, 2, 0, 1,
+#' 1)`. Having computed `Blist`, `bcajack2` is invoked as
+#' `bcajack2(Blist)` without need to enter the function \eqn{func}.
 #'
 #' @inheritParams bcajack
 #'
-#' @param B number of bootstrap replications. 'B' can also be a vector
-#'     of B bootstrap replications of the estimated parameter of
-#'     interest, computed separately. If B is \code{Blist} as
-#'     explained above, x is not needed.
+#' @param B number of bootstrap replications. `B` can also be a vector
+#'     of `B` bootstrap replications of the estimated parameter of
+#'     interest, computed separately. If `B` is `Blist` as
+#'     explained above, `x` is not needed.
+#'
+#' @return a named list of several items
+#'
+#' * __lims__ : first column shows the estimated bca confidence limits
+#'     at the requested alpha percentiles. These can be compared with
+#'     the standard limits \eqn{\hat{\theta} +
+#'     \hat{\sigma}z_{\alpha}}, third column. The second column
+#'     `jacksd` gives the internal standard errors for the bca limits,
+#'     quite small in the example. Column 4, `pct`, gives the
+#'     percentiles of the ordered B bootstrap replications
+#'     corresponding to the bca limits, eg the 897th largest
+#'     replication equalling the .975 Bca limit .557.
+#'
+#' * __stats__ : top line of stats shows 5 estimates: theta is
+#'     \eqn{func(x)}, original point estimate of the parameter of
+#'     interest; `sdboot` is its bootstrap estimate of standard error;
+#'     `z0` is the bca bias correction value, in this case quite
+#'     negative; `a` is the _acceleration_, a component of the bca
+#'     limits (nearly zero here); `sdjack` is the jackknife estimate
+#'     of standard error for theta. Bottom line gives the internal
+#'     standard errors for the five quantities above. This is
+#'     substantial for `z0` above.
+#'
+#' * __B.mean__ : bootstrap sample size B, and the mean of the B
+#'     bootstrap replications \eqn{\hat{\theta^*}}
+#'
+#' * __ustats__ : The bias-corrected estimator `2 * t0 - mean(tt)`,
+#'     and an estimate `sdu` of its sampling error
+#'
+#' * __seed__ : The random number state for reproducibility
+#'
+#' @importFrom stats quantile
+#' @import lars
+#' @export
+#' @examples
+#' data(diabetes, package = "lars")
+#' Xy <- cbind(diabetes$x, diabetes$y)
+#' rfun <- function(Xy) {
+#'   y <- Xy[, 11]
+#'   X <- Xy[, 1:10]
+#'   summary(lm(y~X) )$adj.r.squared
+#' }
+#' set.seed(1234)
+#' bcajack2(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
 #'
 #' @export
 bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 12,
-                     alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
-                     verbose = TRUE, sw = 0) {
+                     alpha = c(0.025, 0.05, 0.1, 0.16),
+                     verbose = TRUE) {
 
     call <- match.call()
 
-    qbca2 <- function(Y, tt, t0, alpha, pct, sw = 0) {
+    ## Save rng state
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        runif(1)
+    seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+
+    qbca2 <- function(Y, tt, t0, alpha, pct) {
         m <- ncol(Y)
         B <- nrow(Y)
         o1 <- rep(1, m)
         D <- rep(0, B)
 
-        for (i in 1:B) {
+        for (i in seq_len(B)) {
             Yi <- Y[i, ]
             d <- 2 * Yi * log(Yi) - 2 * (Yi - 1)
             d[Yi == 0] <- 2
             D[i] <- sum(d)
         }
-        Qd <- quantile(D, pct)
-        ip <- (1:B)[D <= Qd]
+        Qd <- stats::quantile(D, pct)
+        ip <- seq_len(B)[D <= Qd]
         ty. <- as.vector(m * lm(tt[ip] ~ Y[ip, ] - 1)$coef)
         ty. <- ty. - mean(ty.)
         a <- (1/6) * sum(ty.^3)/sum(ty.^2)^1.5
-        if (sw == 3)
-            return(ty.)
+        ## if (sw == 3)
+        ##     return(ty.)
         s <- mean(tt)
         B.mean <- c(B, s)
+
         zalpha <- qnorm(alpha)
         nal <- length(alpha)
         ustat <- 2 * t0 - s
@@ -77,12 +126,15 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         standard <- t0 + sdboot * qnorm(alpha)
         ##lims <- round(cbind(lims, standard), rou)
         lims <- cbind(lims, standard)
-        dimnames(lims) <- list(alpha, c("bcalims", "standard"))
+        dimnames(lims) <- list(alpha, c("bca", "std"))
         stats <- c(t0, sdboot, z0, a, sdjack)
-        names(stats) <- c("thet", "sdboot", "z0", "a", "sdjack")
+        names(stats) <- c("theta", "sdboot", "z0", "a", "sdjack")
         vl <- list(lims = lims, stats = stats, B.mean = B.mean, ustats = ustats)
         return(vl)
     }
+
+    alpha <- alpha[alpha < 0.5]
+    alpha <- c(alpha, 0.5, rev(1 - alpha))
 
     if (is.list(B)) {
         Y <- B$Y
@@ -136,9 +188,10 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         }
     }
     vl0$call <- call
+    vl0$seed <- seed
 
     if (K == 0)
-        return(vl0)
+        bcaboot.return(vl0)
 
     nal <- length(alpha)
     Pct <- rep(0, nal)
@@ -168,31 +221,32 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             stats[, j] <- vlj$stats
         }
 
-        if (sw == 4)
-            return(list(limbc = limbc, limst = limst, stats = stats))
+        ## if (sw == 4)
+        ##     return(list(limbc = limbc, limst = limst, stats = stats))
         Limbcsd[, k] <- apply(limbc, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
         ## if (verbose)
         ##     cat("{", k, "}", sep = "")
-        if (sw == 6)
-            return(list(Limbcsd = Limbcsd, Statsd = Statsd))
+        ## if (sw == 6)
+        ##     return(list(Limbcsd = Limbcsd, Statsd = Statsd))
     }
     limsd <- rowMeans(Limbcsd, 1)
     statsd <- rowMeans(Statsd, 1)
     ##limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct), rou)
     limits <- cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct)
-    dimnames(limits) <- list(alpha, c("bcalims", "jacksd", "standard", "Pct"))
+    dimnames(limits) <- list(alpha, c("bca", "jacksd", "std", "pct"))
     ##stats <- round(rbind(vl0$stats, statsd), rou)
     stats <- rbind(vl0$stats, statsd)
     ##ustats <- round(vl0$ustats, rou)
     ustats <- vl0$ustats
     ##B.mean <- c(B, round(mean(tt), rou))
     B.mean <- c(B, mean(tt))
-    dimnames(stats) <- list(c("est", "jsd"), c("thet", "sdboot", "z0", "a", "sdjack"))
-    vll <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, ustats = ustats)
-    if (sw == 5)
-        vll$tt <- tt
-    return(vll)
+    dimnames(stats) <- list(c("est", "jsd"), c("theta", "sdboot", "z0", "a", "sdjack"))
+    vll <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, ustats = ustats,
+                seed = seed)
+    ## if (sw == 5)
+    ##     vll$tt <- tt
+    bcaboot.return(vll)
 }
 
 

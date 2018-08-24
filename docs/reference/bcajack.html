@@ -34,7 +34,7 @@ confidence limits — bcajack • bcaboot</title>
 <meta property="og:title" content="Nonparametric bias-corrected and accelerated bootstrap
 confidence limits — bcajack" />
 
-<meta property="og:description" content="bcajack computes nonparametric confidence
+<meta property="og:description" content="This routine computes nonparametric confidence
 intervals for bootstrap estimates. For reproducibility, save or
 set the random number state before calling this routine." />
 <meta name="twitter:card" content="summary" />
@@ -65,7 +65,7 @@ set the random number state before calling this routine." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">bcaboot</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2</span>
       </span>
     </div>
 
@@ -76,6 +76,9 @@ set the random number state before calling this routine." />
     <span class="fa fa-home fa-lg"></span>
      
   </a>
+</li>
+<li>
+  <a href="../articles/bcaboot.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -109,118 +112,118 @@ confidence limits</h1>
 
     <div class="ref-description">
     
-    <p><code>bcajack</code> computes nonparametric confidence
+    <p>This routine computes nonparametric confidence
 intervals for bootstrap estimates. For reproducibility, save or
 set the random number state before calling this routine.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>bcajack</span>(<span class='no'>x</span>, <span class='no'>B</span>, <span class='no'>func</span>, <span class='no'>...</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fu'>nrow</span>(<span class='no'>x</span>), <span class='kw'>mr</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>J</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>, <span class='fl'>0.5</span>, <span class='fl'>0.84</span>, <span class='fl'>0.9</span>, <span class='fl'>0.95</span>, <span class='fl'>0.975</span>),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>sw</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>an nxp data matrix, rows are observed p-vectors, assumed
-to be independently sampled from target population. If <code>p</code> is 1
-then x can be a vector.</p></td>
+      <td><p>an \(n \times p\) data matrix, rows are observed
+\(p\)-vectors, assumed to be independently sampled from
+target population. If \(p\) is 1 then <code>x</code> can be a vector.</p></td>
     </tr>
     <tr>
       <th>B</th>
-      <td><p>number of bootstrap replications. 'B' can also be a vector
-of B bootstrap replications of the estimated parameter of
+      <td><p>number of bootstrap replications. It can also be a vector
+of <code>B</code> bootstrap replications of the estimated parameter of
 interest, computed separately.</p></td>
     </tr>
     <tr>
       <th>func</th>
-      <td><p>function \(\hat{\theta}\)=func(x) computing estimate of the
-parameter of interest; func(x) should return a real value for
-any n' x p matrix x', n' not necessarily equal to n.</p></td>
+      <td><p>function \(\hat{\theta}=func(x)\) computing estimate of the
+parameter of interest; \(func(x)\) should return a real value
+for any \(n^\prime \times p\) matrix \(x^\prime\),
+\(n^\prime\) not necessarily equal to \(n\)</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments for func.</p></td>
+      <td><p>additional arguments for <code>func</code>.</p></td>
     </tr>
     <tr>
       <th>m</th>
-      <td><p>integer m &lt;= n; collects the n rows of x into m groups to
-speed up the jackknife calculations for estimating the
-acceleration value 'a'; typically m=20 or 40; does not have to
-exactly divide n.</p></td>
+      <td><p>an integer less than or equal to \(n\); the routine
+collects the \(n\) rows of <code>x</code> into <code>m</code> groups to speed up
+the jackknife calculations for estimating the acceleration
+value \(a\); typically <code>m</code> is 20 or 40 and does not have to
+exactly divide \(n\).</p></td>
     </tr>
     <tr>
       <th>mr</th>
-      <td><p>if m &lt; n then mr repetions of the randomly grouped
-jackknife calculations are averaged.</p></td>
+      <td><p>if \(m &lt; n\) then <code>mr</code> repetions of the randomly
+grouped jackknife calculations are averaged.</p></td>
     </tr>
     <tr>
       <th>K</th>
-      <td><p>If K &gt; 0, bcajack also returns estimates of 'internal
-standard error', that is, of the variability due to stopping at
-B bootstrap replications rather than going on to
-infinity. These are obtained from a second type of jackknifing,
-taking an average of K separate jackknife estimates, each
-randomly splitting the B bootstrap replications into J groups.</p></td>
+      <td><p>a non-negative integer. If <code>K</code> &gt; 0, bcajack also returns
+estimates of <em>internal standard error</em>, that is, of the
+variability due to stopping at <code>B</code> bootstrap replications
+rather than going on to infinity. These are obtained from a
+second type of jackknifing, taking an average of <code>K</code> separate
+jackknife estimates, each randomly splitting the <code>B</code> bootstrap
+replications into <code>J</code> groups.</p></td>
     </tr>
     <tr>
       <th>J</th>
-      <td><p>the number of groups into which the bootstrap replications are split</p></td>
+      <td><p>the number of groups into which the bootstrap replications
+are split</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>percentiles desired for the bca confidence limits.</p></td>
+      <td><p>percentiles desired for the Bca confidence limits. One
+only needs to provide <code>alpha</code> values below 0.5; the upper
+limits are automatically computed</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>logical for verbose messages</p></td>
-    </tr>
-    <tr>
-      <th>sw</th>
-      <td><p>switch that controls output, eg sw=5 returns the B
-bootstrap replications as well as the bca output.</p></td>
-    </tr>
-    <tr>
-      <th>rou</th>
-      <td><p>rounding parameter for the output.</p></td>
+      <td><p>logical for verbose progress messages</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a named list of several items:</p>
-<dl class='dl-horizontal'>
-<dt>lims</dt><dd><p>first column shows the estimated bca confidence limits
-at the requested alpha percentiles. These can be compared with the
-standard limits <code>thetahat+sdboot*z[alpha]</code>, third column. The second
-column "jacksd" gives the internal standard errors for the bca
-limits, quite small in the example. Column 4, "pct", gives the
-percentiles of the ordered B bootstrap replications corresponding
-to the bca limits, eg the 897th largest replication equalling the
-.975 bca limit .557.</p></dd>
-<dt>stats</dt><dd><p>top line of stats shows 5 estimates: thet is func(x),
-original point estimate of the parameter of interest; sdboot is its
-bootstrap estimate of standard error; z0 is the bca bias correction
-value, in this case quite negative; a is the "acceleration", a
-component of the bca limits (nearly zero here); sdjack is the
-jackknife estimate of standard error for thet. Bottom line gives
-the internal standard errors for the five quantities above. This is
-substantial for z0 above.</p></dd>
-<dt>B.mean</dt><dd><p>bootstrap sample size B, and the mean of the B
-bootstrap replications theathat*.</p></dd>
-</dl>
+    <p>a named list of several items</p><ul>
+<li><p><strong>lims</strong> : first column shows the estimated bca confidence limits
+at the requested alpha percentiles. These can be compared with
+the standard limits \(\hat{\theta} +
+    \hat{\sigma}z_{\alpha}\), third column. The second column
+<code>jacksd</code> gives the internal standard errors for the bca limits,
+quite small in the example. Column 4, <code>pct</code>, gives the
+percentiles of the ordered B bootstrap replications
+corresponding to the bca limits, eg the 897th largest
+replication equalling the .975 bca limit .557.</p></li>
+<li><p><strong>stats</strong> : top line of stats shows 5 estimates: theta is
+\(f(x)\), original point estimate of the parameter of
+interest; <code>sdboot</code> is its bootstrap estimate of standard error;
+<code>z0</code> is the bca bias correction value, in this case quite
+negative; <code>a</code> is the <em>acceleration</em>, a component of the bca
+limits (nearly zero here); <code>sdjack</code> is the jackknife estimate
+of standard error for theta. Bottom line gives the internal
+standard errors for the five quantities above. This is
+substantial for <code>z0</code> above.</p></li>
+<li><p><strong>B.mean</strong> : bootstrap sample size B, and the mean of the B
+bootstrap replications \(\hat{\theta^*}\)</p></li>
+<li><p><strong>ustats</strong> : The bias-corrected estimator <code>2 * t0 - mean(tt)</code>,
+and an estimate <code>sdu</code> of its sampling error</p></li>
+<li><p><strong>seed</strong> : The random number state for reproducibility</p></li>
+</ul>
 
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Bootstrap confidence intervals depend on three elements:</p><ul>
-<li><p>the cdf of the B bootstrap replications <code>t[i]*, i=1...B</code></p></li>
-<li><p>the bias-correction number <code>z0=qnorm(#{t[i]* &lt; t0}/B )</code>
-where <code>t0=func(x)</code> is the original estimate</p></li>
+<li><p>the cdf of the \(B\) bootstrap replications \(t_i^*\), \(i=1\ldots B\)</p></li>
+<li><p>the bias-correction number \(z_0=\Phi(\sum_i^B I(t_i^* &lt; t_0) / B )\)
+where \(t_0=f(x)\) is the original estimate</p></li>
 <li><p>the acceleration number \(a\) that measures the rate of
-change in <code>sd{t0}</code> as x, the data changes.</p></li>
+change in \(\sigma_{t_0}\) as \(x\), the data changes.</p></li>
 </ul>
     <p>The first two of these depend only on the bootstrap distribution,
 and not how it is generated: parametrically or
@@ -229,13 +232,13 @@ in which the vector <code>tt</code> of B bootstrap replications is first
 generated from a parametric model.</p>
 <p>So, in the diabetes example below, we might first draw bootstrap
 samples \(y^* \sim N(X\hat{\beta}, \hat{\sigma}^2I)\) where
-\(\hat{beta}\) and \(\hat{sigma}\) were obtained from
+\(\hat{\beta}\) and \(\hat{\sigma}\) were obtained from
 <code>lm(y~X)</code>; each \(y^*\) would then provide a bootstrap
-replication <code>t* = rfun(cbind(X,y*))</code>.  Then we could get bca
+replication <code>tstar = rfun(cbind(X, ystar))</code>.  Then we could get Bca
 intervals from <code>bcajack(Xy, tt, rfun ....)</code> with <code>tt</code>,
-the vector of B <code>t*</code> values. The only difference from a full
-parametric bca analysis would lie in the nonparametric estimation
-of <code>a</code>, often a negligible error.</p>
+the vector of B <code>tstar</code> values. The only difference from a full
+parametric Bca analysis would lie in the nonparametric estimation
+of \(a\), often a negligible error.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -253,34 +256,36 @@ intervals. JASA 82 171-200</p>
   <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='no'>Xy</span>[, <span class='fl'>1</span>:<span class='fl'>10</span>]
   <span class='fu'>summary</span>(<span class='fu'>lm</span>(<span class='no'>y</span>~<span class='no'>X</span>) )$<span class='no'>adj.r.squared</span>
 }
-<span class='fu'>bcajack</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>Xy</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>func</span> <span class='kw'>=</span> <span class='no'>rfun</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>40</span>)</div><div class='output co'>#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%</div><div class='output co'>#&gt; <span class='warning'>Warning: longer object length is not a multiple of shorter object length</span></div><div class='output co'>#&gt; $call
-#&gt; bcajack(x = Xy, B = 1000, func = rfun, m = 40)
+<span class='fu'>set.seed</span>(<span class='fl'>1234</span>)
+<span class='fu'>bcajack</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>Xy</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>func</span> <span class='kw'>=</span> <span class='no'>rfun</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: longer object length is not a multiple of shorter object length</span></div><div class='output co'>#&gt; $call
+#&gt; bcajack(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
 #&gt; 
 #&gt; $lims
-#&gt;         bcalims      jacksd  standard   pct
-#&gt; 0.025 0.4285596 0.003637365 0.4456986 0.005
-#&gt; 0.05  0.4396789 0.003266602 0.4554836 0.012
-#&gt; 0.1   0.4526139 0.004371316 0.4667650 0.030
-#&gt; 0.16  0.4674165 0.003120873 0.4756799 0.056
-#&gt; 0.5   0.4974291 0.001610290 0.5065603 0.282
-#&gt; 0.84  0.5282229 0.002728307 0.5374407 0.661
-#&gt; 0.9   0.5386519 0.002827792 0.5463557 0.757
-#&gt; 0.95  0.5489462 0.002864281 0.5576371 0.854
-#&gt; 0.975 0.5561995 0.002685774 0.5674220 0.913
+#&gt;             bca      jacksd       std   pct
+#&gt; 0.025 0.4344601 0.004331391 0.4446582 0.006
+#&gt; 0.05  0.4462107 0.002314187 0.4546105 0.015
+#&gt; 0.1   0.4578153 0.002894762 0.4660847 0.036
+#&gt; 0.16  0.4669968 0.003222898 0.4751521 0.066
+#&gt; 0.5   0.4992032 0.001654483 0.5065603 0.307
+#&gt; 0.84  0.5303981 0.002539000 0.5379686 0.688
+#&gt; 0.9   0.5399201 0.001819106 0.5470359 0.781
+#&gt; 0.95  0.5499805 0.001802362 0.5585102 0.872
+#&gt; 0.975 0.5610528 0.004811745 0.5684624 0.926
 #&gt; 
 #&gt; $stats
-#&gt;          thet       sdboot          z0            a     sdjack
-#&gt; est 0.5065603 0.0310524656 -0.28714669 -0.007570513 0.03370235
-#&gt; jsd 0.0000000 0.0008317929  0.04058162  0.000000000 0.00000000
+#&gt;         theta       sdboot          z0            a     sdjack
+#&gt; est 0.5065603 0.0315832741 -0.25075957 -0.002225219 0.01739899
+#&gt; jsd 0.0000000 0.0009807951  0.04146536  0.000000000 0.00000000
 #&gt; 
 #&gt; $B.mean
-#&gt; [1] 1000.0000000    0.5156306
+#&gt; [1] 1000.0000000    0.5148135
 #&gt; 
 #&gt; $ustats
 #&gt;      ustat        sdu 
-#&gt; 0.49749003 0.04053599 
-#&gt; </div><div class='input'>
-</div></pre>
+#&gt; 0.49830716 0.03821763 
+#&gt; 
+#&gt; attr(,"class")
+#&gt; [1] "bcaboot"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -301,7 +306,7 @@ intervals. JASA 82 171-200</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Bradley Efron, Balasubramanian Narasimhan.</p>
+  <p>Developed by <a href='https://efron.web.stanford.edu'>Bradley Efron</a>, <a href='https://statistics.stanford.edu/people/balasubramanian-narasimhan'>Balasubramanian Narasimhan</a>.</p>
 </div>
 
 <div class="pkgdown">

@@ -41,7 +41,7 @@ bcaplot <- function(vl, main = " ", xlab = "coverage", ylab = "limits", alpha = 
         li <- vl$lims
         o <- rep(0, nrow(li))
         li <- cbind(li[, 1], o, li[, 2])
-        dimnames(li)[[2]] <- c("bcalims", "jacksd", "standard")
+        dimnames(li)[[2]] <- c("bca", "jacksd", "std")
         sta <- vl$stats
         sta <- rbind(sta, 0)
         vl$stats <- sta
@@ -51,7 +51,7 @@ bcaplot <- function(vl, main = " ", xlab = "coverage", ylab = "limits", alpha = 
 
     vn <- dimnames(vm)[[2]]
     nvn <- length(vn)
-    jn <- (1:nvn)[vn == "standard" | vn == "Stand"]
+    jn <- (1:nvn)[vn == "std"]
     vja <- (1:nvn)[vn == "jacksd"]
     if (length(vja) > 0)
         jasd <- vm[, vja]

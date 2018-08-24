@@ -13,8 +13,6 @@
 #'     length `B`, usually large, say `B = 2000`
 #' @param bb A `B` by `p` matrix of natural sufficient vectors, where
 #'     `p` is the dimension of the exponential family.
-#' @param alpha Confidence values for which the confidence limits are
-#'     calculated
 #' @param J,K Parameters controlling the jackknife estimates of Monte
 #'     Carlo error: `J` jackknife folds, with the jackknife standard
 #'     errors averaged over `K` random divisions of `bb`
@@ -22,34 +20,36 @@
 #'     acceleration `a`.
 #' @param pct Proportion of "nearby" b vectors used in the calculation
 #'     of `t.`, the gradient vector of theta.
-#' @param cd If cd is 1 the bca confidence density is also returned
-#'     (See Section 11.6 of "Computer Age Statistical Inference",
-#'     B. Efron and T. Hastie.)
-#' @param func Function `thetahat = t(b)`. If this is not missing then
-#'     output includes _abc_ estimates (See
-#'     "More accurate confidence intervals in exponential families",
-#'     T. DiCiccio and B. Efron, Biometrika 1992 p231-245.)
+#' @param cd If cd is 1 the bca confidence density is also returned;
+#'     see Section 11.6 in reference Efron and Hastie (2016) below
+#' @param func Function \eqn{\hat{\theta} = func(b)}. If this is not missing then
+#'     output includes _abc_ estimates; see reference DiCiccio and Efron (1992) below
 #' @return a named list of several items:
-#' \describe{
-#' \item{`lims`}{bca confidence limits (first column) and the standard
+#'
+#' * __lims__ : Bca confidence limits (first column) and the standard
 #'     limits (fourth column). Also the abc limits (fifth column) if
 #'     `func` is provided. The second column, `jacksd`, are the
-#'     jackknife estimates of Monte Carlo error; `pctiles`, the third
+#'     jackknife estimates of Monte Carlo error; `pct`, the third
 #'     column are the proportion of the replicates `tt` less than each
-#'     `bcalim` value}
-#' \item{`stats`}{estimates and their jackknife Monte Carlo errors:
-#'     `thet` = \eqn{\hat{\theta}}; `sd`, the bootstrap standard deviation
+#'     `bcalim` value
+#'
+#' * __stats__ : Estimates and their jackknife Monte Carlo errors:
+#'     `theta` = \eqn{\hat{\theta}}; `sd`, the bootstrap standard deviation
 #'      for \eqn{\hat{\theta}}; `a` the acceleration estimate; `az` another
 #'      acceleration estimate that depends less on extreme values of `tt`;
 #'      `z0` the bias-correction estimate; `A` the big-A measure of raw
 #'      acceleration; `sdd` delta method estimate for standard deviation of
-#'      \eqn{\hat{\theta}}; `mean` the average of `tt`}
-#' \item{abcstats}{The abc estimates of `a` and `z0`, returned if `func` was provided}
-#' \item{ustats}{The bias-corrected estimator `2 * t0 - mean(tt)`. `ustats`
+#'      \eqn{\hat{\theta}}; `mean` the average of `tt`
+#'
+#' * __abcstats__ : The abc estimates of `a` and `z0`, returned if `func` was provided
+#'
+#' * __ustats__ : The bias-corrected estimator `2 * t0 - mean(tt)`. `ustats`
 #'      gives `ustat`, an estimate `sdu` of its sampling error, and jackknife
 #'      estimates of monte carlo error for both `ustat` and `sdu`. Also given
-#'      is `B`, the number of bootstrap replications}
-#' }
+#'      is `B`, the number of bootstrap replications
+#'
+#' * __seed__ : The random number state for reproducibility
+#'
 #' @references DiCiccio T and Efron B (1996). Bootstrap confidence
 #'     intervals. Statistical Science 11, 189-228
 #' @references T. DiCiccio and B. Efron. More accurate confidence intervals in exponential families.
@@ -71,15 +71,28 @@
 #' y.star <- sapply(mu.hat, rnorm, n = 1000, sd = sigma.hat)
 #' tt <- apply(y.star, 1, function(y) summary(lm(y ~ X - 1))$adj.r.squared)
 #' b.star <- y.star %*% X
+#' set.seed(1234)
 #' bcapar(t0 = t0, tt = tt, bb = b.star)
 #' @export bcapar
-bcapar <- function(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95,
-    0.975), J = 10, K = 6, trun = 0.001, pct = 0.333, cd = 0, func) {
-    # if(!missing(func)) adds abc limits and stats K=0 skips jackknifing computes
-    # confidence density weights 'w' if cd=1
+bcapar <- function(t0, tt, bb,
+                   alpha = c(0.025, 0.05, 0.1, 0.16),
+                   J = 10, K = 6, trun = 0.001, pct = 0.333, cd = 0, func) {
 
-    if (K == 0)
-        return(bca(t0, tt, bb, alpha = alpha, trun = trun, pct = pct))
+    ## Save rng state
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        runif(1)
+    seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+
+    ## if(!missing(func)) adds abc limits and stats K=0 skips jackknifing computes
+    ## confidence density weights 'w' if cd=1
+    alpha <- alpha[alpha < 0.5]
+    alpha <- c(alpha, 0.5, rev(1 - alpha))
+
+    if (K == 0) {
+        result <- bca(t0, tt, bb, alpha = alpha, trun = trun, pct = pct)
+        result$seed <- seed
+        bcaboot.return(result)
+    }
     call <- match.call()
     B <- length(tt)
     vl0 <- bca(t0, tt, bb = as.matrix(bb), alpha = alpha, trun = trun, pct = pct)
@@ -118,10 +131,10 @@ bcapar <- function(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9,
     ustsd <- rowMeans(Ustm)
     lim0 <- vl0$lims
     lim0 <- cbind(lim0[, 1], limsd, lim0[, 2:3])
-    dimnames(lim0) <- list(alpha, c("bcalims", "jacksd", "pctiles", "Stand"))
+    dimnames(lim0) <- list(alpha, c("bca", "jacksd", "pct", "std"))
     th0 <- vl0$thet
     th0 <- rbind(th0, thsd)
-    dimnames(th0) <- list(c("est", "jsd"), c("thet", "a", "z0", "A", "az"))
+    dimnames(th0) <- list(c("est", "jsd"), c("theta", "a", "z0", "A", "az"))
     sdm0 <- vl0$sd.s
     sdm0 <- rbind(sdm0, sdmsd)
     dimnames(sdm0) <- list(c("est", "jsd"), c("sd", "sdd", "mean", "B"))
@@ -138,7 +151,7 @@ bcapar <- function(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9,
     stats <- cbind(th0, sdm0)
     stats <- stats[, c(1, 6, 2, 5, 3, 4, 7, 8)]
 
-    vl <- list(call = call, lims = lims, stats = stats, ustats = ust0)
+    vl <- list(call = call, lims = lims, stats = stats, ustats = ust0, seed = seed)
     if (length(trun) > 1)
         vl$amat <- vl0$amat
     if (cd == 1) {
@@ -155,13 +168,13 @@ bcapar <- function(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9,
 
     if (!missing(func)) {
         vla <- abcpar(func, bb, alpha = alpha[alpha < 0.5])
-        abclims <- vla$lims[, 1]
+        abc <- vla$lims[, 1]
         ## vl$lims <- round(cbind(vl$lims, abclims), roun)
         ## abcstats <- round(vla$a.z0.cq[1:2], roun)
-        vl$lims <- cbind(vl$lims, abclims)
+        vl$lims <- cbind(vl$lims, abc)
         abcstats <- vla$a.z0.cq[1:2]
         names(abcstats) <- c("a", "z0")
         vl$abcstats <- abcstats
     }
-    vl
+    bcaboot.return(vl)
 }

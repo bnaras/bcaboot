@@ -4,9 +4,8 @@
 \alias{bcapar}
 \title{Compute parametric bootstrap confidence intervals}
 \usage{
-bcapar(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9,
-  0.95, 0.975), J = 10, K = 6, trun = 0.001, pct = 0.333, cd = 0,
-  func)
+bcapar(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16), J = 10, K = 6,
+  trun = 0.001, pct = 0.333, cd = 0, func)
 }
 \arguments{
 \item{t0}{Observed estimate of theta, usually by maximum
@@ -18,8 +17,9 @@ length \code{B}, usually large, say \code{B = 2000}}
 \item{bb}{A \code{B} by \code{p} matrix of natural sufficient vectors, where
 \code{p} is the dimension of the exponential family.}
 
-\item{alpha}{Confidence values for which the confidence limits are
-calculated}
+\item{alpha}{percentiles desired for the Bca confidence limits. One
+only needs to provide \code{alpha} values below 0.5; the upper
+limits are automatically computed}
 
 \item{J, K}{Parameters controlling the jackknife estimates of Monte
 Carlo error: \code{J} jackknife folds, with the jackknife standard
@@ -31,36 +31,34 @@ acceleration \code{a}.}
 \item{pct}{Proportion of "nearby" b vectors used in the calculation
 of \code{t.}, the gradient vector of theta.}
 
-\item{cd}{If cd is 1 the bca confidence density is also returned
-(See Section 11.6 of "Computer Age Statistical Inference",
-B. Efron and T. Hastie.)}
+\item{cd}{If cd is 1 the bca confidence density is also returned;
+see Section 11.6 in reference Efron and Hastie (2016) below}
 
-\item{func}{Function \code{thetahat = t(b)}. If this is not missing then
-output includes \emph{abc} estimates (See
-"More accurate confidence intervals in exponential families",
-T. DiCiccio and B. Efron, Biometrika 1992 p231-245.)}
+\item{func}{Function \eqn{\hat{\theta} = func(b)}. If this is not missing then
+output includes \emph{abc} estimates; see reference DiCiccio and Efron (1992) below}
 }
 \value{
 a named list of several items:
-\describe{
-\item{\code{lims}}{bca confidence limits (first column) and the standard
+\itemize{
+\item \strong{lims} : Bca confidence limits (first column) and the standard
 limits (fourth column). Also the abc limits (fifth column) if
 \code{func} is provided. The second column, \code{jacksd}, are the
-jackknife estimates of Monte Carlo error; \code{pctiles}, the third
+jackknife estimates of Monte Carlo error; \code{pct}, the third
 column are the proportion of the replicates \code{tt} less than each
-\code{bcalim} value}
-\item{\code{stats}}{estimates and their jackknife Monte Carlo errors:
-\code{thet} = \eqn{\hat{\theta}}; \code{sd}, the bootstrap standard deviation
+\code{bcalim} value
+\item \strong{stats} : Estimates and their jackknife Monte Carlo errors:
+\code{theta} = \eqn{\hat{\theta}}; \code{sd}, the bootstrap standard deviation
 for \eqn{\hat{\theta}}; \code{a} the acceleration estimate; \code{az} another
 acceleration estimate that depends less on extreme values of \code{tt};
 \code{z0} the bias-correction estimate; \code{A} the big-A measure of raw
 acceleration; \code{sdd} delta method estimate for standard deviation of
-\eqn{\hat{\theta}}; \code{mean} the average of \code{tt}}
-\item{abcstats}{The abc estimates of \code{a} and \code{z0}, returned if \code{func} was provided}
-\item{ustats}{The bias-corrected estimator \code{2 * t0 - mean(tt)}. \code{ustats}
+\eqn{\hat{\theta}}; \code{mean} the average of \code{tt}
+\item \strong{abcstats} : The abc estimates of \code{a} and \code{z0}, returned if \code{func} was provided
+\item \strong{ustats} : The bias-corrected estimator \code{2 * t0 - mean(tt)}. \code{ustats}
 gives \code{ustat}, an estimate \code{sdu} of its sampling error, and jackknife
 estimates of monte carlo error for both \code{ustat} and \code{sdu}. Also given
-is \code{B}, the number of bootstrap replications}
+is \code{B}, the number of bootstrap replications
+\item \strong{seed} : The random number state for reproducibility
 }
 }
 \description{
@@ -80,6 +78,7 @@ t0 <- summary(lm.model)$adj.r.squared
 y.star <- sapply(mu.hat, rnorm, n = 1000, sd = sigma.hat)
 tt <- apply(y.star, 1, function(y) summary(lm(y ~ X - 1))$adj.r.squared)
 b.star <- y.star \%*\% X
+set.seed(1234)
 bcapar(t0 = t0, tt = tt, bb = b.star)
 }
 \references{

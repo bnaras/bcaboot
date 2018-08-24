@@ -6,87 +6,91 @@
 confidence limits}
 \usage{
 bcajack(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
-  alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95, 0.975),
-  verbose = TRUE, sw = 0)
+  alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE)
 }
 \arguments{
-\item{x}{an nxp data matrix, rows are observed p-vectors, assumed
-to be independently sampled from target population. If \code{p} is 1
-then x can be a vector.}
+\item{x}{an \eqn{n \times p} data matrix, rows are observed
+\eqn{p}-vectors, assumed to be independently sampled from
+target population. If \eqn{p} is 1 then \code{x} can be a vector.}
 
-\item{B}{number of bootstrap replications. 'B' can also be a vector
-of B bootstrap replications of the estimated parameter of
+\item{B}{number of bootstrap replications. It can also be a vector
+of \code{B} bootstrap replications of the estimated parameter of
 interest, computed separately.}
 
-\item{func}{function \eqn{\hat{\theta}}=func(x) computing estimate of the
-parameter of interest; func(x) should return a real value for
-any n' x p matrix x', n' not necessarily equal to n.}
+\item{func}{function \eqn{\hat{\theta}=func(x)} computing estimate of the
+parameter of interest; \eqn{func(x)} should return a real value
+for any \eqn{n^\prime \times p} matrix \eqn{x^\prime},
+\eqn{n^\prime} not necessarily equal to \eqn{n}}
 
-\item{...}{additional arguments for func.}
+\item{...}{additional arguments for \code{func}.}
 
-\item{m}{integer m <= n; collects the n rows of x into m groups to
-speed up the jackknife calculations for estimating the
-acceleration value 'a'; typically m=20 or 40; does not have to
-exactly divide n.}
+\item{m}{an integer less than or equal to \eqn{n}; the routine
+collects the \eqn{n} rows of \code{x} into \code{m} groups to speed up
+the jackknife calculations for estimating the acceleration
+value \eqn{a}; typically \code{m} is 20 or 40 and does not have to
+exactly divide \eqn{n}.}
 
-\item{mr}{if m < n then mr repetions of the randomly grouped
-jackknife calculations are averaged.}
+\item{mr}{if \eqn{m < n} then \code{mr} repetions of the randomly
+grouped jackknife calculations are averaged.}
 
-\item{K}{If K > 0, bcajack also returns estimates of 'internal
-standard error', that is, of the variability due to stopping at
-B bootstrap replications rather than going on to
-infinity. These are obtained from a second type of jackknifing,
-taking an average of K separate jackknife estimates, each
-randomly splitting the B bootstrap replications into J groups.}
+\item{K}{a non-negative integer. If \code{K} > 0, bcajack also returns
+estimates of \emph{internal standard error}, that is, of the
+variability due to stopping at \code{B} bootstrap replications
+rather than going on to infinity. These are obtained from a
+second type of jackknifing, taking an average of \code{K} separate
+jackknife estimates, each randomly splitting the \code{B} bootstrap
+replications into \code{J} groups.}
 
-\item{J}{the number of groups into which the bootstrap replications are split}
+\item{J}{the number of groups into which the bootstrap replications
+are split}
 
-\item{alpha}{percentiles desired for the bca confidence limits.}
+\item{alpha}{percentiles desired for the Bca confidence limits. One
+only needs to provide \code{alpha} values below 0.5; the upper
+limits are automatically computed}
 
-\item{verbose}{logical for verbose messages}
-
-\item{sw}{switch that controls output, eg sw=5 returns the B
-bootstrap replications as well as the bca output.}
-
-\item{rou}{rounding parameter for the output.}
+\item{verbose}{logical for verbose progress messages}
 }
 \value{
-a named list of several items:
-
-\describe{
-\item{lims}{first column shows the estimated bca confidence limits
-at the requested alpha percentiles. These can be compared with the
-standard limits \code{thetahat+sdboot*z[alpha]}, third column. The second
-column "jacksd" gives the internal standard errors for the bca
-limits, quite small in the example. Column 4, "pct", gives the
-percentiles of the ordered B bootstrap replications corresponding
-to the bca limits, eg the 897th largest replication equalling the
-.975 bca limit .557.}
-\item{stats}{ top line of stats shows 5 estimates: thet is func(x),
-original point estimate of the parameter of interest; sdboot is its
-bootstrap estimate of standard error; z0 is the bca bias correction
-value, in this case quite negative; a is the "acceleration", a
-component of the bca limits (nearly zero here); sdjack is the
-jackknife estimate of standard error for thet. Bottom line gives
-the internal standard errors for the five quantities above. This is
-substantial for z0 above.}
-\item{B.mean}{bootstrap sample size B, and the mean of the B
-bootstrap replications theathat*.}
+a named list of several items
+\itemize{
+\item \strong{lims} : first column shows the estimated bca confidence limits
+at the requested alpha percentiles. These can be compared with
+the standard limits \eqn{\hat{\theta} +
+    \hat{\sigma}z_{\alpha}}, third column. The second column
+\code{jacksd} gives the internal standard errors for the bca limits,
+quite small in the example. Column 4, \code{pct}, gives the
+percentiles of the ordered B bootstrap replications
+corresponding to the bca limits, eg the 897th largest
+replication equalling the .975 bca limit .557.
+\item \strong{stats} : top line of stats shows 5 estimates: theta is
+\eqn{f(x)}, original point estimate of the parameter of
+interest; \code{sdboot} is its bootstrap estimate of standard error;
+\code{z0} is the bca bias correction value, in this case quite
+negative; \code{a} is the \emph{acceleration}, a component of the bca
+limits (nearly zero here); \code{sdjack} is the jackknife estimate
+of standard error for theta. Bottom line gives the internal
+standard errors for the five quantities above. This is
+substantial for \code{z0} above.
+\item \strong{B.mean} : bootstrap sample size B, and the mean of the B
+bootstrap replications \eqn{\hat{\theta^*}}
+\item \strong{ustats} : The bias-corrected estimator \code{2 * t0 - mean(tt)},
+and an estimate \code{sdu} of its sampling error
+\item \strong{seed} : The random number state for reproducibility
 }
 }
 \description{
-\code{bcajack} computes nonparametric confidence
+This routine computes nonparametric confidence
 intervals for bootstrap estimates. For reproducibility, save or
 set the random number state before calling this routine.
 }
 \details{
 Bootstrap confidence intervals depend on three elements:
 \itemize{
-\item the cdf of the B bootstrap replications \code{t[i]*, i=1...B}
-\item the bias-correction number \code{z0=qnorm(#{t[i]* < t0}/B )}
-where \code{t0=func(x)} is the original estimate
+\item the cdf of the \eqn{B} bootstrap replications \eqn{t_i^*}, \eqn{i=1\ldots B}
+\item the bias-correction number \eqn{z_0=\Phi(\sum_i^B I(t_i^* < t_0) / B )}
+where \eqn{t_0=f(x)} is the original estimate
 \item the acceleration number \eqn{a} that measures the rate of
-change in \code{sd{t0}} as x, the data changes.
+change in \eqn{\sigma_{t_0}} as \eqn{x}, the data changes.
 }
 
 The first two of these depend only on the bootstrap distribution,
@@ -97,13 +101,13 @@ generated from a parametric model.
 
 So, in the diabetes example below, we might first draw bootstrap
 samples \eqn{y^* \sim N(X\hat{\beta}, \hat{\sigma}^2I)} where
-\eqn{\hat{beta}} and \eqn{\hat{sigma}} were obtained from
+\eqn{\hat{\beta}} and \eqn{\hat{\sigma}} were obtained from
 \code{lm(y~X)}; each \eqn{y^*} would then provide a bootstrap
-replication \code{t* = rfun(cbind(X,y*))}.  Then we could get bca
+replication \code{tstar = rfun(cbind(X, ystar))}.  Then we could get Bca
 intervals from \code{bcajack(Xy, tt, rfun ....)} with \code{tt},
-the vector of B \code{t*} values. The only difference from a full
-parametric bca analysis would lie in the nonparametric estimation
-of \code{a}, often a negligible error.
+the vector of B \code{tstar} values. The only difference from a full
+parametric Bca analysis would lie in the nonparametric estimation
+of \eqn{a}, often a negligible error.
 }
 \examples{
 data(diabetes, package = "lars")
@@ -113,8 +117,8 @@ rfun <- function(Xy) {
   X <- Xy[, 1:10]
   summary(lm(y~X) )$adj.r.squared
 }
-bcajack(x = Xy, B = 1000, func = rfun, m = 40)
-
+set.seed(1234)
+bcajack(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
 }
 \references{
 DiCiccio T and Efron B (1996). Bootstrap confidence

@@ -22,6 +22,11 @@
 #'     the column "jacksd" of jackknife internal standard deviations
 #'     then these are indicated by vertical red bars centered at the
 #'     bca limit points.
+#'
+#' @importFrom ggplot2 geom_line geom_segment geom_point aes labs
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select filter
+#' @importFrom tidyr gather spread
 #' @export
 ggbcaplot <- function(vl, main = "", xlab = "coverage", ylab = "limits",
                       alpha = c(0.025, 0.05, 0.1, 0.16), ...) {
@@ -44,23 +49,23 @@ ggbcaplot <- function(vl, main = "", xlab = "coverage", ylab = "limits",
     upper <- vmf %>% dplyr::filter(type == "upper")
 
     g <- ggplot2::ggplot(...) +
-        ggplot2::geom_line(mapping = aes(x = coverage, y = bcalims), data = lower) +
-        ggplot2::geom_line(mapping = aes(x = coverage, y = bcalims), data = upper) +
-        ggplot2::geom_point(mapping = aes(x = coverage, y = bcalims), data = lower) +
-        ggplot2::geom_point(mapping = aes(x = coverage, y = bcalims), data = upper) +
-        ggplot2::geom_line(mapping = aes(x = coverage, y = standard), data = lower, color = "blue", linetype = 3) +
-        ggplot2::geom_line(mapping = aes(x = coverage, y = standard), data = upper, color = "blue", linetype = 3) +
-        ggplot2::geom_point(mapping = aes(x = coverage, y = standard), data = lower, color = "blue") +
-        ggplot2::geom_point(mapping = aes(x = coverage, y = standard), data = upper, color = "blue")
+        ggplot2::geom_line(mapping = ggplot2::aes(x = coverage, y = bcalims), data = lower) +
+        ggplot2::geom_line(mapping = ggplot2::aes(x = coverage, y = bcalims), data = upper) +
+        ggplot2::geom_point(mapping = ggplot2::aes(x = coverage, y = bcalims), data = lower) +
+        ggplot2::geom_point(mapping = ggplot2::aes(x = coverage, y = bcalims), data = upper) +
+        ggplot2::geom_line(mapping = ggplot2::aes(x = coverage, y = standard), data = lower, color = "blue", linetype = 3) +
+        ggplot2::geom_line(mapping = ggplot2::aes(x = coverage, y = standard), data = upper, color = "blue", linetype = 3) +
+        ggplot2::geom_point(mapping = ggplot2::aes(x = coverage, y = standard), data = lower, color = "blue") +
+        ggplot2::geom_point(mapping = ggplot2::aes(x = coverage, y = standard), data = upper, color = "blue")
 
     g <- g +
-        ggplot2::geom_segment(mapping = aes(x = coverage, xend = coverage, y = bcalims - jacksd, yend = bcalims + jacksd),
+        ggplot2::geom_segment(mapping = ggplot2::aes(x = coverage, xend = coverage, y = bcalims - jacksd, yend = bcalims + jacksd),
                      color = "red", data = vmf)
     g <- g +
         ggplot2::geom_hline(yintercept = thet, linetype = "dashed", color = "red")
 
     g <-  g +
-        ggplot2::geom_segment(mapping = aes(x = coverage, xend = coverage, y = bcalims[2], yend = bcalims[1], group = coverage),
+        ggplot2::geom_segment(mapping = ggplot2::aes(x = coverage, xend = coverage, y = bcalims[2], yend = bcalims[1], group = coverage),
                               color = "green", data = vmf)
 
     g +

@@ -6,65 +6,105 @@
 confidence limits}
 \usage{
 bcajack2(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
-  J = 12, alpha = c(0.025, 0.05, 0.1, 0.16, 0.5, 0.84, 0.9, 0.95,
-  0.975), verbose = TRUE, sw = 0)
+  J = 12, alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE)
 }
 \arguments{
-\item{x}{an nxp data matrix, rows are observed p-vectors, assumed
-to be independently sampled from target population. If \code{p} is 1
-then x can be a vector.}
+\item{x}{an \eqn{n \times p} data matrix, rows are observed
+\eqn{p}-vectors, assumed to be independently sampled from
+target population. If \eqn{p} is 1 then \code{x} can be a vector.}
 
-\item{B}{number of bootstrap replications. 'B' can also be a vector
-of B bootstrap replications of the estimated parameter of
-interest, computed separately. If B is \code{Blist} as
-explained above, x is not needed.}
+\item{B}{number of bootstrap replications. \code{B} can also be a vector
+of \code{B} bootstrap replications of the estimated parameter of
+interest, computed separately. If \code{B} is \code{Blist} as
+explained above, \code{x} is not needed.}
 
-\item{func}{function \eqn{\hat{\theta}}=func(x) computing estimate of the
-parameter of interest; func(x) should return a real value for
-any n' x p matrix x', n' not necessarily equal to n.}
+\item{func}{function \eqn{\hat{\theta}=func(x)} computing estimate of the
+parameter of interest; \eqn{func(x)} should return a real value
+for any \eqn{n^\prime \times p} matrix \eqn{x^\prime},
+\eqn{n^\prime} not necessarily equal to \eqn{n}}
 
-\item{...}{additional arguments for func.}
+\item{...}{additional arguments for \code{func}.}
 
-\item{m}{integer m <= n; collects the n rows of x into m groups to
-speed up the jackknife calculations for estimating the
-acceleration value 'a'; typically m=20 or 40; does not have to
-exactly divide n.}
+\item{m}{an integer less than or equal to \eqn{n}; the routine
+collects the \eqn{n} rows of \code{x} into \code{m} groups to speed up
+the jackknife calculations for estimating the acceleration
+value \eqn{a}; typically \code{m} is 20 or 40 and does not have to
+exactly divide \eqn{n}.}
 
-\item{mr}{if m < n then mr repetions of the randomly grouped
-jackknife calculations are averaged.}
+\item{mr}{if \eqn{m < n} then \code{mr} repetions of the randomly
+grouped jackknife calculations are averaged.}
 
-\item{K}{If K > 0, bcajack also returns estimates of 'internal
-standard error', that is, of the variability due to stopping at
-B bootstrap replications rather than going on to
-infinity. These are obtained from a second type of jackknifing,
-taking an average of K separate jackknife estimates, each
-randomly splitting the B bootstrap replications into J groups.}
+\item{K}{a non-negative integer. If \code{K} > 0, bcajack also returns
+estimates of \emph{internal standard error}, that is, of the
+variability due to stopping at \code{B} bootstrap replications
+rather than going on to infinity. These are obtained from a
+second type of jackknifing, taking an average of \code{K} separate
+jackknife estimates, each randomly splitting the \code{B} bootstrap
+replications into \code{J} groups.}
 
-\item{J}{the number of groups into which the bootstrap replications are split}
+\item{J}{the number of groups into which the bootstrap replications
+are split}
 
-\item{alpha}{percentiles desired for the bca confidence limits.}
+\item{alpha}{percentiles desired for the Bca confidence limits. One
+only needs to provide \code{alpha} values below 0.5; the upper
+limits are automatically computed}
 
-\item{verbose}{logical for verbose messages}
-
-\item{sw}{switch that controls output, eg sw=5 returns the B
-bootstrap replications as well as the bca output.}
+\item{verbose}{logical for verbose progress messages}
+}
+\value{
+a named list of several items
+\itemize{
+\item \strong{lims} : first column shows the estimated bca confidence limits
+at the requested alpha percentiles. These can be compared with
+the standard limits \eqn{\hat{\theta} +
+    \hat{\sigma}z_{\alpha}}, third column. The second column
+\code{jacksd} gives the internal standard errors for the bca limits,
+quite small in the example. Column 4, \code{pct}, gives the
+percentiles of the ordered B bootstrap replications
+corresponding to the bca limits, eg the 897th largest
+replication equalling the .975 Bca limit .557.
+\item \strong{stats} : top line of stats shows 5 estimates: theta is
+\eqn{func(x)}, original point estimate of the parameter of
+interest; \code{sdboot} is its bootstrap estimate of standard error;
+\code{z0} is the bca bias correction value, in this case quite
+negative; \code{a} is the \emph{acceleration}, a component of the bca
+limits (nearly zero here); \code{sdjack} is the jackknife estimate
+of standard error for theta. Bottom line gives the internal
+standard errors for the five quantities above. This is
+substantial for \code{z0} above.
+\item \strong{B.mean} : bootstrap sample size B, and the mean of the B
+bootstrap replications \eqn{\hat{\theta^*}}
+\item \strong{ustats} : The bias-corrected estimator \code{2 * t0 - mean(tt)},
+and an estimate \code{sdu} of its sampling error
+\item \strong{seed} : The random number state for reproducibility
+}
 }
 \description{
-\code{bcajack2} is a version of \code{bcajack} that allows
+This function is a version of \code{bcajack} that allows
 all the recomputations of the original statistic function
-\code{func} to be carried out separately. This is an advantage
-if \code{func} is time-consuming, in which case the B
+\eqn{f} to be carried out separately. This is an advantage
+if \eqn{f} is time-consuming, in which case the B
 replications for the nonparametric bca calculations might need
 to be done on a distributed basis.
 
-To use bcajack2 in this mode, we first compute a list \code{Blist}
-via \code{Blist <- list(Y = Y,tt = tt,t0 = t0)}.  Here \code{tt} is
-a vector of length B having i-th entry \code{tt[i] <- func(x[Ii,],
-...)}, where x is the n x p data matrix and \code{Ii <-
-sample(n,n,T)}, a bootstrap vector of indices. Y is a B x n "count"
-matrix, whose i-th row is the counts corresponding to Ii. For
-example if n = 5 and \code{Ii=(2,5,2,1,4)}, then \code{Yi =
-(1,2,0,1,1)}. Having computed \code{Blist}, \code{bcajack2} is
-invoked as \code{bcajack2(Blist)} without need to enter the
-function func.
+To use \code{bcajack2} in this mode, we first compute a list \code{Blist} via
+\code{Blist <- list(Y = Y, tt = tt, t0 = t0)}.  Here \code{tt} is a vector of
+length \code{B} having i-th entry \code{tt[i] <- func(x[Ii,], ...)}, where \code{x}
+is the \eqn{n \times p} data matrix and \code{Ii} is a bootstrap vector
+of (observation) indices. \code{Y} is a \code{B} by \eqn{n} count matrix,
+whose i-th row is the counts corresponding to \code{Ii}. For example if
+n = 5 and \code{Ii = (2, 5, 2, 1, 4)}, then \code{Yi = (1, 2, 0, 1, 1)}. Having computed \code{Blist}, \code{bcajack2} is invoked as
+\code{bcajack2(Blist)} without need to enter the function \eqn{func}.
+}
+\examples{
+data(diabetes, package = "lars")
+Xy <- cbind(diabetes$x, diabetes$y)
+rfun <- function(Xy) {
+  y <- Xy[, 11]
+  X <- Xy[, 1:10]
+  summary(lm(y~X) )$adj.r.squared
+}
+set.seed(1234)
+bcajack2(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
+
 }

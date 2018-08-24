@@ -64,7 +64,7 @@ reference below." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">bcaboot</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2</span>
       </span>
     </div>
 
@@ -75,6 +75,9 @@ reference below." />
     <span class="fa fa-home fa-lg"></span>
      
   </a>
+</li>
+<li>
+  <a href="../articles/bcaboot.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -114,9 +117,8 @@ reference below.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>bcapar</span>(<span class='no'>t0</span>, <span class='no'>tt</span>, <span class='no'>bb</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>, <span class='fl'>0.5</span>, <span class='fl'>0.84</span>, <span class='fl'>0.9</span>,
-  <span class='fl'>0.95</span>, <span class='fl'>0.975</span>), <span class='kw'>J</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>trun</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>pct</span> <span class='kw'>=</span> <span class='fl'>0.333</span>, <span class='kw'>cd</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='no'>func</span>)</pre>
+    <pre class="usage"><span class='fu'>bcapar</span>(<span class='no'>t0</span>, <span class='no'>tt</span>, <span class='no'>bb</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.025</span>, <span class='fl'>0.05</span>, <span class='fl'>0.1</span>, <span class='fl'>0.16</span>), <span class='kw'>J</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fl'>6</span>,
+  <span class='kw'>trun</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>pct</span> <span class='kw'>=</span> <span class='fl'>0.333</span>, <span class='kw'>cd</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='no'>func</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,8 +140,9 @@ length <code>B</code>, usually large, say <code>B = 2000</code></p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>Confidence values for which the confidence limits are
-calculated</p></td>
+      <td><p>percentiles desired for the Bca confidence limits. One
+only needs to provide <code>alpha</code> values below 0.5; the upper
+limits are automatically computed</p></td>
     </tr>
     <tr>
       <th>J, K</th>
@@ -159,41 +162,39 @@ of <code>t.</code>, the gradient vector of theta.</p></td>
     </tr>
     <tr>
       <th>cd</th>
-      <td><p>If cd is 1 the bca confidence density is also returned
-(See Section 11.6 of "Computer Age Statistical Inference",
-B. Efron and T. Hastie.)</p></td>
+      <td><p>If cd is 1 the bca confidence density is also returned;
+see Section 11.6 in reference Efron and Hastie (2016) below</p></td>
     </tr>
     <tr>
       <th>func</th>
-      <td><p>Function <code>thetahat = t(b)</code>. If this is not missing then
-output includes <em>abc</em> estimates (See
-"More accurate confidence intervals in exponential families",
-T. DiCiccio and B. Efron, Biometrika 1992 p231-245.)</p></td>
+      <td><p>Function \(\hat{\theta} = func(b)\). If this is not missing then
+output includes <em>abc</em> estimates; see reference DiCiccio and Efron (1992) below</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a named list of several items:</p><dl class='dl-horizontal'>
-<dt><code>lims</code></dt><dd><p>bca confidence limits (first column) and the standard
+    <p>a named list of several items:</p><ul>
+<li><p><strong>lims</strong> : Bca confidence limits (first column) and the standard
 limits (fourth column). Also the abc limits (fifth column) if
 <code>func</code> is provided. The second column, <code>jacksd</code>, are the
-jackknife estimates of Monte Carlo error; <code>pctiles</code>, the third
+jackknife estimates of Monte Carlo error; <code>pct</code>, the third
 column are the proportion of the replicates <code>tt</code> less than each
-<code>bcalim</code> value</p></dd>
-<dt><code>stats</code></dt><dd><p>estimates and their jackknife Monte Carlo errors:
-<code>thet</code> = \(\hat{\theta}\); <code>sd</code>, the bootstrap standard deviation
+<code>bcalim</code> value</p></li>
+<li><p><strong>stats</strong> : Estimates and their jackknife Monte Carlo errors:
+<code>theta</code> = \(\hat{\theta}\); <code>sd</code>, the bootstrap standard deviation
 for \(\hat{\theta}\); <code>a</code> the acceleration estimate; <code>az</code> another
 acceleration estimate that depends less on extreme values of <code>tt</code>;
 <code>z0</code> the bias-correction estimate; <code>A</code> the big-A measure of raw
 acceleration; <code>sdd</code> delta method estimate for standard deviation of
-\(\hat{\theta}\); <code>mean</code> the average of <code>tt</code></p></dd>
-<dt>abcstats</dt><dd><p>The abc estimates of <code>a</code> and <code>z0</code>, returned if <code>func</code> was provided</p></dd>
-<dt>ustats</dt><dd><p>The bias-corrected estimator <code>2 * t0 - mean(tt)</code>. <code>ustats</code>
+\(\hat{\theta}\); <code>mean</code> the average of <code>tt</code></p></li>
+<li><p><strong>abcstats</strong> : The abc estimates of <code>a</code> and <code>z0</code>, returned if <code>func</code> was provided</p></li>
+<li><p><strong>ustats</strong> : The bias-corrected estimator <code>2 * t0 - mean(tt)</code>. <code>ustats</code>
 gives <code>ustat</code>, an estimate <code>sdu</code> of its sampling error, and jackknife
 estimates of monte carlo error for both <code>ustat</code> and <code>sdu</code>. Also given
-is <code>B</code>, the number of bootstrap replications</p></dd>
-</dl>
+is <code>B</code>, the number of bootstrap replications</p></li>
+<li><p><strong>seed</strong> : The random number state for reproducibility</p></li>
+</ul>
 
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -217,34 +218,37 @@ Biometrika (1992) p231-245.</p>
 <span class='no'>y.star</span> <span class='kw'>&lt;-</span> <span class='fu'>sapply</span>(<span class='no'>mu.hat</span>, <span class='no'>rnorm</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>sd</span> <span class='kw'>=</span> <span class='no'>sigma.hat</span>)
 <span class='no'>tt</span> <span class='kw'>&lt;-</span> <span class='fu'>apply</span>(<span class='no'>y.star</span>, <span class='fl'>1</span>, <span class='kw'>function</span>(<span class='no'>y</span>) <span class='fu'>summary</span>(<span class='fu'>lm</span>(<span class='no'>y</span> ~ <span class='no'>X</span> - <span class='fl'>1</span>))$<span class='no'>adj.r.squared</span>)
 <span class='no'>b.star</span> <span class='kw'>&lt;-</span> <span class='no'>y.star</span> <span class='kw'>%*%</span> <span class='no'>X</span>
+<span class='fu'>set.seed</span>(<span class='fl'>1234</span>)
 <span class='fu'>bcapar</span>(<span class='kw'>t0</span> <span class='kw'>=</span> <span class='no'>t0</span>, <span class='kw'>tt</span> <span class='kw'>=</span> <span class='no'>tt</span>, <span class='kw'>bb</span> <span class='kw'>=</span> <span class='no'>b.star</span>)</div><div class='output co'>#&gt; $call
 #&gt; bcapar(t0 = t0, tt = tt, bb = b.star)
 #&gt; 
 #&gt; $lims
-#&gt;         bcalims      jacksd     pctiles     Stand
-#&gt; 0.025 0.4428959 0.003661395 0.003332929 0.4488460
-#&gt; 0.05  0.4500621 0.003814048 0.008849122 0.4581291
-#&gt; 0.1   0.4583857 0.006916918 0.023655477 0.4688319
-#&gt; 0.16  0.4674013 0.001717676 0.046444138 0.4772896
-#&gt; 0.5   0.4963654 0.001446054 0.256205543 0.5065862
-#&gt; 0.84  0.5268316 0.001829672 0.630530835 0.5358828
-#&gt; 0.9   0.5345168 0.002557747 0.729732159 0.5443405
-#&gt; 0.95  0.5461607 0.002734117 0.831631696 0.5550434
-#&gt; 0.975 0.5541380 0.003282259 0.896051202 0.5643265
+#&gt;             bca      jacksd        pct       std
+#&gt; 0.025 0.4495533 0.004360959 0.01027297 0.4478806
+#&gt; 0.05  0.4547124 0.003702610 0.02087321 0.4573189
+#&gt; 0.1   0.4664863 0.001751501 0.04392895 0.4682007
+#&gt; 0.16  0.4716968 0.001860690 0.07467737 0.4767998
+#&gt; 0.5   0.4998849 0.001698831 0.31227571 0.5065862
+#&gt; 0.84  0.5305638 0.003062928 0.69854528 0.5363726
+#&gt; 0.9   0.5395649 0.002293021 0.79476844 0.5449718
+#&gt; 0.95  0.5516410 0.002763821 0.88762824 0.5558536
+#&gt; 0.975 0.5604463 0.004183640 0.94064895 0.5652919
 #&gt; 
 #&gt; $stats
-#&gt;          thet           sd           a          az          z0          A
-#&gt; est 0.5065862 0.0294598509 -0.01832669 -0.01536872 -0.32656093 0.00604705
-#&gt; jsd 0.0000000 0.0006337504  0.01410125  0.02269929  0.03937421 0.03191789
+#&gt;         theta           sd          a         az          z0          A
+#&gt; est 0.5065862 0.0299524125 0.02954242 0.02339717 -0.24558952 0.03906097
+#&gt; jsd 0.0000000 0.0006807075 0.01156657 0.01858144  0.04102731 0.03315569
 #&gt;             sdd         mean
-#&gt; est 0.024549844 0.5167504546
-#&gt; jsd 0.001745597 0.0008895083
+#&gt; est 0.027584401 0.5147768144
+#&gt; jsd 0.002478029 0.0009644795
 #&gt; 
 #&gt; $ustats
 #&gt;            ustat         sdu    B
-#&gt; est 0.4964219807 0.025774649 1000
-#&gt; jsd 0.0008895083 0.003360288    0
-#&gt; </div></pre>
+#&gt; est 0.4983956209 0.031430197 1000
+#&gt; jsd 0.0009644795 0.004770472    0
+#&gt; 
+#&gt; attr(,"class")
+#&gt; [1] "bcaboot"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -263,7 +267,7 @@ Biometrika (1992) p231-245.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Bradley Efron, Balasubramanian Narasimhan.</p>
+  <p>Developed by <a href='https://efron.web.stanford.edu'>Bradley Efron</a>, <a href='https://statistics.stanford.edu/people/balasubramanian-narasimhan'>Balasubramanian Narasimhan</a>.</p>
 </div>
 
 <div class="pkgdown">

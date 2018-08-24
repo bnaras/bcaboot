@@ -48,8 +48,9 @@ are:
 - `bcajack` and `bcajack2` for nonparametric bootstrap 
 - `bcapar` for parametric bootstrap
 
-Much of the theory behind the approach can be found in references
-@efron1987, @diciccio1992, @diciccio1996, and @efron2016. 
+Further details are in the @efronnaras2018 paper. Much of the theory
+behind the approach can be found in references @efron1987,
+@diciccio1992, @diciccio1996, and @efron2016.
 
 ## A Nonparametric Example
 
@@ -81,7 +82,7 @@ The `result` contains several components. The confidence interval
 limits can be obtained via
 
 ```{r}
-knitr::kable(result$lims)
+knitr::kable(result$lims, digits = 3)
 ```
 
 The first column shows the estimated Bca confidence limits at the
@@ -96,7 +97,7 @@ the .975 Bca limit .5600968.
 Further details are provided by the `stats` component. 
 
 ```{r}
-knitr::kable(result$stats)
+knitr::kable(result$stats, digits = 3)
 ```
 
 The first column `theta` is the original point estimate of the
@@ -140,7 +141,7 @@ of interest is the coefficient of `resp`.
 neonates %>%
     dplyr::group_by(y) %>%
     dplyr::summarize(count = n()) %>%
-    knitr::kable()
+    knitr::kable(digits = 3)
 ```
 
 Discussions with the investigator suggested a weighting of 4 to 1 of
@@ -191,11 +192,11 @@ glm_bca <- bcapar(t0 = glm_boot_out$theta,
 We can examine the bootstrap limits and statistics. 
 
 ```{r}
-knitr::kable(glm_bca$lims)
+knitr::kable(glm_bca$lims, digits = 3)
 ```
 
 ```{r}
-knitr::kable(glm_bca$stats)
+knitr::kable(glm_bca$stats, digits = 3)
 ```
 
 Our bootstrap standard error using $B=2000$ samples for `resp` can be
@@ -223,7 +224,7 @@ We can examine the estimates at the `lambda.min` as follows.
 ```{r}
 as.matrix(coef(glmnet_model, s = glmnet_model$lambda.min)) %>%
     (function(x) data.frame(variable = rownames(x), coefficient = x[, 1])) %>%
-knitr::kable(row.names = FALSE)
+knitr::kable(row.names = FALSE, digits = 3)
 ```
 
 Following the lines above, we create a helper function to perform the
@@ -263,11 +264,11 @@ above.
 We can examine the bootstrap limits and statistics. 
 
 ```{r}
-knitr::kable(glmnet_bca$lims)
+knitr::kable(glmnet_bca$lims, digits = 3)
 ```
 
 ```{r}
-knitr::kable(glmnet_bca$stats)
+knitr::kable(glmnet_bca$stats, digits = 3)
 ```
 
 The shrinkage is evident; we now have the bootstrap estimate is now
@@ -350,7 +351,7 @@ the last column.
 ```{r}
 result$lims %>%
     cbind(exact = 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(result$lims)))) %>%
-    knitr::kable()
+    knitr::kable(digits = 3)
 ```
 
 Clearly the bca limits match the exact values very well and suggests a
@@ -360,15 +361,15 @@ $\hat{a} = 0.095$.
 
 
 ```{r}
-knitr::kable(result$stats)
+knitr::kable(result$stats, digits = 3)
 ```
 
 ```{r}
-knitr::kable(result$abcstats)
+knitr::kable(result$abcstats, digits = 3)
 ```
 
 ```{r}
-knitr::kable(result$ustats)
+knitr::kable(result$ustats, digits = 3)
 ```
 
 The plot below shows that there is moderate amount of internal error

@@ -97,7 +97,7 @@
 <li>
 <code>bcapar</code> for parametric bootstrap</li>
 </ul>
-<p>Much of the theory behind the approach can be found in references <span class="citation">Efron (1987)</span>, <span class="citation">DiCiccio and Efron (1992)</span>, <span class="citation">DiCiccio and Efron (1996)</span>, and <span class="citation">Efron and Hastie (2016)</span>.</p>
+<p>Further details are in the <span class="citation">Efron and Narasimhan (2018)</span> paper. Much of the theory behind the approach can be found in references <span class="citation">Efron (1987)</span>, <span class="citation">DiCiccio and Efron (1992)</span>, <span class="citation">DiCiccio and Efron (1996)</span>, and <span class="citation">Efron and Hastie (2016)</span>.</p>
 </div>
 <div id="a-nonparametric-example" class="section level2">
 <h2 class="hasAnchor">
@@ -114,7 +114,7 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">1234</span>)</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcajack.html">bcajack</a></span>(<span class="dt">x =</span> Xy, <span class="dt">B =</span> <span class="dv">2000</span>, <span class="dt">func =</span> rfun, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p>The <code>result</code> contains several components. The confidence interval limits can be obtained via</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>lims)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -126,72 +126,72 @@
 <tbody>
 <tr class="odd">
 <td>0.025</td>
-<td align="right">0.4370924</td>
-<td align="right">0.0036224</td>
-<td align="right">0.4443276</td>
-<td align="right">0.0055</td>
+<td align="right">0.437</td>
+<td align="right">0.004</td>
+<td align="right">0.444</td>
+<td align="right">0.006</td>
 </tr>
 <tr class="even">
 <td>0.05</td>
-<td align="right">0.4463105</td>
-<td align="right">0.0026447</td>
-<td align="right">0.4543330</td>
-<td align="right">0.0130</td>
+<td align="right">0.446</td>
+<td align="right">0.003</td>
+<td align="right">0.454</td>
+<td align="right">0.013</td>
 </tr>
 <tr class="odd">
 <td>0.1</td>
-<td align="right">0.4565161</td>
-<td align="right">0.0018622</td>
-<td align="right">0.4658686</td>
-<td align="right">0.0325</td>
+<td align="right">0.457</td>
+<td align="right">0.002</td>
+<td align="right">0.466</td>
+<td align="right">0.032</td>
 </tr>
 <tr class="even">
 <td>0.16</td>
-<td align="right">0.4650222</td>
-<td align="right">0.0026739</td>
-<td align="right">0.4749843</td>
-<td align="right">0.0605</td>
+<td align="right">0.465</td>
+<td align="right">0.003</td>
+<td align="right">0.475</td>
+<td align="right">0.060</td>
 </tr>
 <tr class="odd">
 <td>0.5</td>
-<td align="right">0.4981326</td>
-<td align="right">0.0008468</td>
-<td align="right">0.5065603</td>
-<td align="right">0.2930</td>
+<td align="right">0.498</td>
+<td align="right">0.001</td>
+<td align="right">0.507</td>
+<td align="right">0.293</td>
 </tr>
 <tr class="even">
 <td>0.84</td>
-<td align="right">0.5292793</td>
-<td align="right">0.0016446</td>
-<td align="right">0.5381363</td>
-<td align="right">0.6725</td>
+<td align="right">0.529</td>
+<td align="right">0.002</td>
+<td align="right">0.538</td>
+<td align="right">0.672</td>
 </tr>
 <tr class="odd">
 <td>0.9</td>
-<td align="right">0.5396439</td>
-<td align="right">0.0017946</td>
-<td align="right">0.5472521</td>
-<td align="right">0.7675</td>
+<td align="right">0.540</td>
+<td align="right">0.002</td>
+<td align="right">0.547</td>
+<td align="right">0.768</td>
 </tr>
 <tr class="even">
 <td>0.95</td>
-<td align="right">0.5499800</td>
-<td align="right">0.0016545</td>
-<td align="right">0.5587876</td>
-<td align="right">0.8615</td>
+<td align="right">0.550</td>
+<td align="right">0.002</td>
+<td align="right">0.559</td>
+<td align="right">0.862</td>
 </tr>
 <tr class="odd">
 <td>0.975</td>
-<td align="right">0.5600968</td>
-<td align="right">0.0016752</td>
-<td align="right">0.5687930</td>
-<td align="right">0.9185</td>
+<td align="right">0.560</td>
+<td align="right">0.002</td>
+<td align="right">0.569</td>
+<td align="right">0.918</td>
 </tr>
 </tbody>
 </table>
 <p>The first column shows the estimated Bca confidence limits at the requested alpha percentiles which can be compared with the standard limits <span class="math inline">\(\theta \pm \hat{\sigma}z_{\alpha}\)</span> under the column titled <code>standard</code>. The <code>jacksd</code> column jacksd gives the internal standard errors for the Bca limits, quite small in this example. The <code>pct</code> column gives percentiles of the ordered <code>B</code> bootstrap replications corresponding to the Bca limits, e.g. the 91.85 percentile equals the the .975 Bca limit .5600968.</p>
 <p>Further details are provided by the <code>stats</code> component.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -204,19 +204,19 @@
 <tbody>
 <tr class="odd">
 <td>est</td>
-<td align="right">0.5065603</td>
-<td align="right">0.0317520</td>
-<td align="right">-0.2715085</td>
-<td align="right">-0.0074788</td>
-<td align="right">0.0327019</td>
+<td align="right">0.507</td>
+<td align="right">0.032</td>
+<td align="right">-0.272</td>
+<td align="right">-0.007</td>
+<td align="right">0.033</td>
 </tr>
 <tr class="even">
 <td>jsd</td>
-<td align="right">0.0000000</td>
-<td align="right">0.0003536</td>
-<td align="right">0.0298746</td>
-<td align="right">0.0000000</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">0.030</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
 </tr>
 </tbody>
 </table>
@@ -248,7 +248,7 @@
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">neonates <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(y) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">count =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">    </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>()</a></code></pre></div>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">    </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">y</th>
@@ -325,7 +325,7 @@
 <a class="sourceLine" id="cb12-4" data-line-number="4">                  <span class="dt">tt =</span> glm_boot_out<span class="op">$</span>theta_star,</a>
 <a class="sourceLine" id="cb12-5" data-line-number="5">                  <span class="dt">bb =</span> glm_boot_out<span class="op">$</span>suff_stat)</a></code></pre></div>
 <p>We can examine the bootstrap limits and statistics.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>lims)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -337,70 +337,70 @@
 <tbody>
 <tr class="odd">
 <td>0.025</td>
-<td align="right">0.5981733</td>
-<td align="right">0.0230081</td>
-<td align="right">0.0064745</td>
-<td align="right">0.6394385</td>
+<td align="right">0.598</td>
+<td align="right">0.023</td>
+<td align="right">0.006</td>
+<td align="right">0.639</td>
 </tr>
 <tr class="even">
 <td>0.05</td>
-<td align="right">0.6549470</td>
-<td align="right">0.0162041</td>
-<td align="right">0.0160220</td>
-<td align="right">0.6882535</td>
+<td align="right">0.655</td>
+<td align="right">0.016</td>
+<td align="right">0.016</td>
+<td align="right">0.688</td>
 </tr>
 <tr class="odd">
 <td>0.1</td>
-<td align="right">0.7169529</td>
-<td align="right">0.0092059</td>
-<td align="right">0.0395705</td>
-<td align="right">0.7445341</td>
+<td align="right">0.717</td>
+<td align="right">0.009</td>
+<td align="right">0.040</td>
+<td align="right">0.745</td>
 </tr>
 <tr class="even">
 <td>0.16</td>
-<td align="right">0.7635391</td>
-<td align="right">0.0064100</td>
-<td align="right">0.0731243</td>
-<td align="right">0.7890090</td>
+<td align="right">0.764</td>
+<td align="right">0.006</td>
+<td align="right">0.073</td>
+<td align="right">0.789</td>
 </tr>
 <tr class="odd">
 <td>0.5</td>
-<td align="right">0.9133786</td>
-<td align="right">0.0036090</td>
-<td align="right">0.3334882</td>
-<td align="right">0.9430645</td>
+<td align="right">0.913</td>
+<td align="right">0.004</td>
+<td align="right">0.333</td>
+<td align="right">0.943</td>
 </tr>
 <tr class="even">
 <td>0.84</td>
-<td align="right">1.0671596</td>
-<td align="right">0.0043214</td>
-<td align="right">0.7100166</td>
-<td align="right">1.0971201</td>
+<td align="right">1.067</td>
+<td align="right">0.004</td>
+<td align="right">0.710</td>
+<td align="right">1.097</td>
 </tr>
 <tr class="odd">
 <td>0.9</td>
-<td align="right">1.1136598</td>
-<td align="right">0.0085609</td>
-<td align="right">0.7968755</td>
-<td align="right">1.1415950</td>
+<td align="right">1.114</td>
+<td align="right">0.009</td>
+<td align="right">0.797</td>
+<td align="right">1.142</td>
 </tr>
 <tr class="even">
 <td>0.95</td>
-<td align="right">1.1677886</td>
-<td align="right">0.0083745</td>
-<td align="right">0.8803697</td>
-<td align="right">1.1978756</td>
+<td align="right">1.168</td>
+<td align="right">0.008</td>
+<td align="right">0.880</td>
+<td align="right">1.198</td>
 </tr>
 <tr class="odd">
 <td>0.975</td>
-<td align="right">1.2136762</td>
-<td align="right">0.0104673</td>
-<td align="right">0.9296780</td>
-<td align="right">1.2466906</td>
+<td align="right">1.214</td>
+<td align="right">0.010</td>
+<td align="right">0.930</td>
+<td align="right">1.247</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>stats)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -416,25 +416,25 @@
 <tbody>
 <tr class="odd">
 <td>est</td>
-<td align="right">0.9430645</td>
-<td align="right">0.1549141</td>
-<td align="right">-0.0194027</td>
-<td align="right">-0.0012295</td>
-<td align="right">-0.2147016</td>
-<td align="right">0.0059895</td>
-<td align="right">0.1294947</td>
-<td align="right">0.9815135</td>
+<td align="right">0.943</td>
+<td align="right">0.155</td>
+<td align="right">-0.019</td>
+<td align="right">-0.001</td>
+<td align="right">-0.215</td>
+<td align="right">0.006</td>
+<td align="right">0.129</td>
+<td align="right">0.982</td>
 </tr>
 <tr class="even">
 <td>jsd</td>
-<td align="right">0.0000000</td>
-<td align="right">0.0022546</td>
-<td align="right">0.0078513</td>
-<td align="right">0.0123727</td>
-<td align="right">0.0244439</td>
-<td align="right">0.0237367</td>
-<td align="right">0.0039206</td>
-<td align="right">0.0032436</td>
+<td align="right">0.000</td>
+<td align="right">0.002</td>
+<td align="right">0.008</td>
+<td align="right">0.012</td>
+<td align="right">0.024</td>
+<td align="right">0.024</td>
+<td align="right">0.004</td>
+<td align="right">0.003</td>
 </tr>
 </tbody>
 </table>
@@ -449,7 +449,7 @@
 <p>We can examine the estimates at the <code>lambda.min</code> as follows.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet_model, <span class="dt">s =</span> glmnet_model<span class="op">$</span>lambda.min)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">    </span>(<span class="cf">function</span>(x) <span class="kw">data.frame</span>(<span class="dt">variable =</span> <span class="kw">rownames</span>(x), <span class="dt">coefficient =</span> x[, <span class="dv">1</span>])) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">row.names =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb16-3" data-line-number="3">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">variable</th>
@@ -458,51 +458,51 @@
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-0.2080268</td>
+<td align="right">-0.208</td>
 </tr>
 <tr class="even">
 <td align="left">gest</td>
-<td align="right">-0.5241418</td>
+<td align="right">-0.524</td>
 </tr>
 <tr class="odd">
 <td align="left">ap</td>
-<td align="right">-0.6784438</td>
+<td align="right">-0.678</td>
 </tr>
 <tr class="even">
 <td align="left">bwei</td>
-<td align="right">-0.2721715</td>
+<td align="right">-0.272</td>
 </tr>
 <tr class="odd">
 <td align="left">gen</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">resp</td>
-<td align="right">0.8620441</td>
+<td align="right">0.862</td>
 </tr>
 <tr class="odd">
 <td align="left">head</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">hr</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">cpap</td>
-<td align="right">0.3783898</td>
+<td align="right">0.378</td>
 </tr>
 <tr class="even">
 <td align="left">age</td>
-<td align="right">0.0421924</td>
+<td align="right">0.042</td>
 </tr>
 <tr class="odd">
 <td align="left">temp</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">size</td>
-<td align="right">-0.2079750</td>
+<td align="right">-0.208</td>
 </tr>
 </tbody>
 </table>
@@ -530,7 +530,7 @@
 <a class="sourceLine" id="cb18-4" data-line-number="4">                     <span class="dt">bb =</span> glmnet_boot_out<span class="op">$</span>suff_stat)</a></code></pre></div>
 <p>We can compare the output of this against what we got from <code>glm</code> above.</p>
 <p>We can examine the bootstrap limits and statistics.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>lims)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -542,70 +542,70 @@
 <tbody>
 <tr class="odd">
 <td>0.025</td>
-<td align="right">0.6672869</td>
-<td align="right">0.0089905</td>
-<td align="right">0.1228869</td>
-<td align="right">0.6128588</td>
+<td align="right">0.667</td>
+<td align="right">0.009</td>
+<td align="right">0.123</td>
+<td align="right">0.613</td>
 </tr>
 <tr class="even">
 <td>0.05</td>
-<td align="right">0.7072489</td>
-<td align="right">0.0077514</td>
-<td align="right">0.2012546</td>
-<td align="right">0.6529212</td>
+<td align="right">0.707</td>
+<td align="right">0.008</td>
+<td align="right">0.201</td>
+<td align="right">0.653</td>
 </tr>
 <tr class="odd">
 <td>0.1</td>
-<td align="right">0.7496840</td>
-<td align="right">0.0065047</td>
-<td align="right">0.3204135</td>
-<td align="right">0.6991106</td>
+<td align="right">0.750</td>
+<td align="right">0.007</td>
+<td align="right">0.320</td>
+<td align="right">0.699</td>
 </tr>
 <tr class="even">
 <td>0.16</td>
-<td align="right">0.7888862</td>
-<td align="right">0.0057104</td>
-<td align="right">0.4303512</td>
-<td align="right">0.7356111</td>
+<td align="right">0.789</td>
+<td align="right">0.006</td>
+<td align="right">0.430</td>
+<td align="right">0.736</td>
 </tr>
 <tr class="odd">
 <td>0.5</td>
-<td align="right">0.9153708</td>
-<td align="right">0.0055948</td>
-<td align="right">0.7940668</td>
-<td align="right">0.8620441</td>
+<td align="right">0.915</td>
+<td align="right">0.006</td>
+<td align="right">0.794</td>
+<td align="right">0.862</td>
 </tr>
 <tr class="even">
 <td>0.84</td>
-<td align="right">1.0344970</td>
-<td align="right">0.0054922</td>
-<td align="right">0.9639358</td>
-<td align="right">0.9884772</td>
+<td align="right">1.034</td>
+<td align="right">0.005</td>
+<td align="right">0.964</td>
+<td align="right">0.988</td>
 </tr>
 <tr class="odd">
 <td>0.9</td>
-<td align="right">1.0760372</td>
-<td align="right">0.0131527</td>
-<td align="right">0.9811089</td>
-<td align="right">1.0249776</td>
+<td align="right">1.076</td>
+<td align="right">0.013</td>
+<td align="right">0.981</td>
+<td align="right">1.025</td>
 </tr>
 <tr class="even">
 <td>0.95</td>
-<td align="right">1.1292043</td>
-<td align="right">0.0161419</td>
-<td align="right">0.9924094</td>
-<td align="right">1.0711670</td>
+<td align="right">1.129</td>
+<td align="right">0.016</td>
+<td align="right">0.992</td>
+<td align="right">1.071</td>
 </tr>
 <tr class="odd">
 <td>0.975</td>
-<td align="right">1.1755418</td>
-<td align="right">0.0307151</td>
-<td align="right">0.9968372</td>
-<td align="right">1.1112294</td>
+<td align="right">1.176</td>
+<td align="right">0.031</td>
+<td align="right">0.997</td>
+<td align="right">1.111</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>stats)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -621,25 +621,25 @@
 <tbody>
 <tr class="odd">
 <td>est</td>
-<td align="right">0.8620441</td>
-<td align="right">0.1271377</td>
-<td align="right">-0.0094106</td>
-<td align="right">-0.0246292</td>
-<td align="right">0.4110989</td>
-<td align="right">-0.0063282</td>
-<td align="right">0.1076068</td>
-<td align="right">0.8111837</td>
+<td align="right">0.862</td>
+<td align="right">0.127</td>
+<td align="right">-0.009</td>
+<td align="right">-0.025</td>
+<td align="right">0.411</td>
+<td align="right">-0.006</td>
+<td align="right">0.108</td>
+<td align="right">0.811</td>
 </tr>
 <tr class="even">
 <td>jsd</td>
-<td align="right">0.0000000</td>
-<td align="right">0.0021236</td>
-<td align="right">0.0106458</td>
-<td align="right">0.0126848</td>
-<td align="right">0.0277709</td>
-<td align="right">0.0317481</td>
-<td align="right">0.0045537</td>
-<td align="right">0.0024632</td>
+<td align="right">0.000</td>
+<td align="right">0.002</td>
+<td align="right">0.011</td>
+<td align="right">0.013</td>
+<td align="right">0.028</td>
+<td align="right">0.032</td>
+<td align="right">0.005</td>
+<td align="right">0.002</td>
 </tr>
 </tbody>
 </table>
@@ -690,7 +690,7 @@
 <p>The limits obtained are shown below, along with the exact limits as the last column.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">result<span class="op">$</span>lims <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb23-2" data-line-number="2"><span class="st">    </span><span class="kw">cbind</span>(<span class="dt">exact =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span><span class="kw">qf</span>(<span class="dt">df1 =</span> n1, <span class="dt">df2 =</span> n2, <span class="dt">p =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(result<span class="op">$</span>lims)))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">    </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>()</a></code></pre></div>
+<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">    </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -704,89 +704,89 @@
 <tbody>
 <tr class="odd">
 <td>0.025</td>
-<td align="right">0.4160941</td>
-<td align="right">0.0070166</td>
-<td align="right">0.0667499</td>
-<td align="right">-0.0537460</td>
-<td align="right">0.3964953</td>
-<td align="right">0.4217619</td>
+<td align="right">0.416</td>
+<td align="right">0.007</td>
+<td align="right">0.067</td>
+<td align="right">-0.054</td>
+<td align="right">0.396</td>
+<td align="right">0.422</td>
 </tr>
 <tr class="even">
 <td>0.05</td>
-<td align="right">0.4770902</td>
-<td align="right">0.0062996</td>
-<td align="right">0.1029103</td>
-<td align="right">0.1156685</td>
-<td align="right">0.4649627</td>
-<td align="right">0.4842629</td>
+<td align="right">0.477</td>
+<td align="right">0.006</td>
+<td align="right">0.103</td>
+<td align="right">0.116</td>
+<td align="right">0.465</td>
+<td align="right">0.484</td>
 </tr>
 <tr class="odd">
 <td>0.1</td>
-<td align="right">0.5618917</td>
-<td align="right">0.0052201</td>
-<td align="right">0.1638918</td>
-<td align="right">0.3109925</td>
-<td align="right">0.5570150</td>
-<td align="right">0.5699094</td>
+<td align="right">0.562</td>
+<td align="right">0.005</td>
+<td align="right">0.164</td>
+<td align="right">0.311</td>
+<td align="right">0.557</td>
+<td align="right">0.570</td>
 </tr>
 <tr class="even">
 <td>0.16</td>
-<td align="right">0.6387797</td>
-<td align="right">0.0075925</td>
-<td align="right">0.2297627</td>
-<td align="right">0.4653442</td>
-<td align="right">0.6417230</td>
-<td align="right">0.6501754</td>
+<td align="right">0.639</td>
+<td align="right">0.008</td>
+<td align="right">0.230</td>
+<td align="right">0.465</td>
+<td align="right">0.642</td>
+<td align="right">0.650</td>
 </tr>
 <tr class="odd">
 <td>0.5</td>
-<td align="right">1.0510737</td>
-<td align="right">0.0068242</td>
-<td align="right">0.5739964</td>
-<td align="right">1.0000000</td>
-<td align="right">1.0523134</td>
-<td align="right">1.0534447</td>
+<td align="right">1.051</td>
+<td align="right">0.007</td>
+<td align="right">0.574</td>
+<td align="right">1.000</td>
+<td align="right">1.052</td>
+<td align="right">1.053</td>
 </tr>
 <tr class="even">
 <td>0.84</td>
-<td align="right">1.7761356</td>
-<td align="right">0.0208672</td>
-<td align="right">0.9033904</td>
-<td align="right">1.5346558</td>
-<td align="right">1.7903012</td>
-<td align="right">1.8003343</td>
+<td align="right">1.776</td>
+<td align="right">0.021</td>
+<td align="right">0.903</td>
+<td align="right">1.535</td>
+<td align="right">1.790</td>
+<td align="right">1.800</td>
 </tr>
 <tr class="odd">
 <td>0.9</td>
-<td align="right">2.0925060</td>
-<td align="right">0.0333456</td>
-<td align="right">0.9521754</td>
-<td align="right">1.6890075</td>
-<td align="right">2.1177827</td>
-<td align="right">2.1282370</td>
+<td align="right">2.093</td>
+<td align="right">0.033</td>
+<td align="right">0.952</td>
+<td align="right">1.689</td>
+<td align="right">2.118</td>
+<td align="right">2.128</td>
 </tr>
 <tr class="even">
 <td>0.95</td>
-<td align="right">2.5719846</td>
-<td align="right">0.0529465</td>
-<td align="right">0.9846678</td>
-<td align="right">1.8843315</td>
-<td align="right">2.6594881</td>
-<td align="right">2.6552409</td>
+<td align="right">2.572</td>
+<td align="right">0.053</td>
+<td align="right">0.985</td>
+<td align="right">1.884</td>
+<td align="right">2.659</td>
+<td align="right">2.655</td>
 </tr>
 <tr class="odd">
 <td>0.975</td>
-<td align="right">3.0948462</td>
-<td align="right">0.0914176</td>
-<td align="right">0.9956530</td>
-<td align="right">2.0537460</td>
-<td align="right">3.3017827</td>
-<td align="right">3.2473408</td>
+<td align="right">3.095</td>
+<td align="right">0.091</td>
+<td align="right">0.996</td>
+<td align="right">2.054</td>
+<td align="right">3.302</td>
+<td align="right">3.247</td>
 </tr>
 </tbody>
 </table>
 <p>Clearly the bca limits match the exact values very well and suggests a large upward correction to the standard limits. Here the corrections are all positive as seen in the table below; <span class="math inline">\(\hat{z}_0 = 0.093\)</span> and <span class="math inline">\(\hat{a} = 0.095\)</span>.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -803,28 +803,28 @@
 <tr class="odd">
 <td>est</td>
 <td align="right">1</td>
-<td align="right">0.5376354</td>
-<td align="right">0.0920258</td>
-<td align="right">0.0881672</td>
-<td align="right">0.0928786</td>
-<td align="right">0.4956078</td>
-<td align="right">0.5032905</td>
-<td align="right">1.0536753</td>
+<td align="right">0.538</td>
+<td align="right">0.092</td>
+<td align="right">0.088</td>
+<td align="right">0.093</td>
+<td align="right">0.496</td>
+<td align="right">0.503</td>
+<td align="right">1.054</td>
 </tr>
 <tr class="even">
 <td>jsd</td>
 <td align="right">0</td>
-<td align="right">0.0041441</td>
-<td align="right">0.0038818</td>
-<td align="right">0.0050892</td>
-<td align="right">0.0098805</td>
-<td align="right">0.0199552</td>
-<td align="right">0.0034082</td>
-<td align="right">0.0038238</td>
+<td align="right">0.004</td>
+<td align="right">0.004</td>
+<td align="right">0.005</td>
+<td align="right">0.010</td>
+<td align="right">0.020</td>
+<td align="right">0.003</td>
+<td align="right">0.004</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>abcstats)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>abcstats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -833,15 +833,15 @@
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td align="right">0.0936172</td>
+<td align="right">0.094</td>
 </tr>
 <tr class="even">
 <td>z0</td>
-<td align="right">0.0936172</td>
+<td align="right">0.094</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>ustats)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>ustats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -852,14 +852,14 @@
 <tbody>
 <tr class="odd">
 <td>est</td>
-<td align="right">0.9463247</td>
-<td align="right">0.4874157</td>
+<td align="right">0.946</td>
+<td align="right">0.487</td>
 <td align="right">16000</td>
 </tr>
 <tr class="even">
 <td>jsd</td>
-<td align="right">0.0038238</td>
-<td align="right">0.0040528</td>
+<td align="right">0.004</td>
+<td align="right">0.004</td>
 <td align="right">0</td>
 </tr>
 </tbody>
@@ -883,6 +883,9 @@
 </div>
 <div id="ref-efron2016">
 <p>Efron, Bradley, and Trevor Hastie. 2016. <em>Computer Age Statistical Inference: Algorithms, Evidence, and Data Science</em>. 1st ed. New York, NY, USA: Cambridge University Press.</p>
+</div>
+<div id="ref-efronnaras2018">
+<p>Efron, Bradley, and Balasubramanian Narasimhan. 2018. “The Automatic Construction of Bootstrap Confidence Intervals.”</p>
 </div>
 </div>
 </div>

@@ -259,32 +259,33 @@ Bootstrap Confidence Intervals, 2018.</p>
   <span class='fu'>summary</span>(<span class='fu'>lm</span>(<span class='no'>y</span>~<span class='no'>X</span>) )$<span class='no'>adj.r.squared</span>
 }
 <span class='fu'>set.seed</span>(<span class='fl'>1234</span>)
-<span class='fu'>bcajack</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>Xy</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>func</span> <span class='kw'>=</span> <span class='no'>rfun</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: longer object length is not a multiple of shorter object length</span></div><div class='output co'>#&gt; $call
-#&gt; bcajack(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
+<span class='co'>## n = 442 = 34 * 13</span>
+<span class='fu'>bcajack</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>Xy</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>func</span> <span class='kw'>=</span> <span class='no'>rfun</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>34</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; $call
+#&gt; bcajack(x = Xy, B = 1000, func = rfun, m = 34, verbose = FALSE)
 #&gt; 
 #&gt; $lims
 #&gt;             bca      jacksd       std   pct
-#&gt; 0.025 0.4344601 0.004331391 0.4446582 0.006
-#&gt; 0.05  0.4462107 0.002314187 0.4546105 0.015
-#&gt; 0.1   0.4578153 0.002894762 0.4660847 0.036
-#&gt; 0.16  0.4669968 0.003222898 0.4751521 0.066
-#&gt; 0.5   0.4992032 0.001654483 0.5065603 0.307
-#&gt; 0.84  0.5303981 0.002539000 0.5379686 0.688
-#&gt; 0.9   0.5399201 0.001819106 0.5470359 0.781
-#&gt; 0.95  0.5499805 0.001802362 0.5585102 0.872
-#&gt; 0.975 0.5610528 0.004811745 0.5684624 0.926
+#&gt; 0.025 0.4397641 0.002865222 0.4436815 0.007
+#&gt; 0.05  0.4473747 0.003481831 0.4537907 0.016
+#&gt; 0.1   0.4577052 0.002144860 0.4654461 0.038
+#&gt; 0.16  0.4665482 0.002518510 0.4746565 0.068
+#&gt; 0.5   0.4983510 0.001417285 0.5065603 0.311
+#&gt; 0.84  0.5305117 0.003404510 0.5384641 0.692
+#&gt; 0.9   0.5412166 0.001847288 0.5476746 0.785
+#&gt; 0.95  0.5501776 0.002575333 0.5593299 0.875
+#&gt; 0.975 0.5624409 0.002941915 0.5694391 0.929
 #&gt; 
 #&gt; $stats
-#&gt;         theta       sdboot          z0            a     sdjack
-#&gt; est 0.5065603 0.0315832741 -0.25075957 -0.002225219 0.01739899
-#&gt; jsd 0.0000000 0.0009807951  0.04146536  0.000000000 0.00000000
+#&gt;         theta       sdboot          z0            a    sdjack
+#&gt; est 0.5065603 0.0320816221 -0.24558952 0.0004269264 0.0210771
+#&gt; jsd 0.0000000 0.0005108335  0.04423824 0.0000000000 0.0000000
 #&gt; 
 #&gt; $B.mean
-#&gt; [1] 1000.0000000    0.5148135
+#&gt; [1] 1000.0000000    0.5144936
 #&gt; 
 #&gt; $ustats
 #&gt;      ustat        sdu 
-#&gt; 0.49830716 0.03821763 
+#&gt; 0.49862706 0.03984912 
 #&gt; 
 #&gt; attr(,"class")
 #&gt; [1] "bcaboot"</div></pre>

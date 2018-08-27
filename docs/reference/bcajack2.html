@@ -185,9 +185,11 @@ grouped jackknife calculations are averaged.</p></td>
     </tr>
     <tr>
       <th>pct</th>
-      <td><p>the fraction of bootstrap samples that have a single
-replicate in all B samples (default 1/3). See appendix in Efron
-and Narasimhan</p></td>
+      <td><p><code>bcajack2</code> uses those count vectors nearest (1,1,...1)
+to estimate the gradient of the statistic, "nearest" being
+defined as those count vectors in the smallest <code>pct</code> of all B
+of them. Default value for `pct is 1/3 (see appendix in Efron
+and Narasimhan for further details)</p></td>
     </tr>
     <tr>
       <th>K</th>

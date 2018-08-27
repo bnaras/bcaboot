@@ -28,7 +28,7 @@ for any \eqn{n^\prime \times p} matrix \eqn{x^\prime},
 collects the \eqn{n} rows of \code{x} into \code{m} groups to speed up
 the jackknife calculations for estimating the acceleration
 value \eqn{a}; typically \code{m} is 20 or 40 and does not have to
-exactly divide \eqn{n}.}
+exactly divide \eqn{n}. However, warnings will be shown.}
 
 \item{mr}{if \eqn{m < n} then \code{mr} repetions of the randomly
 grouped jackknife calculations are averaged.}
@@ -118,7 +118,8 @@ rfun <- function(Xy) {
   summary(lm(y~X) )$adj.r.squared
 }
 set.seed(1234)
-bcajack(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
+## n = 442 = 34 * 13
+bcajack(x = Xy, B = 1000, func = rfun, m = 34, verbose = FALSE)
 }
 \references{
 DiCiccio T and Efron B (1996). Bootstrap confidence

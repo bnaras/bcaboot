@@ -101,7 +101,7 @@ bcapar <- function(t0, tt, bb,
     Sdmsd <- matrix(0, 4, K)
     Ustm <- matrix(0, 2, K)
     for (k in 1:K) {
-        II <- sample(B, B)
+        II <- sample(x = B, size = B)
         II <- matrix(II, ncol = J)
         lims <- matrix(0, length(alpha), J)
         th <- matrix(0, 5, J)

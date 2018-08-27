@@ -3,6 +3,7 @@ bcaboot.return <- function(x) {
     x
 }
 
+#' @export
 print.bcaboot <- function (x, digits = getOption("digits"), ...) {
     result <- x
     result$seed <- NULL

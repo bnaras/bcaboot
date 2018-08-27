@@ -70,18 +70,24 @@
 
     
     
+<!-- README.md is generated from the source: README.Rmd -->
+<div id="bcaboot" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#bcaboot" class="anchor"></a>bcaboot</h1></div>
+
 <p>Bootstrap confidence intervals depend on three elements:</p>
 <ul>
-<li>the cdf of the  bootstrap replications , </li>
-<li>the bias-correction number  where  is the original estimate</li>
-<li>the acceleration number  that measures the rate of change in  as , the data changes.</li>
+<li>the cdf of the bootstrap replications</li>
+<li>the bias-correction number which depends on the proportion of bootstrap estimates that are less than the original estimate</li>
+<li>the acceleration number that measures the rate of change in standard deviation of the estimate as the data changes.</li>
 </ul>
 <p>The first two of these depend only on the bootstrap distribution, and not how it is generated: parametrically or non-parametrically. Therefore, the only difference in a parametric bca analysis would lie in the nonparametric estimation of the acceleration, often a negligible error.</p>
-<p>Further details may be found in the paper by Efron and Narasimhan below.</p>
+<p>The package <code>bcaboot</code> provides functions to compute bootstrap confidence intervals in an (almost) automatic fashion. Further details may be found in the paper by Efron and Narasimhan below.</p>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <p>Efron, Bradley, and Balasubramanian Narasimhan. The Automatic Construction of Bootstrap Confidence Intervals. (2018)</p>
+</div>
 </div>
   </div>
 
@@ -111,7 +117,16 @@
 </ul>
 </div>
 
-      </div>
+      <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/bnaras/bcaboot"><img src="https://travis-ci.org/bnaras/cubature.svg?branch=master" alt="Travis-CI Build Status"></a></li>
+<li><a href="https://cran.r-project.org/package=bcaboot"><img src="http://www.r-pkg.org/badges/version/cubature" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://codecov.io/github/bnaras/bcaboot?branch=master"><img src="https://img.shields.io/codecov/c/github/bnaras/cubature/master.svg" alt="Coverage Status"></a></li>
+<li><a href="https://cloud.r-project.org/package=bcaboot"><img src="https://cranlogs.r-pkg.org/badges/bcaboot"></a></li>
+</ul>
+</div>
+</div>
 
 </div>
 

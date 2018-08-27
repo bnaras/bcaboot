@@ -24,9 +24,13 @@
 #'
 #' @param B number of bootstrap replications. `B` can also be a vector
 #'     of `B` bootstrap replications of the estimated parameter of
-#'     interest, computed separately. If `B` is `Blist` as
-#'     explained above, `x` is not needed.
-#' @param pct the bootstrap percentile, default 0.333
+#'     interest, computed separately. If `B` is `Blist` as explained
+#'     above, `x` is not needed.
+#' @param pct `bcajack2` uses those count vectors nearest (1,1,...1)
+#'     to estimate the gradient of the statistic, "nearest" being
+#'     defined as those count vectors in the smallest `pct` of all B
+#'     of them. Default value for `pct is 1/3 (see appendix in Efron
+#'     and Narasimhan for further details)
 #'
 #' @return a named list of several items
 #'
@@ -151,7 +155,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         t0 <- func(x, ...)
 
         if (m == n) {
-            ii <- sample(1:n, n * B, T)
+            ii <- sample(x = seq_len(n), size = n * B, replace = TRUE)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, n)
             if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
@@ -168,9 +172,9 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
 
         if (m < n) {
             r <- n%%m
-            Imat <- matrix(sample(1:n, n - r), m)
+            Imat <- matrix(sample(x = seq_len(n), size = n - r), m)
             Iout <- setdiff(1:n, Imat)
-            ii <- sample(1:m, m * B, T)
+            ii <- sample(x = seq_len(m), size = m * B, replace = TRUE)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, m)
             if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
@@ -205,7 +209,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
     Statsd <- matrix(0, 5, K)
     for (k in 1:K) {
         rr <- B%%J
-        II <- sample(B, B - rr)
+        II <- sample(x = B, size = B - rr)
         II <- matrix(II, ncol = J)
         limbc <- limst <- matrix(0, length(alpha), J)
         stats <- matrix(0, 5, J)

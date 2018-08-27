@@ -48,7 +48,7 @@
 #'     collects the \eqn{n} rows of `x` into `m` groups to speed up
 #'     the jackknife calculations for estimating the acceleration
 #'     value \eqn{a}; typically `m` is 20 or 40 and does not have to
-#'     exactly divide \eqn{n}.
+#'     exactly divide \eqn{n}. However, warnings will be shown.
 #' @param mr if \eqn{m < n} then `mr` repetions of the randomly
 #'     grouped jackknife calculations are averaged.
 #' @param K a non-negative integer. If `K` > 0, bcajack also returns
@@ -114,7 +114,8 @@
 #'   summary(lm(y~X) )$adj.r.squared
 #' }
 #' set.seed(1234)
-#' bcajack(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
+#' ## n = 442 = 34 * 13
+#' bcajack(x = Xy, B = 1000, func = rfun, m = 34, verbose = FALSE)
 #' @export
 bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
                     alpha = c(0.025, 0.05, 0.1, 0.16),  verbose = TRUE) {
@@ -175,7 +176,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
         tY. <- Y. <- rep(0, n)
         if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
         for (j in seq_len(B)) {
-            ij <- sample(n, n, T)
+            ij <- sample(x = n, size = n, replace = TRUE)
             Yj <- table(c(ij, 1:n)) - 1
             tt[j] <- func(x[ij, ], ...)
             tY. <- tY. + tt[j] * Yj
@@ -226,7 +227,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     Statsd <- matrix(0, 5, K)
 
     for (k in 1:K) {
-        II <- sample(B, B)
+        II <- sample(x = B, size = B)
         II <- matrix(II, ncol = J)
         lims <- matrix(0, length(alpha), J)
         stats <- matrix(0, 5, J)

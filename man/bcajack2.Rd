@@ -15,8 +15,8 @@ target population. If \eqn{p} is 1 then \code{x} can be a vector.}
 
 \item{B}{number of bootstrap replications. \code{B} can also be a vector
 of \code{B} bootstrap replications of the estimated parameter of
-interest, computed separately. If \code{B} is \code{Blist} as
-explained above, \code{x} is not needed.}
+interest, computed separately. If \code{B} is \code{Blist} as explained
+above, \code{x} is not needed.}
 
 \item{func}{function \eqn{\hat{\theta}=func(x)} computing estimate of the
 parameter of interest; \eqn{func(x)} should return a real value
@@ -29,12 +29,16 @@ for any \eqn{n^\prime \times p} matrix \eqn{x^\prime},
 collects the \eqn{n} rows of \code{x} into \code{m} groups to speed up
 the jackknife calculations for estimating the acceleration
 value \eqn{a}; typically \code{m} is 20 or 40 and does not have to
-exactly divide \eqn{n}.}
+exactly divide \eqn{n}. However, warnings will be shown.}
 
 \item{mr}{if \eqn{m < n} then \code{mr} repetions of the randomly
 grouped jackknife calculations are averaged.}
 
-\item{pct}{the bootstrap percentile, default 0.333}
+\item{pct}{\code{bcajack2} uses those count vectors nearest (1,1,...1)
+to estimate the gradient of the statistic, "nearest" being
+defined as those count vectors in the smallest \code{pct} of all B
+of them. Default value for `pct is 1/3 (see appendix in Efron
+and Narasimhan for further details)}
 
 \item{K}{a non-negative integer. If \code{K} > 0, bcajack also returns
 estimates of \emph{internal standard error}, that is, of the

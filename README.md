@@ -1,26 +1,24 @@
----
-title: "Automatic Construction of Bootstrap Confidence Intervals"
-author: "Bradley Efron and Balasubramanian Narasimhan"
-date: '2018-08-27'
----
 
+<!-- README.md is generated from the source: README.Rmd -->
+bcaboot
+=======
+
+<!-- [![Travis-CI Build Status](https://travis-ci.org/bnaras/bcaboot.svg?branch=master)](https://travis-ci.org/bnaras/bcaboot) -->
+<!-- [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bcaboot)](https://cran.r-project.org/package=bcaboot) -->
+<!-- [![Coverage -->
+<!-- Status](https://img.shields.io/codecov/c/github/bnaras/bcaboot/master.svg)](https://codecov.io/github/bnaras/bcaboot?branch=master) -->
+<!-- [![](https://cranlogs.r-pkg.org/badges/bcaboot)](https://cloud.r-project.org/package=bcaboot) -->
 Bootstrap confidence intervals depend on three elements:
 
-- the cdf of the \eqn{B} bootstrap replications \eqn{t_i^*}, \eqn{i=1\ldots B}
-- the bias-correction number \eqn{z_0=\Phi(\sum_i^B I(t_i^* < t_0) / B )}
-  where \eqn{t_0=f(x)} is the original estimate
-- the acceleration number \eqn{a} that measures the rate of
-  change in \eqn{\sigma_{t_0}} as \eqn{x}, the data changes.
+-   the cdf of the bootstrap replications
+-   the bias-correction number which depends on the proportion of bootstrap estimates that are less than the original estimate
+-   the acceleration number that measures the rate of change in standard deviation of the estimate as the data changes.
 
-The first two of these depend only on the bootstrap distribution, and
-not how it is generated: parametrically or
-non-parametrically. Therefore, the only difference in a parametric bca
-analysis would lie in the nonparametric estimation of the
-acceleration, often a negligible error.
+The first two of these depend only on the bootstrap distribution, and not how it is generated: parametrically or non-parametrically. Therefore, the only difference in a parametric bca analysis would lie in the nonparametric estimation of the acceleration, often a negligible error.
 
-Further details may be found in the paper by Efron and Narasimhan below.
+The package `bcaboot` provides functions to compute bootstrap confidence intervals in an (almost) automatic fashion. Further details may be found in the paper by Efron and Narasimhan below.
 
-## References
+References
+----------
 
-Efron, Bradley, and Balasubramanian Narasimhan. The Automatic
-Construction of Bootstrap Confidence Intervals. (2018)
+Efron, Bradley, and Balasubramanian Narasimhan. The Automatic Construction of Bootstrap Confidence Intervals. (2018)

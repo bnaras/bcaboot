@@ -6,11 +6,11 @@ output: github_document
 
 # bcaboot
 
-[![Travis-CI Build Status](https://travis-ci.org/bnaras/cubature.svg?branch=master)](https://travis-ci.org/bnaras/bcaboot)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/cubature)](https://cran.r-project.org/package=bcaboot)
-[![Coverage
-Status](https://img.shields.io/codecov/c/github/bnaras/cubature/master.svg)](https://codecov.io/github/bnaras/bcaboot?branch=master)
-[![](https://cranlogs.r-pkg.org/badges/bcaboot)](https://cloud.r-project.org/package=bcaboot)
+<!-- [![Travis-CI Build Status](https://travis-ci.org/bnaras/bcaboot.svg?branch=master)](https://travis-ci.org/bnaras/bcaboot) -->
+<!-- [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bcaboot)](https://cran.r-project.org/package=bcaboot) -->
+<!-- [![Coverage -->
+<!-- Status](https://img.shields.io/codecov/c/github/bnaras/bcaboot/master.svg)](https://codecov.io/github/bnaras/bcaboot?branch=master) -->
+<!-- [![](https://cranlogs.r-pkg.org/badges/bcaboot)](https://cloud.r-project.org/package=bcaboot) -->
 
 Bootstrap confidence intervals depend on three elements:
 

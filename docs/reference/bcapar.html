@@ -86,7 +86,7 @@ reference below." />
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="http://github.com/bnaras/bcaboot">
+  <a href="https://github.com/bnaras/bcaboot">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -104,7 +104,7 @@ reference below." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute parametric bootstrap confidence intervals</h1>
-    <small class="dont-index">Source: <a href='http://github.com/bnaras/bcaboot/blob/master/R/bcapar.R'><code>R/bcapar.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/bnaras/bcaboot/blob/master/R/bcapar.R'><code>R/bcapar.R</code></a></small>
     <div class="hidden name"><code>bcapar.Rd</code></div>
     </div>
 
@@ -140,7 +140,7 @@ length <code>B</code>, usually large, say <code>B = 2000</code></p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>percentiles desired for the Bca confidence limits. One
+      <td><p>percentiles desired for the bca confidence limits. One
 only needs to provide <code>alpha</code> values below 0.5; the upper
 limits are automatically computed</p></td>
     </tr>
@@ -205,15 +205,16 @@ intervals. Statistical Science 11, 189-228</p>
 Biometrika (1992) p231-245.</p>
 <p>Efron B (1987). Better bootstrap confidence intervals. JASA 82, 171-200</p>
 <p>B. Efron and T. Hastie. Computer Age Statistical Inference. Cambridge University Press, 2016.</p>
+<p>B. Efron and B. Narasimhan. Automatic Construction of Bootstrap Confidence Intervals, 2018.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>diabetes</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"lars"</span>)
+    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>diabetes</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"bcaboot"</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='no'>diabetes</span>$<span class='no'>x</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>scale</span>(<span class='no'>diabetes</span>$<span class='no'>y</span>, <span class='kw'>center</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='no'>lm.model</span> <span class='kw'>&lt;-</span> <span class='fu'>lm</span>(<span class='no'>y</span> ~ <span class='no'>X</span> - <span class='fl'>1</span>)
 <span class='no'>mu.hat</span> <span class='kw'>&lt;-</span> <span class='no'>lm.model</span>$<span class='no'>fitted.values</span>
-<span class='no'>sigma.hat</span> <span class='kw'>&lt;-</span> <span class='fu'>sd</span>(<span class='no'>lm.model</span>$<span class='no'>residuals</span>)
+<span class='no'>sigma.hat</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>stats</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/stats/topics/sd'>sd</a></span>(<span class='no'>lm.model</span>$<span class='no'>residuals</span>)
 <span class='no'>t0</span> <span class='kw'>&lt;-</span> <span class='fu'>summary</span>(<span class='no'>lm.model</span>)$<span class='no'>adj.r.squared</span>
 <span class='no'>y.star</span> <span class='kw'>&lt;-</span> <span class='fu'>sapply</span>(<span class='no'>mu.hat</span>, <span class='no'>rnorm</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>sd</span> <span class='kw'>=</span> <span class='no'>sigma.hat</span>)
 <span class='no'>tt</span> <span class='kw'>&lt;-</span> <span class='fu'>apply</span>(<span class='no'>y.star</span>, <span class='fl'>1</span>, <span class='kw'>function</span>(<span class='no'>y</span>) <span class='fu'>summary</span>(<span class='fu'>lm</span>(<span class='no'>y</span> ~ <span class='no'>X</span> - <span class='fl'>1</span>))$<span class='no'>adj.r.squared</span>)

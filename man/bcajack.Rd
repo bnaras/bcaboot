@@ -44,7 +44,7 @@ replications into \code{J} groups.}
 \item{J}{the number of groups into which the bootstrap replications
 are split}
 
-\item{alpha}{percentiles desired for the Bca confidence limits. One
+\item{alpha}{percentiles desired for the bca confidence limits. One
 only needs to provide \code{alpha} values below 0.5; the upper
 limits are automatically computed}
 
@@ -100,17 +100,17 @@ in which the vector \code{tt} of B bootstrap replications is first
 generated from a parametric model.
 
 So, in the diabetes example below, we might first draw bootstrap
-samples \eqn{y^* \sim N(X\hat{\beta}, \hat{\sigma}^2I)} where
+samples \eqn{y^* \sim N(X\hat{\beta}, \hat{\sigma}^2 I)} where
 \eqn{\hat{\beta}} and \eqn{\hat{\sigma}} were obtained from
 \code{lm(y~X)}; each \eqn{y^*} would then provide a bootstrap
-replication \code{tstar = rfun(cbind(X, ystar))}.  Then we could get Bca
+replication \code{tstar = rfun(cbind(X, ystar))}.  Then we could get bca
 intervals from \code{bcajack(Xy, tt, rfun ....)} with \code{tt},
 the vector of B \code{tstar} values. The only difference from a full
-parametric Bca analysis would lie in the nonparametric estimation
+parametric bca analysis would lie in the nonparametric estimation
 of \eqn{a}, often a negligible error.
 }
 \examples{
-data(diabetes, package = "lars")
+data(diabetes, package = "bcaboot")
 Xy <- cbind(diabetes$x, diabetes$y)
 rfun <- function(Xy) {
   y <- Xy[, 11]
@@ -126,4 +126,7 @@ intervals. Statistical Science 11, 189-228
 
 Efron B (1987). Better bootstrap confidence
 intervals. JASA 82 171-200
+
+B. Efron and B. Narasimhan. Automatic Construction of
+Bootstrap Confidence Intervals, 2018.
 }

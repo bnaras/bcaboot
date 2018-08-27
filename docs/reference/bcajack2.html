@@ -98,7 +98,7 @@ bcajack2(Blist) without need to enter the function \(func\)." />
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="http://github.com/bnaras/bcaboot">
+  <a href="https://github.com/bnaras/bcaboot">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -117,7 +117,7 @@ bcajack2(Blist) without need to enter the function \(func\)." />
     <div class="page-header">
     <h1>Nonparametric bias-corrected and accelerated bootstrap
 confidence limits</h1>
-    <small class="dont-index">Source: <a href='http://github.com/bnaras/bcaboot/blob/master/R/bcajack2.R'><code>R/bcajack2.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/bnaras/bcaboot/blob/master/R/bcajack2.R'><code>R/bcajack2.R</code></a></small>
     <div class="hidden name"><code>bcajack2.Rd</code></div>
     </div>
 
@@ -184,6 +184,10 @@ exactly divide \(n\).</p></td>
 grouped jackknife calculations are averaged.</p></td>
     </tr>
     <tr>
+      <th>pct</th>
+      <td><p>the bootstrap percentile, default 0.333</p></td>
+    </tr>
+    <tr>
       <th>K</th>
       <td><p>a non-negative integer. If <code>K</code> &gt; 0, bcajack also returns
 estimates of <em>internal standard error</em>, that is, of the
@@ -200,7 +204,7 @@ are split</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>percentiles desired for the Bca confidence limits. One
+      <td><p>percentiles desired for the bca confidence limits. One
 only needs to provide <code>alpha</code> values below 0.5; the upper
 limits are automatically computed</p></td>
     </tr>
@@ -221,7 +225,7 @@ the standard limits \(\hat{\theta} +
 quite small in the example. Column 4, <code>pct</code>, gives the
 percentiles of the ordered B bootstrap replications
 corresponding to the bca limits, eg the 897th largest
-replication equalling the .975 Bca limit .557.</p></li>
+replication equalling the .975 bca limit .557.</p></li>
 <li><p><strong>stats</strong> : top line of stats shows 5 estimates: theta is
 \(func(x)\), original point estimate of the parameter of
 interest; <code>sdboot</code> is its bootstrap estimate of standard error;
@@ -241,7 +245,7 @@ and an estimate <code>sdu</code> of its sampling error</p></li>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>diabetes</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"lars"</span>)
+    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>diabetes</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"bcaboot"</span>)
 <span class='no'>Xy</span> <span class='kw'>&lt;-</span> <span class='fu'>cbind</span>(<span class='no'>diabetes</span>$<span class='no'>x</span>, <span class='no'>diabetes</span>$<span class='no'>y</span>)
 <span class='no'>rfun</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>Xy</span>) {
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>Xy</span>[, <span class='fl'>11</span>]

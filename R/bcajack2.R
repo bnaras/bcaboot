@@ -26,6 +26,7 @@
 #'     of `B` bootstrap replications of the estimated parameter of
 #'     interest, computed separately. If `B` is `Blist` as
 #'     explained above, `x` is not needed.
+#' @param pct the bootstrap percentile, default 0.333
 #'
 #' @return a named list of several items
 #'
@@ -37,7 +38,7 @@
 #'     quite small in the example. Column 4, `pct`, gives the
 #'     percentiles of the ordered B bootstrap replications
 #'     corresponding to the bca limits, eg the 897th largest
-#'     replication equalling the .975 Bca limit .557.
+#'     replication equalling the .975 bca limit .557.
 #'
 #' * __stats__ : top line of stats shows 5 estimates: theta is
 #'     \eqn{func(x)}, original point estimate of the parameter of
@@ -58,10 +59,9 @@
 #' * __seed__ : The random number state for reproducibility
 #'
 #' @importFrom stats quantile
-#' @import lars
 #' @export
 #' @examples
-#' data(diabetes, package = "lars")
+#' data(diabetes, package = "bcaboot")
 #' Xy <- cbind(diabetes$x, diabetes$y)
 #' rfun <- function(Xy) {
 #'   y <- Xy[, 11]
@@ -80,7 +80,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
 
     ## Save rng state
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-        runif(1)
+        stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 
     qbca2 <- function(Y, tt, t0, alpha, pct) {
@@ -97,7 +97,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         }
         Qd <- stats::quantile(D, pct)
         ip <- seq_len(B)[D <= Qd]
-        ty. <- as.vector(m * lm(tt[ip] ~ Y[ip, ] - 1)$coef)
+        ty. <- as.vector(m * stats::lm(tt[ip] ~ Y[ip, ] - 1)$coef)
         ty. <- ty. - mean(ty.)
         a <- (1/6) * sum(ty.^3)/sum(ty.^2)^1.5
         ## if (sw == 3)
@@ -105,25 +105,25 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         s <- mean(tt)
         B.mean <- c(B, s)
 
-        zalpha <- qnorm(alpha)
+        zalpha <- stats::qnorm(alpha)
         nal <- length(alpha)
         ustat <- 2 * t0 - s
-        ##s. <- m * .v(cov(tt, Y))
-        s. <- m * as.vector(cov(tt, Y))
+        ##s. <- m * .v(stats::cov(tt, Y))
+        s. <- m * as.vector(stats::cov(tt, Y))
         u. <- 2 * ty. - s.
         sdu <- sum(u.^2)^0.5/m
         ustats <- c(ustat, sdu)
         names(ustats) <- c("ustat", "sdu")
 
-        sdboot <- sd(tt)
+        sdboot <- stats::sd(tt)
         sdjack <- sqrt(sum(ty.^2))/(m - 1)
-        z0 <- qnorm(sum(tt < t0)/B)
+        z0 <- stats::qnorm(sum(tt < t0)/B)
 
-        iles <- pnorm(z0 + (z0 + zalpha)/(1 - a * (z0 + zalpha)))
+        iles <- stats::pnorm(z0 + (z0 + zalpha)/(1 - a * (z0 + zalpha)))
         ooo <- trunc(iles * B)
         ooo <- pmin(pmax(ooo, 1), B)
         lims <- sort(tt)[ooo]
-        standard <- t0 + sdboot * qnorm(alpha)
+        standard <- t0 + sdboot * stats::qnorm(alpha)
         ##lims <- round(cbind(lims, standard), rou)
         lims <- cbind(lims, standard)
         dimnames(lims) <- list(alpha, c("bca", "std"))
@@ -154,12 +154,12 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             ii <- sample(1:n, n * B, T)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, n)
-            if (verbose) pb <- txtProgressBar(min = 0, max = B, style = 3)
+            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
             for (k in 1:B) {
                 ik <- ii[k, ]
                 tt[k] <- func(x[ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:n)) - 1
-                if (verbose) setTxtProgressBar(pb, k)
+                if (verbose) utils::setTxtProgressBar(pb, k)
             }
             if (verbose) close(pb)
             ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
@@ -173,14 +173,14 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             ii <- sample(1:m, m * B, T)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, m)
-            if (verbose) pb <- txtProgressBar(min = 0, max = B, style = 3)
+            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
             for (k in 1:B) {
                 ik <- ii[k, ]
                 Ik <- c(t(Imat[ik, ]))
                 Ik <- c(Ik, Iout)
                 tt[k] <- func(x[Ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:m)) - 1
-                if (verbose) setTxtProgressBar(pb, k)
+                if (verbose) utils::setTxtProgressBar(pb, k)
             }
             if (verbose) close(pb)
             ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
@@ -197,7 +197,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
     Pct <- rep(0, nal)
     ##for (i in 1:nal) Pct[i] <- round(sum(tt <= vl0$lims[i, 1])/B, rou)
     for (i in 1:nal) Pct[i] <- sum(tt <= vl0$lims[i, 1])/B
-    Stand <- vl0$stats[1] + vl0$stats[2] * qnorm(alpha)
+    Stand <- vl0$stats[1] + vl0$stats[2] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Statsd <- matrix(0, 5, K)
 

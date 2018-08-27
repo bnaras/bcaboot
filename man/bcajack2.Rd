@@ -34,6 +34,8 @@ exactly divide \eqn{n}.}
 \item{mr}{if \eqn{m < n} then \code{mr} repetions of the randomly
 grouped jackknife calculations are averaged.}
 
+\item{pct}{the bootstrap percentile, default 0.333}
+
 \item{K}{a non-negative integer. If \code{K} > 0, bcajack also returns
 estimates of \emph{internal standard error}, that is, of the
 variability due to stopping at \code{B} bootstrap replications
@@ -45,7 +47,7 @@ replications into \code{J} groups.}
 \item{J}{the number of groups into which the bootstrap replications
 are split}
 
-\item{alpha}{percentiles desired for the Bca confidence limits. One
+\item{alpha}{percentiles desired for the bca confidence limits. One
 only needs to provide \code{alpha} values below 0.5; the upper
 limits are automatically computed}
 
@@ -62,7 +64,7 @@ the standard limits \eqn{\hat{\theta} +
 quite small in the example. Column 4, \code{pct}, gives the
 percentiles of the ordered B bootstrap replications
 corresponding to the bca limits, eg the 897th largest
-replication equalling the .975 Bca limit .557.
+replication equalling the .975 bca limit .557.
 \item \strong{stats} : top line of stats shows 5 estimates: theta is
 \eqn{func(x)}, original point estimate of the parameter of
 interest; \code{sdboot} is its bootstrap estimate of standard error;
@@ -97,7 +99,7 @@ n = 5 and \code{Ii = (2, 5, 2, 1, 4)}, then \code{Yi = (1, 2, 0, 1, 1)}. Having 
 \code{bcajack2(Blist)} without need to enter the function \eqn{func}.
 }
 \examples{
-data(diabetes, package = "lars")
+data(diabetes, package = "bcaboot")
 Xy <- cbind(diabetes$x, diabetes$y)
 rfun <- function(Xy) {
   y <- Xy[, 11]

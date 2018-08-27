@@ -13,7 +13,7 @@ abcpar <- function (func,bb,lambda = 0.001,alpha = c(0.025, 0.05, 0.1, 0.16), ..
         as.vector(y + t(W %*% BB))}
 
     p <- length(y)
-    S <- var(bb)
+    S <- stats::var(bb)
     S <- as.matrix(S)
     I <- diag(p)
     thetahat <- func(y, ...)
@@ -42,7 +42,7 @@ abcpar <- function (func,bb,lambda = 0.001,alpha = c(0.025, 0.05, 0.1, 0.16), ..
     curv <- bhat / sighat - cq
     z0 <- a - curv
     al <- c(alpha, .5, rev(1 - alpha))
-    za <- qnorm(al)
+    za <- stats::qnorm(al)
     z0a <- (z0 + za) / (1 - a * (z0 + za))
     z1a <- z0a + a * (z0a + z0)^2
     standard <- thetahat + sighat * za

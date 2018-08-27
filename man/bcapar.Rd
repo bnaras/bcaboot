@@ -17,7 +17,7 @@ length \code{B}, usually large, say \code{B = 2000}}
 \item{bb}{A \code{B} by \code{p} matrix of natural sufficient vectors, where
 \code{p} is the dimension of the exponential family.}
 
-\item{alpha}{percentiles desired for the Bca confidence limits. One
+\item{alpha}{percentiles desired for the bca confidence limits. One
 only needs to provide \code{alpha} values below 0.5; the upper
 limits are automatically computed}
 
@@ -68,12 +68,12 @@ exponential family. It is described in Section 4 of the
 reference below.
 }
 \examples{
-data(diabetes, package = "lars")
+data(diabetes, package = "bcaboot")
 X <- diabetes$x
 y <- scale(diabetes$y, center = TRUE, scale = FALSE)
 lm.model <- lm(y ~ X - 1)
 mu.hat <- lm.model$fitted.values
-sigma.hat <- sd(lm.model$residuals)
+sigma.hat <- stats::sd(lm.model$residuals)
 t0 <- summary(lm.model)$adj.r.squared
 y.star <- sapply(mu.hat, rnorm, n = 1000, sd = sigma.hat)
 tt <- apply(y.star, 1, function(y) summary(lm(y ~ X - 1))$adj.r.squared)
@@ -91,4 +91,6 @@ Biometrika (1992) p231-245.
 Efron B (1987). Better bootstrap confidence intervals. JASA 82, 171-200
 
 B. Efron and T. Hastie. Computer Age Statistical Inference. Cambridge University Press, 2016.
+
+B. Efron and B. Narasimhan. Automatic Construction of Bootstrap Confidence Intervals, 2018.
 }

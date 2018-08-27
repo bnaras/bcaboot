@@ -24,13 +24,13 @@
 #' generated from a parametric model.
 #'
 #' So, in the diabetes example below, we might first draw bootstrap
-#' samples \eqn{y^* \sim N(X\hat{\beta}, \hat{\sigma}^2I)} where
+#' samples \eqn{y^* \sim N(X\hat{\beta}, \hat{\sigma}^2 I)} where
 #' \eqn{\hat{\beta}} and \eqn{\hat{\sigma}} were obtained from
 #' `lm(y~X)`; each \eqn{y^*} would then provide a bootstrap
-#' replication `tstar = rfun(cbind(X, ystar))`.  Then we could get Bca
+#' replication `tstar = rfun(cbind(X, ystar))`.  Then we could get bca
 #' intervals from `bcajack(Xy, tt, rfun ....)` with `tt`,
 #' the vector of B `tstar` values. The only difference from a full
-#' parametric Bca analysis would lie in the nonparametric estimation
+#' parametric bca analysis would lie in the nonparametric estimation
 #' of \eqn{a}, often a negligible error.
 #'
 #' @param x an \eqn{n \times p} data matrix, rows are observed
@@ -60,7 +60,7 @@
 #'     replications into `J` groups.
 #' @param J the number of groups into which the bootstrap replications
 #'     are split
-#' @param alpha percentiles desired for the Bca confidence limits. One
+#' @param alpha percentiles desired for the bca confidence limits. One
 #'     only needs to provide `alpha` values below 0.5; the upper
 #'     limits are automatically computed
 #' @param verbose logical for verbose progress messages
@@ -98,11 +98,15 @@
 #'     intervals. Statistical Science 11, 189-228
 #' @references Efron B (1987). Better bootstrap confidence
 #'     intervals. JASA 82 171-200
+#' @references B. Efron and B. Narasimhan. Automatic Construction of
+#'     Bootstrap Confidence Intervals, 2018.
 #'
+#' @importFrom graphics abline lines plot points segments text
+#' @importFrom stats cov dnorm lm pnorm qnorm runif sd var
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #'
-#' @import lars
 #' @examples
-#' data(diabetes, package = "lars")
+#' data(diabetes, package = "bcaboot")
 #' Xy <- cbind(diabetes$x, diabetes$y)
 #' rfun <- function(Xy) {
 #'   y <- Xy[, 11]
@@ -120,7 +124,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     call <- match.call()
     ## Save rng state
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-        runif(1)
+        stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 
     if (is.vector(x))
@@ -169,14 +173,14 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
 
     if (ttind == 0) {
         tY. <- Y. <- rep(0, n)
-        if (verbose) pb <- txtProgressBar(min = 0, max = B, style = 3)
+        if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
         for (j in seq_len(B)) {
             ij <- sample(n, n, T)
             Yj <- table(c(ij, 1:n)) - 1
             tt[j] <- func(x[ij, ], ...)
             tY. <- tY. + tt[j] * Yj
             Y. <- Y. + Yj
-            if (verbose) setTxtProgressBar(pb, j)
+            if (verbose) utils::setTxtProgressBar(pb, j)
         }
         if (verbose) close(pb)
         tt. <- mean(tt)
@@ -193,17 +197,17 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     alpha <- alpha[alpha < 0.5]
     alpha <- c(alpha, 0.5, rev(1 - alpha))
 
-    zalpha <- qnorm(alpha)
+    zalpha <- stats::qnorm(alpha)
     nal <- length(alpha)
 
-    sdboot0 <- sd(tt)  # sdd=sd(dd)
-    z00 <- qnorm(sum(tt < t0)/B)
+    sdboot0 <- stats::sd(tt)  # sdd=stats::sd(dd)
+    z00 <- stats::qnorm(sum(tt < t0)/B)
 
-    iles <- pnorm(z00 + (z00 + zalpha)/(1 - a * (z00 + zalpha)))
+    iles <- stats::pnorm(z00 + (z00 + zalpha)/(1 - a * (z00 + zalpha)))
     ooo <- trunc(iles * B)
     ooo <- pmin(pmax(ooo, 1), B)
     lims0 <- sort(tt)[ooo]
-    standard <- t0 + sdboot0 * qnorm(alpha)
+    standard <- t0 + sdboot0 * stats::qnorm(alpha)
     ## lims0 <- round(cbind(lims0, standard), rou)
     lims0 <- cbind(lims0, standard)
     dimnames(lims0) <- list(alpha, c("bca", "std"))
@@ -217,7 +221,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     pct <- rep(0, nal)
     ##for (i in 1:nal) pct[i] <- round(sum(tt <= lims0[i, 1])/B, 3)
     for (i in 1:nal) pct[i] <- sum(tt <= lims0[i, 1])/B
-    Stand <- vl0$stats[1] + vl0$stats[2] * qnorm(alpha)
+    Stand <- vl0$stats[1] + vl0$stats[2] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Statsd <- matrix(0, 5, K)
 
@@ -230,14 +234,14 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
             iij <- c(II[, -j])
             ttj <- tt[iij]
             Bj <- length(ttj)
-            sdboot <- sd(ttj)
-            z0 <- qnorm(sum(ttj < t0)/Bj)
+            sdboot <- stats::sd(ttj)
+            z0 <- stats::qnorm(sum(ttj < t0)/Bj)
 
-            iles <- pnorm(z0 + (z0 + zalpha)/(1 - a * (z0 + zalpha)))
+            iles <- stats::pnorm(z0 + (z0 + zalpha)/(1 - a * (z0 + zalpha)))
             oo <- trunc(iles * Bj)
             oo <- pmin(pmax(oo, 1), Bj)
             li <- sort(ttj)[oo]
-            standard <- t0 + sdboot * qnorm(alpha)
+            standard <- t0 + sdboot * stats::qnorm(alpha)
             ##sta <- round(c(t0, sdboot, z0, a, sdjack), rou)
             sta <- c(t0, sdboot, z0, a, sdjack)
             names(sta) <- c("theta", "sdboot", "z0", "a", "sdjack")

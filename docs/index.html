@@ -18,7 +18,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-home">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -50,7 +50,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="http://github.com/bnaras/bcaboot">
+  <a href="https://github.com/bnaras/bcaboot">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -65,19 +65,31 @@
 
       
       </header><div class="row">
-  <div class="contents col-md-9">
-    <div id="bootstrap-confidence-intervals" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#bootstrap-confidence-intervals" class="anchor"></a>Bootstrap Confidence Intervals</h1></div>
-<p>This is an unfinished repo of code that will eventually form the <code>bcaboot</code> package (or package by some other name) on CRAN.</p>
+  <div class="col-md-9 contents">
+    
+
+    
+    
+<p>Bootstrap confidence intervals depend on three elements:</p>
+<ul>
+<li>the cdf of the  bootstrap replications , </li>
+<li>the bias-correction number  where  is the original estimate</li>
+<li>the acceleration number  that measures the rate of change in  as , the data changes.</li>
+</ul>
+<p>The first two of these depend only on the bootstrap distribution, and not how it is generated: parametrically or non-parametrically. Therefore, the only difference in a parametric bca analysis would lie in the nonparametric estimation of the acceleration, often a negligible error.</p>
+<p>Further details may be found in the paper by Efron and Narasimhan below.</p>
+<div id="references" class="section level2">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
+<p>Efron, Bradley, and Balasubramanian Narasimhan. The Automatic Construction of Bootstrap Confidence Intervals. (2018)</p>
 </div>
   </div>
 
-  <div class="col-md-3" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="http://github.com/bnaras/bcaboot">http://​github.com/​bnaras/​bcaboot</a>
+<li>Browse source code at <br><a href="https://github.com/bnaras/bcaboot">https://​github.com/​bnaras/​bcaboot</a>
 </li>
 <li>Report a bug at <br><a href="http://github.com/bnaras/bcaboot/issues">http://​github.com/​bnaras/​bcaboot/​issues</a>
 </li>
@@ -99,7 +111,8 @@
 </ul>
 </div>
 
-  </div>
+      </div>
+
 </div>
 
 

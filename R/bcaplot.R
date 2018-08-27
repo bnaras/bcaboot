@@ -58,8 +58,8 @@ bcaplot <- function(vl, main = " ", xlab = "coverage", ylab = "limits", alpha = 
 
     vm <- vm[, c(1, jn)]
     if (add == 1) {
-        lines(alp, vm[4:1, 1], lwd = 2, lty = 2, col = 2)
-        lines(alp, vm[5:8, 1], lwd = 2, lty = 2, col = 2)
+        graphics::lines(alp, vm[4:1, 1], lwd = 2, lty = 2, col = 2)
+        graphics::lines(alp, vm[5:8, 1], lwd = 2, lty = 2, col = 2)
     }
     if (add == 0) {
         if (length(vl$thet) == 0)
@@ -68,22 +68,22 @@ bcaplot <- function(vl, main = " ", xlab = "coverage", ylab = "limits", alpha = 
             ylim <- range(vm)
         if (missing(xlim))
             xlim <- c(min(alp), max(alp) + 0.005)
-        plot(alp, vm[4:1, 1], type = "l", lwd = 3, ..., ylim = ylim, xlab = xlab,
-            ylab = ylab, main = main, xlim = xlim, sub = sub)
-        lines(alp, vm[5:8, 1], lwd = 3)
-        lines(alp, vm[4:1, 2], lwd = 2, lty = 3, col = 3)
-        lines(alp, vm[5:8, 2], lwd = 3, lty = 3, col = 3)
-        abline(thet, 0, col = 2, lty = 2)
-        points(alp, vm[4:1, 1], pch = 16, cex = 1.1)
-        points(alp, vm[5:8, 1], pch = 16, cex = 1.1)
-        for (k in 1:length(alp)) text(alp[k], thet, paste(100 * alp[k], "%", sep = ""),
+        graphics::plot(alp, vm[4:1, 1], type = "l", lwd = 3, ..., ylim = ylim, xlab = xlab,
+                       ylab = ylab, main = main, xlim = xlim, sub = sub)
+        graphics::lines(alp, vm[5:8, 1], lwd = 3)
+        graphics::lines(alp, vm[4:1, 2], lwd = 2, lty = 3, col = 3)
+        graphics::lines(alp, vm[5:8, 2], lwd = 3, lty = 3, col = 3)
+        graphics::abline(thet, 0, col = 2, lty = 2)
+        graphics::points(alp, vm[4:1, 1], pch = 16, cex = 1.1)
+        graphics::points(alp, vm[5:8, 1], pch = 16, cex = 1.1)
+        for (k in 1:length(alp)) graphics::text(alp[k], thet, paste(100 * alp[k], "%", sep = ""),
             cex = 1.2)
         if (length(vja) > 0) {
             cover <- c(0.95, 0.9, 0.8, 0.68, 0.68, 0.8, 0.9, 0.95)
-            segments(cover, vm[, 1] - jasd, cover, vm[, 1] + jasd, col = 2, lty = 1,
-                lwd = 3)
+            graphics::segments(cover, vm[, 1] - jasd, cover, vm[, 1] + jasd, col = 2, lty = 1,
+                               lwd = 3)
         }
         if (sw == 1)
-            segments(alp, vm[4:1, 1], alp, vm[5:8, 1], lwd = 1, lty = 2, col = 1)
+            graphics::segments(alp, vm[4:1, 1], alp, vm[5:8, 1], lwd = 1, lty = 2, col = 1)
     }
 }

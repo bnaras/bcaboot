@@ -56,17 +56,16 @@
 #'     Biometrika (1992) p231-245.
 #' @references Efron B (1987). Better bootstrap confidence intervals. JASA 82, 171-200
 #' @references B. Efron and T. Hastie. Computer Age Statistical Inference. Cambridge University Press, 2016.
+#' @references B. Efron and B. Narasimhan. Automatic Construction of Bootstrap Confidence Intervals, 2018.
 #'
-#'
-#' @import lars
 #' @export
 #' @examples
-#' data(diabetes, package = "lars")
+#' data(diabetes, package = "bcaboot")
 #' X <- diabetes$x
 #' y <- scale(diabetes$y, center = TRUE, scale = FALSE)
 #' lm.model <- lm(y ~ X - 1)
 #' mu.hat <- lm.model$fitted.values
-#' sigma.hat <- sd(lm.model$residuals)
+#' sigma.hat <- stats::sd(lm.model$residuals)
 #' t0 <- summary(lm.model)$adj.r.squared
 #' y.star <- sapply(mu.hat, rnorm, n = 1000, sd = sigma.hat)
 #' tt <- apply(y.star, 1, function(y) summary(lm(y ~ X - 1))$adj.r.squared)
@@ -80,7 +79,7 @@ bcapar <- function(t0, tt, bb,
 
     ## Save rng state
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-        runif(1)
+        stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 
     ## if(!missing(func)) adds abc limits and stats K=0 skips jackknifing computes
@@ -96,7 +95,7 @@ bcapar <- function(t0, tt, bb,
     call <- match.call()
     B <- length(tt)
     vl0 <- bca(t0, tt, bb = as.matrix(bb), alpha = alpha, trun = trun, pct = pct)
-    Stand <- vl0$thet[1] + vl0$sd.m[1] * qnorm(alpha)
+    Stand <- vl0$thet[1] + vl0$sd.m[1] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Thsd <- matrix(0, 5, K)
     Sdmsd <- matrix(0, 4, K)
@@ -158,10 +157,10 @@ bcapar <- function(t0, tt, bb,
         a <- stats[1, 4]
         z0 <- stats[1, 5]
         G <- (rank(tt) - 0.5)/B
-        zth <- qnorm(G) - z0
+        zth <- stats::qnorm(G) - z0
         az <- 1 + a * zth
-        num <- dnorm(zth/az - z0)
-        den <- az^2 * dnorm(zth + z0)
+        num <- stats::dnorm(zth/az - z0)
+        den <- az^2 * stats::dnorm(zth + z0)
         w <- num/den
         vl$w <- w
     }

@@ -8,15 +8,18 @@ Authors@R: c(person("Bradley", "Efron", role=c("aut"),
 	   	    email = "naras@stat.stanford.edu"))
 Description: Construct bias corrected bootstrap intervals in a blackbox fashion. 
 Depends: R (>= 3.5.0)
-URL: http://github.com/bnaras/bcaboot
+URL: https://bnaras.github.io/bcaboot, https://github.com/bnaras/bcaboot
 BugReports: http://github.com/bnaras/bcaboot/issues
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE)
-Suggests: glmnet
-Imports: ggplot2,
-    magrittr,
+Suggests: glmnet,
+    knitr
+Imports: magrittr,
     dplyr,
-    tidyr
+    tidyr,
+    graphics,
+    stats,
+    utils

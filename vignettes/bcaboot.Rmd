@@ -25,7 +25,6 @@ knitr::opts_chunk$set(
 )
 library(bcaboot)
 suppressMessages(suppressWarnings(library(dplyr)))
-suppressMessages(suppressWarnings(library(ggplot2)))
 ```
 
 ## Introduction
@@ -56,12 +55,12 @@ behind the approach can be found in references @efron1987,
 
 Suppose we wish to construct bootstrap confidence intervals for an
 $R^2$-statistic from a linear regression. Using the diabetes data from
-the [`lars`](https://cran.r-project.org/package=lars") (442 by 11) as
+the [`lars`](https://cran.r-project.org/package=lars) (442 by 11) as
 an example, we use the function below to regress the `y` on `x`, a
 matrix of of 10 predictors, to compute $R^2$.
 
 ```{r}
-data(diabetes, package = "lars")
+data(diabetes, package = "bcaboot")
 Xy <- cbind(diabetes$x, diabetes$y)
 rfun <- function(Xy) {
     y <- Xy[, 11]

@@ -87,7 +87,7 @@ set the random number state before calling this routine." />
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="http://github.com/bnaras/bcaboot">
+  <a href="https://github.com/bnaras/bcaboot">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -106,7 +106,7 @@ set the random number state before calling this routine." />
     <div class="page-header">
     <h1>Nonparametric bias-corrected and accelerated bootstrap
 confidence limits</h1>
-    <small class="dont-index">Source: <a href='http://github.com/bnaras/bcaboot/blob/master/R/bcajack.R'><code>R/bcajack.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/bnaras/bcaboot/blob/master/R/bcajack.R'><code>R/bcajack.R</code></a></small>
     <div class="hidden name"><code>bcajack.Rd</code></div>
     </div>
 
@@ -177,7 +177,7 @@ are split</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>percentiles desired for the Bca confidence limits. One
+      <td><p>percentiles desired for the bca confidence limits. One
 only needs to provide <code>alpha</code> values below 0.5; the upper
 limits are automatically computed</p></td>
     </tr>
@@ -231,13 +231,13 @@ non-parametrically. Program bcajack can be used in a hybrid fashion
 in which the vector <code>tt</code> of B bootstrap replications is first
 generated from a parametric model.</p>
 <p>So, in the diabetes example below, we might first draw bootstrap
-samples \(y^* \sim N(X\hat{\beta}, \hat{\sigma}^2I)\) where
+samples \(y^* \sim N(X\hat{\beta}, \hat{\sigma}^2 I)\) where
 \(\hat{\beta}\) and \(\hat{\sigma}\) were obtained from
 <code>lm(y~X)</code>; each \(y^*\) would then provide a bootstrap
-replication <code>tstar = rfun(cbind(X, ystar))</code>.  Then we could get Bca
+replication <code>tstar = rfun(cbind(X, ystar))</code>.  Then we could get bca
 intervals from <code>bcajack(Xy, tt, rfun ....)</code> with <code>tt</code>,
 the vector of B <code>tstar</code> values. The only difference from a full
-parametric Bca analysis would lie in the nonparametric estimation
+parametric bca analysis would lie in the nonparametric estimation
 of \(a\), often a negligible error.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -246,10 +246,12 @@ of \(a\), often a negligible error.</p>
 intervals. Statistical Science 11, 189-228</p>
 <p>Efron B (1987). Better bootstrap confidence
 intervals. JASA 82 171-200</p>
+<p>B. Efron and B. Narasimhan. Automatic Construction of
+Bootstrap Confidence Intervals, 2018.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>diabetes</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"lars"</span>)
+    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>diabetes</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"bcaboot"</span>)
 <span class='no'>Xy</span> <span class='kw'>&lt;-</span> <span class='fu'>cbind</span>(<span class='no'>diabetes</span>$<span class='no'>x</span>, <span class='no'>diabetes</span>$<span class='no'>y</span>)
 <span class='no'>rfun</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>Xy</span>) {
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>Xy</span>[, <span class='fl'>11</span>]

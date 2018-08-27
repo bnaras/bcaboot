@@ -4,4 +4,5 @@
 ^\.Rproj\.user$
 ^inst/examples
 ^_pkgdown\.yml$
+^\.travis\.yml$
 ^docs$

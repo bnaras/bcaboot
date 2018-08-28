@@ -1,12 +1,12 @@
 Package: bcaboot
 Title: Bias Corrected Bootstrap Confidence Intervals 
-Version: 0.2
+Version: 0.2-1
 VignetteBuilder: knitr
 Authors@R: c(person("Bradley", "Efron", role=c("aut"),
 	   	    email = "brad@stat.stanford.edu"),
   	     person("Balasubramanian", "Narasimhan", role=c("aut", "cre"),
 	   	    email = "naras@stat.stanford.edu"))
-Description: Construct bias corrected bootstrap intervals in a blackbox fashion. 
+Description: Computation of bootstrap confidence intervals in an almost automatic fashion.
 Depends: R (>= 3.5.0)
 URL: https://bnaras.github.io/bcaboot, https://github.com/bnaras/bcaboot
 BugReports: http://github.com/bnaras/bcaboot/issues
@@ -17,9 +17,6 @@ RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE)
 Suggests: glmnet,
     knitr
-Imports: magrittr,
-    dplyr,
-    tidyr,
-    graphics,
+Imports: graphics,
     stats,
     utils

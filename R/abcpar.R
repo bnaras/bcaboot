@@ -30,7 +30,8 @@ abcpar <- function (func,bb,lambda = 0.001,alpha = c(0.025, 0.05, 0.1, 0.16), ..
     bhat <- sum(b..) / 2
     ehat <- as.vector(evecs %*% (b./evals))
     dhat <- as.vector(evecs %*% (b. * evals))
-    sighat <- sqrt(ehat %*% S %*% ehat)
+    ## sighat <- sqrt(ehat %*% S %*% ehat)
+    sighat <- (sqrt(ehat %*% S %*% ehat))[1, 1]
     lam <- lambda / sighat
     a0 <- sum(ehat * Mu(etahat))
     a1 <- sum(ehat * Mu(etahat + lam * ehat))

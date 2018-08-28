@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
     cache = FALSE
 )
 library(bcaboot)
-suppressMessages(suppressWarnings(library(dplyr)))
 ```
 
 ## Introduction
@@ -119,7 +118,7 @@ bcaplot(result)
 
 ```{r, echo = FALSE}
 if (!requireNamespace("glmnet", quietly = TRUE)) {
-    stop("Please install glmnet package")
+    stop("Please install glmnet package for this vignette.")
 }
 load(system.file("extdata", "neonates.rda", package = "bcaboot"))
 ```
@@ -133,18 +132,10 @@ str(neonates)
 
 The goal was to predict death versus survival---$y$ is 1 or 0,
 respectively---on the basis of 11 baseline variables of which one of
-them `resp` was of particular concern. So here $\theta$, the parameter
-of interest is the coefficient of `resp`.
-
-```{r}
-neonates %>%
-    dplyr::group_by(y) %>%
-    dplyr::summarize(count = n()) %>%
-    knitr::kable(digits = 3)
-```
-
-Discussions with the investigator suggested a weighting of 4 to 1 of
-deaths versus non-deaths. 
+them `resp` was of particular concern. (There were 207 deaths and 605
+survivors.) So here $\theta$, the parameter of interest is the
+coefficient of `resp`. Discussions with the investigator suggested a
+weighting of 4 to 1 of deaths versus non-deaths.
 
 ### A Logistic Model
 
@@ -221,9 +212,8 @@ glmnet_model <- glmnet::cv.glmnet(x = X, y = Y, family = "binomial", weights = w
 We can examine the estimates at the `lambda.min` as follows.
 
 ```{r}
-as.matrix(coef(glmnet_model, s = glmnet_model$lambda.min)) %>%
-    (function(x) data.frame(variable = rownames(x), coefficient = x[, 1])) %>%
-knitr::kable(row.names = FALSE, digits = 3)
+coefs <- as.matrix(coef(glmnet_model, s = glmnet_model$lambda.min))
+knitr::kable(data.frame(variable = rownames(coefs), coefficient = coefs[, 1]), row.names = FALSE, digits = 3)
 ```
 
 Following the lines above, we create a helper function to perform the
@@ -348,15 +338,14 @@ The limits obtained are shown below, along with the exact limits as
 the last column.
 
 ```{r}
-result$lims %>%
-    cbind(exact = 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(result$lims)))) %>%
-    knitr::kable(digits = 3)
+exact <- 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(result$lims)))
+knitr::kable(cbind(result$lims, exact = exact), digits = 3)
 ```
 
 Clearly the bca limits match the exact values very well and suggests a
 large upward correction to the standard limits. Here the corrections
 are all positive as seen in the table below; $\hat{z}_0 = 0.093$ and
-$\hat{a} = 0.095$. 
+$\hat{a} = 0.092$. 
 
 
 ```{r}

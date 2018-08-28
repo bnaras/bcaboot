@@ -29,7 +29,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">bcaboot</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.1</span>
       </span>
     </div>
 
@@ -70,7 +70,7 @@
       <h1>Automatic Construction of Bootstrap Confidence Intervals</h1>
                         <h4 class="author">Bradley Efron and Balasubramanian Narasimhan</h4>
             
-            <h4 class="date">2018-08-27</h4>
+            <h4 class="date">2018-08-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bnaras/bcaboot/blob/master/vignettes/bcaboot.Rmd"><code>vignettes/bcaboot.Rmd</code></a></small>
       <div class="hidden name"><code>bcaboot.Rmd</code></div>
@@ -97,24 +97,24 @@
 <li>
 <code>bcapar</code> for parametric bootstrap</li>
 </ul>
-<p>Further details are in the <span class="citation">Efron and Narasimhan (2018)</span> paper. Much of the theory behind the approach can be found in references <span class="citation">Efron (1987)</span>, <span class="citation">T. DiCiccio and Efron (1992)</span>, <span class="citation">T. J. DiCiccio and Efron (1996)</span>, and <span class="citation">Efron and Hastie (2016)</span>.</p>
+<p>Further details are in the <span class="citation">Efron and Narasimhan (2018)</span> paper. Much of the theory behind the approach can be found in references <span class="citation">Efron (1987)</span>, <span class="citation">DiCiccio and Efron (1992)</span>, <span class="citation">DiCiccio and Efron (1996)</span>, and <span class="citation">Efron and Hastie (2016)</span>.</p>
 </div>
 <div id="a-nonparametric-example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-nonparametric-example" class="anchor"></a>A Nonparametric Example</h2>
 <p>Suppose we wish to construct bootstrap confidence intervals for an <span class="math inline">\(R^2\)</span>-statistic from a linear regression. Using the diabetes data from the <a href="https://cran.r-project.org/package=lars"><code>lars</code></a> (442 by 11) as an example, we use the function below to regress the <code>y</code> on <code>x</code>, a matrix of of 10 predictors, to compute <span class="math inline">\(R^2\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(diabetes, <span class="dt">package =</span> <span class="st">"bcaboot"</span>)
-Xy &lt;-<span class="st"> </span><span class="kw">cbind</span>(diabetes<span class="op">$</span>x, diabetes<span class="op">$</span>y)
-rfun &lt;-<span class="st"> </span><span class="cf">function</span>(Xy) {
-    y &lt;-<span class="st"> </span>Xy[, <span class="dv">11</span>]
-    X &lt;-<span class="st"> </span>Xy[, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]
-    <span class="kw">summary</span>(<span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>X) )<span class="op">$</span>adj.r.squared
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">data</span>(diabetes, <span class="dt">package =</span> <span class="st">"bcaboot"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">Xy &lt;-<span class="st"> </span><span class="kw">cbind</span>(diabetes<span class="op">$</span>x, diabetes<span class="op">$</span>y)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">rfun &lt;-<span class="st"> </span><span class="cf">function</span>(Xy) {</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">    y &lt;-<span class="st"> </span>Xy[, <span class="dv">11</span>]</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">    X &lt;-<span class="st"> </span>Xy[, <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">    <span class="kw">summary</span>(<span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>X) )<span class="op">$</span>adj.r.squared</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">}</a></code></pre></div>
 <p>Constructing bootstrap confidence intervals involves merely calling <code>bcajack</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1234</span>)
-result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcajack.html">bcajack</a></span>(<span class="dt">x =</span> Xy, <span class="dt">B =</span> <span class="dv">2000</span>, <span class="dt">func =</span> rfun, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">1234</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcajack.html">bcajack</a></span>(<span class="dt">x =</span> Xy, <span class="dt">B =</span> <span class="dv">2000</span>, <span class="dt">func =</span> rfun, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p>The <code>result</code> contains several components. The confidence interval limits can be obtained via</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -191,7 +191,7 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcaj
 </table>
 <p>The first column shows the estimated Bca confidence limits at the requested alpha percentiles which can be compared with the standard limits <span class="math inline">\(\theta \pm \hat{\sigma}z_{\alpha}\)</span> under the column titled <code>standard</code>. The <code>jacksd</code> column jacksd gives the internal standard errors for the Bca limits, quite small in this example. The <code>pct</code> column gives percentiles of the ordered <code>B</code> bootstrap replications corresponding to the Bca limits, e.g. the 91.85 percentile equals the the .975 Bca limit .5600968.</p>
 <p>Further details are provided by the <code>stats</code> component.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -223,14 +223,14 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcaj
 <p>The first column <code>theta</code> is the original point estimate of the parameter of interest, <code>sdboot</code> is its bootstrap estimate of standard error. The quantity <code>z0</code> is the Bca bias correction value, in this case quite negative; <code>a</code> is the acceleration, a component of the Bca limits (nearly zero here). Finally, <code>sdjack</code> is the jackknife estimate of standard error for <code>theta</code>.</p>
 <p>The bottom line gives the internal standard errors for the five quantities above. This is substantial for <code>z0</code> above.</p>
 <p>The resulting object can be plotted using <code>bcaplot</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/bcaplot.html">bcaplot</a></span>(result)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/bcaplot.html">bcaplot</a></span>(result)</a></code></pre></div>
 <p><img src="bcaboot_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 <div id="a-parametric-example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-parametric-example" class="anchor"></a>A Parametric Example</h2>
 <p>A logistic regression was fit to data on 812 neonates at a large clinic. Here is a summary of the dataset.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(neonates)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">str</span>(neonates)</a></code></pre></div>
 <pre><code>## 'data.frame':    812 obs. of  12 variables:
 ##  $ gest: num  -0.729 -0.729 1.156 -2.884 0.348 ...
 ##  $ ap  : num  0.856 0.856 0.856 -2.076 0.856 ...
@@ -244,34 +244,13 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcaj
 ##  $ temp: num  -0.669 -0.669 -0.669 -0.669 2.339 ...
 ##  $ size: num  0.484 -1.319 -1.319 0.484 0.484 ...
 ##  $ y   : int  1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>The goal was to predict death versus survival—<span class="math inline">\(y\)</span> is 1 or 0, respectively—on the basis of 11 baseline variables of which one of them <code>resp</code> was of particular concern. So here <span class="math inline">\(\theta\)</span>, the parameter of interest is the coefficient of <code>resp</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">neonates <span class="op">%&gt;%</span>
-<span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(y) <span class="op">%&gt;%</span>
-<span class="st">    </span>dplyr<span class="op">::</span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">count =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span>
-<span class="st">    </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="right">y</th>
-<th align="right">count</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right">605</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">207</td>
-</tr>
-</tbody>
-</table>
-<p>Discussions with the investigator suggested a weighting of 4 to 1 of deaths versus non-deaths.</p>
+<p>The goal was to predict death versus survival—<span class="math inline">\(y\)</span> is 1 or 0, respectively—on the basis of 11 baseline variables of which one of them <code>resp</code> was of particular concern. (There were 207 deaths and 605 survivors.) So here <span class="math inline">\(\theta\)</span>, the parameter of interest is the coefficient of <code>resp</code>. Discussions with the investigator suggested a weighting of 4 to 1 of deaths versus non-deaths.</p>
 <div id="a-logistic-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#a-logistic-model" class="anchor"></a>A Logistic Model</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">weights &lt;-<span class="st"> </span><span class="kw">with</span>(neonates, <span class="kw">ifelse</span>(y <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">4</span>))
-glm_model &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> <span class="st">"binomial"</span>, <span class="dt">weights =</span> weights, <span class="dt">data =</span> neonates)
-<span class="kw">summary</span>(glm_model)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">weights &lt;-<span class="st"> </span><span class="kw">with</span>(neonates, <span class="kw">ifelse</span>(y <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">glm_model &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>., <span class="dt">family =</span> <span class="st">"binomial"</span>, <span class="dt">weights =</span> weights, <span class="dt">data =</span> neonates)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">summary</span>(glm_model)</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## glm(formula = y ~ ., family = "binomial", data = neonates, weights = weights)
@@ -305,27 +284,27 @@ glm_model &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class=
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>Parametric bootstrapping in this context requires us to independently sample the response according to the estimated probabilities from regression model. As discussed in the paper accompanying this software, routine <code>bcapar</code> also requires sufficient statistics <span class="math inline">\(\hat{\beta} = M^\prime y\)</span> where <span class="math inline">\(M\)</span> is the model matrix. Therefore, it makes sense to have a function do the work. The function <code>glm_boot</code> below returns a list of the estimate <span class="math inline">\(\hat{\theta}\)</span>, the bootstrap estimates, and the sufficient statistics.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">glm_boot &lt;-<span class="st"> </span><span class="cf">function</span>(B, glm_model, weights, <span class="dt">var =</span> <span class="st">"resp"</span>) {
-    pi_hat &lt;-<span class="st"> </span>glm_model<span class="op">$</span>fitted.values
-    n &lt;-<span class="st"> </span><span class="kw">length</span>(pi_hat)
-    y_star &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">seq_len</span>(B), <span class="cf">function</span>(i) <span class="kw">ifelse</span>(<span class="kw">runif</span>(n) <span class="op">&lt;=</span><span class="st"> </span>pi_hat, <span class="dv">1</span>, <span class="dv">0</span>))
-    beta_star &lt;-<span class="st"> </span><span class="kw">apply</span>(y_star, <span class="dv">2</span>, <span class="cf">function</span>(y) {
-        boot_data &lt;-<span class="st"> </span>glm_model<span class="op">$</span>data
-        boot_data<span class="op">$</span>y &lt;-<span class="st"> </span>y
-        <span class="kw">coef</span>(<span class="kw">glm</span>(<span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> boot_data, <span class="dt">weights =</span> weights, <span class="dt">family =</span> <span class="st">"binomial"</span>))
-    })
-    <span class="kw">list</span>(<span class="dt">theta =</span> <span class="kw">coef</span>(glm_model)[var],
-         <span class="dt">theta_star =</span> beta_star[var, ],
-         <span class="dt">suff_stat =</span> <span class="kw">t</span>(y_star) <span class="op">%*%</span><span class="st"> </span><span class="kw">model.matrix</span>(glm_model))
-}</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">glm_boot &lt;-<span class="st"> </span><span class="cf">function</span>(B, glm_model, weights, <span class="dt">var =</span> <span class="st">"resp"</span>) {</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">    pi_hat &lt;-<span class="st"> </span>glm_model<span class="op">$</span>fitted.values</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">    n &lt;-<span class="st"> </span><span class="kw">length</span>(pi_hat)</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">    y_star &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">seq_len</span>(B), <span class="cf">function</span>(i) <span class="kw">ifelse</span>(<span class="kw">runif</span>(n) <span class="op">&lt;=</span><span class="st"> </span>pi_hat, <span class="dv">1</span>, <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">    beta_star &lt;-<span class="st"> </span><span class="kw">apply</span>(y_star, <span class="dv">2</span>, <span class="cf">function</span>(y) {</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">        boot_data &lt;-<span class="st"> </span>glm_model<span class="op">$</span>data</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">        boot_data<span class="op">$</span>y &lt;-<span class="st"> </span>y</a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">        <span class="kw">coef</span>(<span class="kw">glm</span>(<span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> boot_data, <span class="dt">weights =</span> weights, <span class="dt">family =</span> <span class="st">"binomial"</span>))</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">    })</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">    <span class="kw">list</span>(<span class="dt">theta =</span> <span class="kw">coef</span>(glm_model)[var],</a>
+<a class="sourceLine" id="cb10-11" data-line-number="11">         <span class="dt">theta_star =</span> beta_star[var, ],</a>
+<a class="sourceLine" id="cb10-12" data-line-number="12">         <span class="dt">suff_stat =</span> <span class="kw">t</span>(y_star) <span class="op">%*%</span><span class="st"> </span><span class="kw">model.matrix</span>(glm_model))</a>
+<a class="sourceLine" id="cb10-13" data-line-number="13">}</a></code></pre></div>
 <p>Now we can compute the bootstrap estimates using <code>bcapar</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">3891</span>)
-glm_boot_out &lt;-<span class="st"> </span><span class="kw">glm_boot</span>(<span class="dt">B =</span> <span class="dv">2000</span>, <span class="dt">glm_model =</span> glm_model, <span class="dt">weights =</span> weights)
-glm_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcapar.html">bcapar</a></span>(<span class="dt">t0 =</span> glm_boot_out<span class="op">$</span>theta,
-                  <span class="dt">tt =</span> glm_boot_out<span class="op">$</span>theta_star,
-                  <span class="dt">bb =</span> glm_boot_out<span class="op">$</span>suff_stat)</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">3891</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">glm_boot_out &lt;-<span class="st"> </span><span class="kw">glm_boot</span>(<span class="dt">B =</span> <span class="dv">2000</span>, <span class="dt">glm_model =</span> glm_model, <span class="dt">weights =</span> weights)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">glm_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcapar.html">bcapar</a></span>(<span class="dt">t0 =</span> glm_boot_out<span class="op">$</span>theta,</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">                  <span class="dt">tt =</span> glm_boot_out<span class="op">$</span>theta_star,</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">                  <span class="dt">bb =</span> glm_boot_out<span class="op">$</span>suff_stat)</a></code></pre></div>
 <p>We can examine the bootstrap limits and statistics.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -400,7 +379,7 @@ glm_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bca
 </tr>
 </tbody>
 </table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glm_bca<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -444,12 +423,11 @@ glm_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bca
 <h3 class="hasAnchor">
 <a href="#a-penalized-logistic-model" class="anchor"></a>A Penalized Logistic Model</h3>
 <p>Now suppose we wish to use a nonstandard estimation procedure, for example, via the <code>glmnet</code> package, which uses cross-validation to figure out a best fit, corresponding to a penalization parameter <span class="math inline">\(\lambda\)</span> (named <code>lambda.min</code>).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(neonates[, <span class="kw">seq_len</span>(<span class="dv">11</span>)]) ; Y &lt;-<span class="st"> </span>neonates<span class="op">$</span>y;
-glmnet_model &lt;-<span class="st"> </span>glmnet<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/glmnet/topics/cv.glmnet">cv.glmnet</a></span>(<span class="dt">x =</span> X, <span class="dt">y =</span> Y, <span class="dt">family =</span> <span class="st">"binomial"</span>, <span class="dt">weights =</span> weights)</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">X &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(neonates[, <span class="kw">seq_len</span>(<span class="dv">11</span>)]) ; Y &lt;-<span class="st"> </span>neonates<span class="op">$</span>y;</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">glmnet_model &lt;-<span class="st"> </span>glmnet<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/glmnet/topics/cv.glmnet">cv.glmnet</a></span>(<span class="dt">x =</span> X, <span class="dt">y =</span> Y, <span class="dt">family =</span> <span class="st">"binomial"</span>, <span class="dt">weights =</span> weights)</a></code></pre></div>
 <p>We can examine the estimates at the <code>lambda.min</code> as follows.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet_model, <span class="dt">s =</span> glmnet_model<span class="op">$</span>lambda.min)) <span class="op">%&gt;%</span>
-<span class="st">    </span>(<span class="cf">function</span>(x) <span class="kw">data.frame</span>(<span class="dt">variable =</span> <span class="kw">rownames</span>(x), <span class="dt">coefficient =</span> x[, <span class="dv">1</span>])) <span class="op">%&gt;%</span>
-knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">coefs &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet_model, <span class="dt">s =</span> glmnet_model<span class="op">$</span>lambda.min))</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="kw">data.frame</span>(<span class="dt">variable =</span> <span class="kw">rownames</span>(coefs), <span class="dt">coefficient =</span> coefs[, <span class="dv">1</span>]), <span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">variable</th>
@@ -507,30 +485,30 @@ knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentati
 </tbody>
 </table>
 <p>Following the lines above, we create a helper function to perform the bootstrap.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">glmnet_boot &lt;-<span class="st"> </span><span class="cf">function</span>(B, X, y, glmnet_model, weights, <span class="dt">var =</span> <span class="st">"resp"</span>) {
-    lambda &lt;-<span class="st"> </span>glmnet_model<span class="op">$</span>lambda.min
-    theta &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet_model, <span class="dt">s =</span> lambda))
-    pi_hat &lt;-<span class="st"> </span><span class="kw">predict</span>(glmnet_model, <span class="dt">newx =</span> X, <span class="dt">s =</span> <span class="st">"lambda.min"</span>, <span class="dt">type =</span> <span class="st">"response"</span>)
-    n &lt;-<span class="st"> </span><span class="kw">length</span>(pi_hat)
-    y_star &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">seq_len</span>(B), <span class="cf">function</span>(i) <span class="kw">ifelse</span>(<span class="kw">runif</span>(n) <span class="op">&lt;=</span><span class="st"> </span>pi_hat, <span class="dv">1</span>, <span class="dv">0</span>))
-    beta_star &lt;-<span class="st"> </span><span class="kw">apply</span>(y_star, <span class="dv">2</span>,
-                       <span class="cf">function</span>(y) {
-                           <span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/glmnet/topics/glmnet">glmnet</a></span>(<span class="dt">x =</span> X, <span class="dt">y =</span> y, <span class="dt">lambda =</span> lambda, <span class="dt">weights =</span> weights, <span class="dt">family =</span> <span class="st">"binomial"</span>)))
-                       })
-
-    <span class="kw">rownames</span>(beta_star) &lt;-<span class="st"> </span><span class="kw">rownames</span>(theta)
-    <span class="kw">list</span>(<span class="dt">theta =</span> theta[var, ],
-         <span class="dt">theta_star =</span> beta_star[var, ],
-         <span class="dt">suff_stat =</span> <span class="kw">t</span>(y_star) <span class="op">%*%</span><span class="st"> </span>X)
-}</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">glmnet_boot &lt;-<span class="st"> </span><span class="cf">function</span>(B, X, y, glmnet_model, weights, <span class="dt">var =</span> <span class="st">"resp"</span>) {</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">    lambda &lt;-<span class="st"> </span>glmnet_model<span class="op">$</span>lambda.min</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">    theta &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet_model, <span class="dt">s =</span> lambda))</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">    pi_hat &lt;-<span class="st"> </span><span class="kw">predict</span>(glmnet_model, <span class="dt">newx =</span> X, <span class="dt">s =</span> <span class="st">"lambda.min"</span>, <span class="dt">type =</span> <span class="st">"response"</span>)</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">    n &lt;-<span class="st"> </span><span class="kw">length</span>(pi_hat)</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">    y_star &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">seq_len</span>(B), <span class="cf">function</span>(i) <span class="kw">ifelse</span>(<span class="kw">runif</span>(n) <span class="op">&lt;=</span><span class="st"> </span>pi_hat, <span class="dv">1</span>, <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">    beta_star &lt;-<span class="st"> </span><span class="kw">apply</span>(y_star, <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">                       <span class="cf">function</span>(y) {</a>
+<a class="sourceLine" id="cb16-9" data-line-number="9">                           <span class="kw">as.matrix</span>(<span class="kw">coef</span>(glmnet<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/glmnet/topics/glmnet">glmnet</a></span>(<span class="dt">x =</span> X, <span class="dt">y =</span> y, <span class="dt">lambda =</span> lambda, <span class="dt">weights =</span> weights, <span class="dt">family =</span> <span class="st">"binomial"</span>)))</a>
+<a class="sourceLine" id="cb16-10" data-line-number="10">                       })</a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12">    <span class="kw">rownames</span>(beta_star) &lt;-<span class="st"> </span><span class="kw">rownames</span>(theta)</a>
+<a class="sourceLine" id="cb16-13" data-line-number="13">    <span class="kw">list</span>(<span class="dt">theta =</span> theta[var, ],</a>
+<a class="sourceLine" id="cb16-14" data-line-number="14">         <span class="dt">theta_star =</span> beta_star[var, ],</a>
+<a class="sourceLine" id="cb16-15" data-line-number="15">         <span class="dt">suff_stat =</span> <span class="kw">t</span>(y_star) <span class="op">%*%</span><span class="st"> </span>X)</a>
+<a class="sourceLine" id="cb16-16" data-line-number="16">}</a></code></pre></div>
 <p>And off we go.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">glmnet_boot_out &lt;-<span class="st"> </span><span class="kw">glmnet_boot</span>(<span class="dt">B =</span> <span class="dv">2000</span>, X, y, glmnet_model, weights)
-glmnet_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcapar.html">bcapar</a></span>(<span class="dt">t0 =</span> glmnet_boot_out<span class="op">$</span>theta,
-                     <span class="dt">tt =</span> glmnet_boot_out<span class="op">$</span>theta_star,
-                     <span class="dt">bb =</span> glmnet_boot_out<span class="op">$</span>suff_stat)</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">glmnet_boot_out &lt;-<span class="st"> </span><span class="kw">glmnet_boot</span>(<span class="dt">B =</span> <span class="dv">2000</span>, X, y, glmnet_model, weights)</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">glmnet_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcapar.html">bcapar</a></span>(<span class="dt">t0 =</span> glmnet_boot_out<span class="op">$</span>theta,</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">                     <span class="dt">tt =</span> glmnet_boot_out<span class="op">$</span>theta_star,</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">                     <span class="dt">bb =</span> glmnet_boot_out<span class="op">$</span>suff_stat)</a></code></pre></div>
 <p>We can compare the output of this against what we got from <code>glm</code> above.</p>
 <p>We can examine the bootstrap limits and statistics.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>lims, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -605,7 +583,7 @@ glmnet_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/
 </tr>
 </tbody>
 </table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(glmnet_bca<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -645,7 +623,7 @@ glmnet_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/
 </table>
 <p>The shrinkage is evident; we now have the bootstrap estimate is now <span class="math inline">\(0.862\pm 0.127\)</span>. In fact, we now have only 0.3405 proportion of bootstrap replicates above <span class="math inline">\(0.862\)</span>. Therefore, the bias corrector is large: <span class="math inline">\(\hat{z}_0 = 0.411.\)</span></p>
 <p>Finally, we can plot both the <code>glm</code> and <code>glmnet</code> results side-by-side.</p>
-<p><img src="bcaboot_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
+<p><img src="bcaboot_files/figure-html/unnamed-chunk-20-1.png" width="700"></p>
 </div>
 </div>
 <div id="ratio-of-independent-variance-estimates" class="section level2">
@@ -668,29 +646,28 @@ glmnet_bca &lt;-<span class="st"> </span><span class="kw"><a href="../reference/
 \hat{\theta}(\alpha) = \frac{\hat{\theta}}{F_{n_1,n_2}^{1-\alpha}}.
 \]</span></p>
 <p>We can apply <code>bcapar</code> to this problem. As before, here are our helper functions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ratio_boot &lt;-<span class="st"> </span><span class="cf">function</span>(B, v1, v2) {
-    s1 &lt;-<span class="st"> </span><span class="kw">sqrt</span>(v1) <span class="op">*</span><span class="st"> </span><span class="kw">rchisq</span>(<span class="dt">n =</span> B, <span class="dt">df =</span> n1)  <span class="op">/</span><span class="st"> </span>n1
-    s2 &lt;-<span class="st"> </span><span class="kw">sqrt</span>(v2) <span class="op">*</span><span class="st"> </span><span class="kw">rchisq</span>(<span class="dt">n =</span> B, <span class="dt">df =</span> n2)  <span class="op">/</span><span class="st"> </span>n2
-    theta_star &lt;-<span class="st"> </span>s1 <span class="op">/</span><span class="st"> </span>s2
-    beta_star &lt;-<span class="st"> </span><span class="kw">cbind</span>(s1, s2)
-    <span class="kw">list</span>(<span class="dt">theta =</span> v1 <span class="op">/</span><span class="st"> </span>v2,
-         <span class="dt">theta_star =</span> theta_star,
-         <span class="dt">suff_stat =</span> beta_star)
-}
-
-funcF &lt;-<span class="st"> </span><span class="cf">function</span>(beta) {
-    beta[<span class="dv">1</span>] <span class="op">/</span><span class="st"> </span>beta[<span class="dv">2</span>]
-}</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">ratio_boot &lt;-<span class="st"> </span><span class="cf">function</span>(B, v1, v2) {</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">    s1 &lt;-<span class="st"> </span><span class="kw">sqrt</span>(v1) <span class="op">*</span><span class="st"> </span><span class="kw">rchisq</span>(<span class="dt">n =</span> B, <span class="dt">df =</span> n1)  <span class="op">/</span><span class="st"> </span>n1</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">    s2 &lt;-<span class="st"> </span><span class="kw">sqrt</span>(v2) <span class="op">*</span><span class="st"> </span><span class="kw">rchisq</span>(<span class="dt">n =</span> B, <span class="dt">df =</span> n2)  <span class="op">/</span><span class="st"> </span>n2</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">    theta_star &lt;-<span class="st"> </span>s1 <span class="op">/</span><span class="st"> </span>s2</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">    beta_star &lt;-<span class="st"> </span><span class="kw">cbind</span>(s1, s2)</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6">    <span class="kw">list</span>(<span class="dt">theta =</span> v1 <span class="op">/</span><span class="st"> </span>v2,</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">         <span class="dt">theta_star =</span> theta_star,</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8">         <span class="dt">suff_stat =</span> beta_star)</a>
+<a class="sourceLine" id="cb20-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11">funcF &lt;-<span class="st"> </span><span class="cf">function</span>(beta) {</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12">    beta[<span class="dv">1</span>] <span class="op">/</span><span class="st"> </span>beta[<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb20-13" data-line-number="13">}</a></code></pre></div>
 <p>Note that we have an additional function <code>funcF</code> which corresponds to <span class="math inline">\(\tau(\hat{\beta}^*)\)</span> in the paper. This is the function expressing the parameter of interest as as a function of the sample.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">B &lt;-<span class="st"> </span><span class="dv">16000</span>; n1 &lt;-<span class="st"> </span><span class="dv">10</span>; n2 &lt;-<span class="st"> </span><span class="dv">42</span>
-ratio_boot_out &lt;-<span class="st"> </span><span class="kw">ratio_boot</span>(B, <span class="dv">1</span>, <span class="dv">1</span>)
-result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcapar.html">bcapar</a></span>(<span class="dt">t0 =</span> ratio_boot_out<span class="op">$</span>theta,
-                 <span class="dt">tt =</span> ratio_boot_out<span class="op">$</span>theta_star,
-                 <span class="dt">bb =</span> ratio_boot_out<span class="op">$</span>suff_stat, <span class="dt">func =</span> funcF)</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">B &lt;-<span class="st"> </span><span class="dv">16000</span>; n1 &lt;-<span class="st"> </span><span class="dv">10</span>; n2 &lt;-<span class="st"> </span><span class="dv">42</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">ratio_boot_out &lt;-<span class="st"> </span><span class="kw">ratio_boot</span>(B, <span class="dv">1</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcapar.html">bcapar</a></span>(<span class="dt">t0 =</span> ratio_boot_out<span class="op">$</span>theta,</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">                 <span class="dt">tt =</span> ratio_boot_out<span class="op">$</span>theta_star,</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">                 <span class="dt">bb =</span> ratio_boot_out<span class="op">$</span>suff_stat, <span class="dt">func =</span> funcF)</a></code></pre></div>
 <p>The limits obtained are shown below, along with the exact limits as the last column.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">result<span class="op">$</span>lims <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">cbind</span>(<span class="dt">exact =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span><span class="kw">qf</span>(<span class="dt">df1 =</span> n1, <span class="dt">df2 =</span> n2, <span class="dt">p =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(result<span class="op">$</span>lims)))) <span class="op">%&gt;%</span>
-<span class="st">    </span>knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">exact &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span><span class="kw">qf</span>(<span class="dt">df1 =</span> n1, <span class="dt">df2 =</span> n2, <span class="dt">p =</span> <span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(result<span class="op">$</span>lims)))</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(<span class="kw">cbind</span>(result<span class="op">$</span>lims, <span class="dt">exact =</span> exact), <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -785,8 +762,8 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcap
 </tr>
 </tbody>
 </table>
-<p>Clearly the bca limits match the exact values very well and suggests a large upward correction to the standard limits. Here the corrections are all positive as seen in the table below; <span class="math inline">\(\hat{z}_0 = 0.093\)</span> and <span class="math inline">\(\hat{a} = 0.095\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<p>Clearly the bca limits match the exact values very well and suggests a large upward correction to the standard limits. Here the corrections are all positive as seen in the table below; <span class="math inline">\(\hat{z}_0 = 0.093\)</span> and <span class="math inline">\(\hat{a} = 0.092\)</span>.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>stats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -824,7 +801,7 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcap
 </tr>
 </tbody>
 </table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>abcstats, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>abcstats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -841,7 +818,7 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcap
 </tr>
 </tbody>
 </table>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>ustats, <span class="dt">digits =</span> <span class="dv">3</span>)</code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">knitr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/knitr/topics/kable">kable</a></span>(result<span class="op">$</span>ustats, <span class="dt">digits =</span> <span class="dv">3</span>)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -865,18 +842,18 @@ result &lt;-<span class="st"> </span><span class="kw"><a href="../reference/bcap
 </tbody>
 </table>
 <p>The plot below shows that there is moderate amount of internal error in <span class="math inline">\(\hat{\theta}_{bca}(0.975)\)</span> as shown by the red bar. The <code>pct</code> column suggests why: <span class="math inline">\(\hat{\theta}_{bca}(0.975)\)</span> occurs at the <span class="math inline">\(0.996\)</span>-quantile of the 16,000 replications, i.e., at the 64th largest <span class="math inline">\(\hat{\theta}\)</span>, where there is a limited amount of data for estimating the distribution.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/bcaplot.html">bcaplot</a></span>(result)</code></pre></div>
-<p><img src="bcaboot_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="../reference/bcaplot.html">bcaplot</a></span>(result)</a></code></pre></div>
+<p><img src="bcaboot_files/figure-html/unnamed-chunk-27-1.png" width="700"></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs" class="references">
-<div id="ref-diciccio1996">
-<p>DiCiccio, Thomas J., and Bradley Efron. 1996. “Bootstrap Confidence Intervals.” <em>Statist. Sci.</em> 11 (3). The Institute of Mathematical Statistics: 189–228. doi:<a href="https://doi.org/10.1214/ss/1032280214">10.1214/ss/1032280214</a>.</p>
-</div>
 <div id="ref-diciccio1992">
 <p>DiCiccio, Thomas, and Bradley Efron. 1992. “More Accurate Confidence Intervals in Exponential Families.” <em>Biometrika</em> 79 (2). [Oxford University Press, Biometrika Trust]: 231–45. <a href="http://www.jstor.org/stable/2336835" class="uri">http://www.jstor.org/stable/2336835</a>.</p>
+</div>
+<div id="ref-diciccio1996">
+<p>DiCiccio, Thomas J., and Bradley Efron. 1996. “Bootstrap Confidence Intervals.” <em>Statist. Sci.</em> 11 (3). The Institute of Mathematical Statistics: 189–228. <a href="https://doi.org/10.1214/ss/1032280214" class="uri">https://doi.org/10.1214/ss/1032280214</a>.</p>
 </div>
 <div id="ref-efron1987">
 <p>Efron, Bradley. 1987. “Better Bootstrap Confidence Intervals.” <em>Journal of the American Statistical Association</em> 82 (397). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 171–85. <a href="http://www.jstor.org/stable/2289144" class="uri">http://www.jstor.org/stable/2289144</a>.</p>

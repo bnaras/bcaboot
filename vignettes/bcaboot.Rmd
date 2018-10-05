@@ -361,7 +361,7 @@ knitr::kable(ratio_bca$stats, digits = 3)
 ```
 
 ```{r}
-knitr::kable(ratio_bca$abcstats, digits = 3)
+knitr::kable(t(ratio_bca$abcstats), digits = 3)
 ```
 
 ```{r}

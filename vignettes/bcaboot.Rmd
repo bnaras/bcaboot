@@ -108,6 +108,13 @@ of standard error for `theta`.
 The bottom line gives the internal standard errors for the five
 quantities above. This is substantial for `z0` above.
 
+The component `ustats` of the result provides the bias-corrected
+estimator and an estimate of its sampling error.
+
+```{r}
+knitr::kable(t(result$ustats), digits = 3)
+```
+
 The resulting object can be plotted using `bcaplot`.
 
 ```{r}
@@ -197,6 +204,7 @@ were above $0.943$. This is also reflected in the bias-corrector term
 $\hat{z}_0= -0.215$ in the table above with an internal standard error of
 $0.024.
 
+
 ### A Penalized Logistic Model
 
 Now suppose we wish to use a nonstandard estimation procedure, for
@@ -269,7 +277,7 @@ above $0.862$. Therefore, the bias corrector is large: $\hat{z}_0 =
 Finally, we can plot both the `glm` and `glmnet` results
 side-by-side. 
 
-```{r, echo = FALSE}
+```{r fig.width = 8, echo = FALSE}
 opar <- par(mfrow = c(1, 2))
 bcaplot(glm_bca)
 bcaplot(glmnet_bca)
@@ -329,7 +337,7 @@ the parameter of interest as as a function of the sample.
 ```{r}
 B <- 16000; n1 <- 10; n2 <- 42
 ratio_boot_out <- ratio_boot(B, 1, 1)
-result <- bcapar(t0 = ratio_boot_out$theta,
+ratio_bca <- bcapar(t0 = ratio_boot_out$theta,
                  tt = ratio_boot_out$theta_star,
                  bb = ratio_boot_out$suff_stat, func = funcF)
 ```
@@ -338,8 +346,8 @@ The limits obtained are shown below, along with the exact limits as
 the last column.
 
 ```{r}
-exact <- 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(result$lims)))
-knitr::kable(cbind(result$lims, exact = exact), digits = 3)
+exact <- 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(ratio_bca$lims)))
+knitr::kable(cbind(ratio_bca$lims, exact = exact), digits = 3)
 ```
 
 Clearly the bca limits match the exact values very well and suggests a
@@ -349,15 +357,15 @@ $\hat{a} = 0.092$.
 
 
 ```{r}
-knitr::kable(result$stats, digits = 3)
+knitr::kable(ratio_bca$stats, digits = 3)
 ```
 
 ```{r}
-knitr::kable(result$abcstats, digits = 3)
+knitr::kable(ratio_bca$abcstats, digits = 3)
 ```
 
 ```{r}
-knitr::kable(result$ustats, digits = 3)
+knitr::kable(ratio_bca$ustats, digits = 3)
 ```
 
 The plot below shows that there is moderate amount of internal error
@@ -368,7 +376,7 @@ $\hat{\theta}$, where there is a limited amount of data for estimating
 the distribution.
 
 ```{r}
-bcaplot(result)
+bcaplot(ratio_bca)
 ```
 
 ## References

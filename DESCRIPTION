@@ -1,6 +1,6 @@
 Package: bcaboot
 Title: Bias Corrected Bootstrap Confidence Intervals 
-Version: 0.2-2
+Version: 0.2-3
 VignetteBuilder: knitr
 Authors@R: c(person("Bradley", "Efron", role=c("aut"),
 	   	    email = "brad@stat.stanford.edu"),

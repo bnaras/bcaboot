@@ -4,8 +4,18 @@
 \alias{bcapar}
 \title{Compute parametric bootstrap confidence intervals}
 \usage{
-bcapar(t0, tt, bb, alpha = c(0.025, 0.05, 0.1, 0.16), J = 10, K = 6,
-  trun = 0.001, pct = 0.333, cd = 0, func)
+bcapar(
+  t0,
+  tt,
+  bb,
+  alpha = c(0.025, 0.05, 0.1, 0.16),
+  J = 10,
+  K = 6,
+  trun = 0.001,
+  pct = 0.333,
+  cd = 0,
+  func
+)
 }
 \arguments{
 \item{t0}{Observed estimate of theta, usually by maximum

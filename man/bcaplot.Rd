@@ -4,9 +4,19 @@
 \alias{bcaplot}
 \title{Plots of bca confidence limits}
 \usage{
-bcaplot(vl, main = " ", xlab = "coverage", ylab = "limits",
-  alpha = c(0.025, 0.05, 0.1, 0.16), ylim, xlim, add = 0,
-  sub = "black=bca, green=standard", sw = 1, ...)
+bcaplot(
+  vl,
+  main = " ",
+  xlab = "coverage",
+  ylab = "limits",
+  alpha = c(0.025, 0.05, 0.1, 0.16),
+  ylim,
+  xlim,
+  add = 0,
+  sub = "black=bca, green=standard",
+  sw = 1,
+  ...
+)
 }
 \arguments{
 \item{vl}{output of \code{bcajack}, \code{bcajack2}, or

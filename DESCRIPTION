@@ -6,14 +6,14 @@ Authors@R: c(person("Bradley", "Efron", role=c("aut"),
 	   	    email = "brad@stat.stanford.edu"),
   	     person("Balasubramanian", "Narasimhan", role=c("aut", "cre"),
 	   	    email = "naras@stat.stanford.edu"))
-Description: Computation of bootstrap confidence intervals in an almost automatic fashion.
+Description: Computation of bootstrap confidence intervals in an almost automatic fashion as described in Efron and Narasimhan (2020, <doi:10.1080/10618600.2020.1714633>).
 Depends: R (>= 3.5.0)
-URL: https://bnaras.github.io/bcaboot, https://github.com/bnaras/bcaboot
-BugReports: http://github.com/bnaras/bcaboot/issues
+URL: https://bnaras.github.io/bcaboot/, https://github.com/bnaras/bcaboot
+BugReports: https://github.com/bnaras/bcaboot/issues
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
     glmnet,

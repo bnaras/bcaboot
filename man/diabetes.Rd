@@ -4,12 +4,14 @@
 \name{diabetes}
 \alias{diabetes}
 \title{Blood and other measurements in diabetics}
-\format{This data frame contains the following columns:
+\format{
+This data frame contains the following columns:
 \itemize{
 \item \strong{x} a matrix with 10 columns
 \item \strong{y} a numeric vector
 \item \strong{x2} a matrix with 64 columns
-}}
+}
+}
 \source{
 \url{https://web.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}
 }

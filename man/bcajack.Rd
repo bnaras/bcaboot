@@ -5,8 +5,18 @@
 \title{Nonparametric bias-corrected and accelerated bootstrap
 confidence limits}
 \usage{
-bcajack(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
-  alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE)
+bcajack(
+  x,
+  B,
+  func,
+  ...,
+  m = nrow(x),
+  mr = 5,
+  K = 2,
+  J = 10,
+  alpha = c(0.025, 0.05, 0.1, 0.16),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{an \eqn{n \times p} data matrix, rows are observed
@@ -104,7 +114,7 @@ samples \eqn{y^* \sim N(X\hat{\beta}, \hat{\sigma}^2 I)} where
 \eqn{\hat{\beta}} and \eqn{\hat{\sigma}} were obtained from
 \code{lm(y~X)}; each \eqn{y^*} would then provide a bootstrap
 replication \code{tstar = rfun(cbind(X, ystar))}.  Then we could get bca
-intervals from \code{bcajack(Xy, tt, rfun ....)} with \code{tt},
+intervals from \verb{bcajack(Xy, tt, rfun ....)} with \code{tt},
 the vector of B \code{tstar} values. The only difference from a full
 parametric bca analysis would lie in the nonparametric estimation
 of \eqn{a}, often a negligible error.

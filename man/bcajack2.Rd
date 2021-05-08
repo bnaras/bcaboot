@@ -5,8 +5,19 @@
 \title{Nonparametric bias-corrected and accelerated bootstrap
 confidence limits}
 \usage{
-bcajack2(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
-  J = 12, alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE)
+bcajack2(
+  x,
+  B,
+  func,
+  ...,
+  m = nrow(x),
+  mr,
+  pct = 0.333,
+  K = 2,
+  J = 12,
+  alpha = c(0.025, 0.05, 0.1, 0.16),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{an \eqn{n \times p} data matrix, rows are observed
@@ -99,7 +110,7 @@ length \code{B} having i-th entry \code{tt[i] <- func(x[Ii,], ...)}, where \code
 is the \eqn{n \times p} data matrix and \code{Ii} is a bootstrap vector
 of (observation) indices. \code{Y} is a \code{B} by \eqn{n} count matrix,
 whose i-th row is the counts corresponding to \code{Ii}. For example if
-n = 5 and \code{Ii = (2, 5, 2, 1, 4)}, then \code{Yi = (1, 2, 0, 1, 1)}. Having computed \code{Blist}, \code{bcajack2} is invoked as
+n = 5 and \verb{Ii = (2, 5, 2, 1, 4)}, then \verb{Yi = (1, 2, 0, 1, 1)}. Having computed \code{Blist}, \code{bcajack2} is invoked as
 \code{bcajack2(Blist)} without need to enter the function \eqn{func}.
 }
 \examples{

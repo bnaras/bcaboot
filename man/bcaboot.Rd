@@ -3,7 +3,6 @@
 \docType{package}
 \name{bcaboot}
 \alias{bcaboot}
-\alias{bcaboot-package}
 \title{Automatic Construction of Bootstrap Confidence Intervals}
 \description{
 Bootstrap confidence intervals depend on three elements: (a) the

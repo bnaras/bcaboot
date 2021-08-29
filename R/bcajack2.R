@@ -104,8 +104,8 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
         Qd <- stats::quantile(D, pct)
         ip <- seq_len(B)[D <= Qd]
         ty. <- as.vector(m * stats::lm(tt[ip] ~ Y[ip, ] - 1)$coef)
-        ty. <- ty. - mean(ty., na.rm = TRUE)
-        a <- (1/6) * sum(ty.^3, na.rm = TRUE)/sum(ty.^2, na.rm = TRUE)^1.5
+        ty. <- ty. - mean(ty.)
+        a <- (1/6) * sum(ty.^3)/sum(ty.^2)^1.5
         s <- mean(tt)
         B.mean <- c(B, s)
         names(B.mean) <- c("B", "s")

@@ -90,7 +90,6 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
     qbca2 <- function(Y, tt, t0, alpha, pct) {
         m <- ncol(Y)
         B <- nrow(Y)
-        o1 <- rep(1, m)
         D <- rep(0, B)
 
         for (i in seq_len(B)) {

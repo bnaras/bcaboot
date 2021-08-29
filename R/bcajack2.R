@@ -105,6 +105,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         a <- (1/6) * sum(ty.^3, na.rm = TRUE)/sum(ty.^2, na.rm = TRUE)^1.5
         s <- mean(tt)
         B.mean <- c(B, s)
+        names(B.mean) <- c("B", "s")
 
         zalpha <- stats::qnorm(alpha)
         nal <- length(alpha)

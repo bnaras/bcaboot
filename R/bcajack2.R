@@ -76,8 +76,8 @@
 #' bcajack2(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)
 #'
 #' @export
-bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 12,
-                     alpha = c(0.025, 0.05, 0.1, 0.16),
+bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
+                     J = 12, alpha = c(0.025, 0.05, 0.1, 0.16),
                      verbose = TRUE) {
 
     call <- match.call()
@@ -86,6 +86,9 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
         stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+
+    stopifnot("tt & t0 must contain no missing values" =
+                  (!is.na(tt) & !is.na(t0)))
 
     qbca2 <- function(Y, tt, t0, alpha, pct) {
         m <- ncol(Y)

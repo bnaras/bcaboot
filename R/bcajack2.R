@@ -87,10 +87,10 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
         stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 
-    stopifnot("tt & t0 must contain no missing values" =
-                  (!is.na(tt) & !is.na(t0)))
-
     qbca2 <- function(Y, tt, t0, alpha, pct) {
+        stopifnot("tt & t0 must contain no missing values" =
+                      (!is.na(tt) & !is.na(t0)))
+
         m <- ncol(Y)
         B <- nrow(Y)
         D <- rep(0, B)
@@ -140,6 +140,9 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
     alpha <- c(alpha, 0.5, rev(1 - alpha))
 
     if (is.list(B)) {
+        stopifnot("To use the Blist format described in bcajack2() help,
+                  please name `B` as Y, tt & t0" =
+                      (names(B) == c("Y", "tt", "t0")))
         Y <- B$Y
         tt <- B$tt
         t0 <- B$t0

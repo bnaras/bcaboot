@@ -103,15 +103,12 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         ty. <- as.vector(m * stats::lm(tt[ip] ~ Y[ip, ] - 1)$coef)
         ty. <- ty. - mean(ty., na.rm = TRUE)
         a <- (1/6) * sum(ty.^3, na.rm = TRUE)/sum(ty.^2, na.rm = TRUE)^1.5
-        ## if (sw == 3)
-        ##     return(ty.)
         s <- mean(tt)
         B.mean <- c(B, s)
 
         zalpha <- stats::qnorm(alpha)
         nal <- length(alpha)
         ustat <- 2 * t0 - s
-        ##s. <- m * .v(stats::cov(tt, Y))
         s. <- m * as.vector(stats::cov(tt, Y))
         u. <- 2 * ty. - s.
         sdu <- sum(u.^2)^0.5/m
@@ -127,7 +124,6 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         ooo <- pmin(pmax(ooo, 1), B)
         lims <- sort(tt)[ooo]
         standard <- t0 + sdboot * stats::qnorm(alpha)
-        ##lims <- round(cbind(lims, standard), rou)
         lims <- cbind(lims, standard)
         dimnames(lims) <- list(alpha, c("bca", "std"))
         stats <- c(t0, sdboot, z0, a, sdjack)
@@ -144,7 +140,6 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
         tt <- B$tt
         t0 <- B$t0
         B <- length(tt)
-        ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
         vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
     } else {
         if (is.vector(x))
@@ -165,7 +160,6 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
                 if (verbose) utils::setTxtProgressBar(pb, k)
             }
             if (verbose) close(pb)
-            ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
             vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
         }
 
@@ -186,7 +180,6 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
                 if (verbose) utils::setTxtProgressBar(pb, k)
             }
             if (verbose) close(pb)
-            ##vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct, rou = rou)
             vl0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
         }
     }
@@ -198,7 +191,6 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
 
     nal <- length(alpha)
     Pct <- rep(0, nal)
-    ##for (i in 1:nal) Pct[i] <- round(sum(tt <= vl0$lims[i, 1])/B, rou)
     for (i in 1:nal) Pct[i] <- sum(tt <= vl0$lims[i, 1])/B
     Stand <- vl0$stats[1] + vl0$stats[2] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
@@ -217,38 +209,25 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
             iij <- c(II[, -j])
             Yj <- Y[iij, ]
             ttj <- tt[iij]
-            ##vlj <- qbca2(Yj, ttj, t0, alpha, pct, rou)
             vlj <- qbca2(Yj, ttj, t0, alpha, pct)
             limbc[, j] <- vlj$lims[, 1]
             limst[, j] <- vlj$lims[, 2]
             stats[, j] <- vlj$stats
         }
 
-        ## if (sw == 4)
-        ##     return(list(limbc = limbc, limst = limst, stats = stats))
         Limbcsd[, k] <- apply(limbc, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
-        ## if (verbose)
-        ##     cat("{", k, "}", sep = "")
-        ## if (sw == 6)
-        ##     return(list(Limbcsd = Limbcsd, Statsd = Statsd))
     }
     limsd <- rowMeans(Limbcsd, 1)
     statsd <- rowMeans(Statsd, 1)
-    ##limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct), rou)
     limits <- cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct)
     dimnames(limits) <- list(alpha, c("bca", "jacksd", "std", "pct"))
-    ##stats <- round(rbind(vl0$stats, statsd), rou)
     stats <- rbind(vl0$stats, statsd)
-    ##ustats <- round(vl0$ustats, rou)
     ustats <- vl0$ustats
-    ##B.mean <- c(B, round(mean(tt), rou))
     B.mean <- c(B, mean(tt))
     dimnames(stats) <- list(c("est", "jsd"), c("theta", "sdboot", "z0", "a", "sdjack"))
     vll <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, ustats = ustats,
                 seed = seed)
-    ## if (sw == 5)
-    ##     vll$tt <- tt
     bcaboot.return(vll)
 }
 

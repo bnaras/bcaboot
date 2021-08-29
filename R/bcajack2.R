@@ -104,7 +104,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2,
         Qd <- stats::quantile(D, pct)
         ip <- seq_len(B)[D <= Qd]
         stopifnot("length(ip) < ncol(Y) makes lm() produce NA-containing ty." =
-                  (length(ip)<ncol(Y)))
+                  (length(ip) >= ncol(Y)))
         ty. <- as.vector(m * stats::lm(tt[ip] ~ Y[ip, ] - 1)$coef)
         ty. <- ty. - mean(ty.)
         a <- (1/6) * sum(ty.^3)/sum(ty.^2)^1.5

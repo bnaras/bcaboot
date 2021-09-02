@@ -119,8 +119,8 @@
 #' @export
 bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
                     alpha = c(0.025, 0.05, 0.1, 0.16),  verbose = TRUE) {
-    ## x is nxp data matrix, func is statistic thetahat=func(x) can enter #bootsize B
-    ## for bootsim vector tt (which is calculated)
+    ## x is nxp data matrix, func is statistic thetahat=func(x) can enter
+    #bootsize B for bootsim vector tt (which is calculated)
 
     call <- match.call()
     ## Save rng state
@@ -151,12 +151,10 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     }
 
     if (m < n) {
-        ##aa <- ssj <- rep(0, mr)
         aa <- ssj <- numeric(mr)
         r <- n %% m
         seq_len_m <- seq_len(m)
         for (k in seq_len(mr)) {
-            ##Imat <- matrix(sample(1:n, n - r), m)
             Imat <- sapply(seq_len_m, sample.int, n = n, size = n - r)
             Iout <- setdiff(seq_len(n), Imat)
             for (j in seq_len_m) {
@@ -209,10 +207,8 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     ooo <- pmin(pmax(ooo, 1), B)
     lims0 <- sort(tt)[ooo]
     standard <- t0 + sdboot0 * stats::qnorm(alpha)
-    ## lims0 <- round(cbind(lims0, standard), rou)
     lims0 <- cbind(lims0, standard)
     dimnames(lims0) <- list(alpha, c("bca", "std"))
-    ## stats0 <- round(c(t0, sdboot0, z00, a, sdjack), rou)
     stats0 <- c(t0, sdboot0, z00, a, sdjack)
     names(stats0) <- c("theta", "sdboot", "z0", "a", "sdjack")
     vl0 <- list(lims = lims0, stats = stats0, B.mean = B.mean, call = call, seed = seed)
@@ -220,7 +216,6 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
         bcaboot.return(vl0)
 
     pct <- rep(0, nal)
-    ##for (i in 1:nal) pct[i] <- round(sum(tt <= lims0[i, 1])/B, 3)
     for (i in 1:nal) pct[i] <- sum(tt <= lims0[i, 1])/B
     Stand <- vl0$stats[1] + vl0$stats[2] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
@@ -243,7 +238,6 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
             oo <- pmin(pmax(oo, 1), Bj)
             li <- sort(ttj)[oo]
             standard <- t0 + sdboot * stats::qnorm(alpha)
-            ##sta <- round(c(t0, sdboot, z0, a, sdjack), rou)
             sta <- c(t0, sdboot, z0, a, sdjack)
             names(sta) <- c("theta", "sdboot", "z0", "a", "sdjack")
             lims[, j] <- li
@@ -251,24 +245,16 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
         }
         Limsd[, k] <- apply(lims, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
-        ##if (verbose) cat("{", k, "}", sep = "")
     }
     limsd <- rowMeans(Limsd, 1)
     statsd <- rowMeans(Statsd, 1)
-    ##limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct), rou)
     limits <- cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct)
     dimnames(limits) <- list(alpha, c("bca", "jacksd", "std", "pct"))
-    ##stats <- round(rbind(stats0, statsd), rou)
     stats <- rbind(stats0, statsd)
     dimnames(stats) <- list(c("est", "jsd"), c("theta", "sdboot", "z0", "a", "sdjack"))
     vl <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, seed = seed)
     if (ttind == 0) {
-        ##vl$ustats <- round(ustats, rou)
         vl$ustats <- ustats
     }
-    ## if (sw == 5) {
-    ##     vl$tt <- tt
-    ##     return(vl)
-    ## }
     bcaboot.return(vl)
 }

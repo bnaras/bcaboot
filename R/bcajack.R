@@ -155,12 +155,13 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
         r <- n %% m
         seq_len_m <- seq_len(m)
         for (k in seq_len(mr)) {
-            Imat <- sapply(seq_len_m, sample.int, n = n, size = n - r)
-            Iout <- setdiff(seq_len(n), Imat)
+            k.ind = sample.int(n = n, size = n - r, replace = FALSE)
             for (j in seq_len_m) {
-                Ij <- setdiff(seq_len_m, j)
-                ij <- c(c(Imat[Ij, ], Iout))
-                u[j] <- func(x[ij, ])
+                ij <- k.ind[(r*j-(r-1)):(r*j)]
+                u[j] <- func(x[-ij, ],...)
+                # note the remainder not in m groups don't appear in k.ind
+                # but are implicitly kept in x
+                stopifnot("func(x) must not produce NAs" = (!is.na(u[j])))
             }
             t. <- (mean(u) - u) * (m - 1)
             aa[k] <- (1/6) * sum(t.^3)/(sum(t.^2))^1.5

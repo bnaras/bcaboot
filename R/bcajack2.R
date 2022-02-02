@@ -195,7 +195,7 @@ bcajack2 <- function(x, B, func, ..., m = nrow(x), mr, pct = 0.333, K = 2, J = 1
     vl0$seed <- seed
 
     if (K == 0)
-        bcaboot.return(vl0)
+        return(bcaboot.return(vl0))
 
     nal <- length(alpha)
     Pct <- rep(0, nal)

@@ -90,7 +90,7 @@ bcapar <- function(t0, tt, bb,
     if (K == 0) {
         result <- bca(t0, tt, bb, alpha = alpha, trun = trun, pct = pct)
         result$seed <- seed
-        bcaboot.return(result)
+        return(bcaboot.return(result))
     }
     call <- match.call()
     B <- length(tt)

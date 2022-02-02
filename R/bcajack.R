@@ -217,7 +217,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     names(stats0) <- c("theta", "sdboot", "z0", "a", "sdjack")
     vl0 <- list(lims = lims0, stats = stats0, B.mean = B.mean, call = call, seed = seed)
     if (K == 0)
-        bcaboot.return(vl0)
+        return(bcaboot.return(vl0))
 
     pct <- rep(0, nal)
     ##for (i in 1:nal) pct[i] <- round(sum(tt <= lims0[i, 1])/B, 3)

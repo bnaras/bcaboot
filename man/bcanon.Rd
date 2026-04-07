@@ -2,7 +2,7 @@
 % Please edit documentation in R/bcanon.R
 \name{bcanon}
 \alias{bcanon}
-\title{Compute nonparametric bca bootstrap confidence intervals}
+\title{Compute nonparametric BCa bootstrap confidence intervals}
 \usage{
 bcanon(
   B,
@@ -14,54 +14,52 @@ bcanon(
   K = 2,
   J = 12,
   alpha = c(0.025, 0.05, 0.1, 0.16),
-  rou = 3,
-  catj = 500,
-  sw = 0
+  verbose = TRUE
 )
 }
 \arguments{
-\item{B}{number of bootstrap replications}
+\item{B}{number of bootstrap replications, or a list with components
+\code{Y} (count matrix), \code{tt} (bootstrap replicates), \code{t0} (original estimate)}
 
 \item{x}{data matrix of dimension \eqn{n\times p}, rows assumed mutually independent}
 
 \item{func}{R function, where \eqn{func(x, \ldots)} is the statistic of interest}
 
-\item{m}{number of units; if \eqn{m<n} then original units collected into groups each of size \eqn{n/m}; useful if \eqn{n} is very large}
+\item{...}{additional arguments for \code{func}}
 
-\item{pct}{proportion of original units used in finding gradient}
+\item{m}{number of units; if \eqn{m<n} then original units collected into
+groups each of size \eqn{n/m}; useful if \eqn{n} is very large}
 
-\item{K}{controls jackknife standard error calculations (how exactly?)}
+\item{pct}{proportion of nearby count vectors used in finding gradient}
 
-\item{J}{controls jackknife standard error calculations (how exactly?)}
+\item{K}{number of jackknife repetitions for internal standard error estimation}
+
+\item{J}{number of jackknife folds per repetition}
 
 \item{alpha}{percentiles of coverage probabilities for bootstrap intervals}
 
-\item{rou}{number of digits rounded to}
-
-\item{catj}{counts number of bootstrap replictions; a value of 0 suppresses count}
-
-\item{sw}{if nonzero, adds the replicates \code{tt} and \code{dd} to output; refer to the returned value below}
+\item{verbose}{logical for verbose progress messages}
 }
 \value{
-a named list containing:
+a named list of class \code{bcaboot} containing:
 \itemize{
-\item \strong{call}: the call
-\item \strong{lims} : Bca confidence limits (first column) and the standard
-limits (third column). The second column, \code{jacksd}, are the
-jackknife estimates of Monte Carlo error; \code{pct}, the third
-column are the proportion of the replicates \code{tt} less than each
-\code{bcalim} value
-\item \strong{stats} : Estimates and their jackknife Monte Carlo errors:
-\code{theta} = \eqn{\hat{\theta}}; \code{sd}, the bootstrap standard
-deviation for \eqn{\hat{\theta}}; \code{a0} the acceleration
-estimate; \code{A} the big-A measure of raw acceleration; \code{sese} of
-standard error stablity
-\item \strong{equiv} : shows the \code{gbca} coverage estimates
-$\eqn{\tilde{\alpha}}$ corresponding to the nomimal bca
-coverages \eqn{\alpha}; also their jacknife montecarlo standard
-deviations.
+\item \strong{call}: the matched call
+\item \strong{lims} : BCa confidence limits (\code{bca}), jackknife internal
+standard errors (\code{jacksd}), standard limits (\code{std}), and
+bootstrap percentiles (\code{pct})
+\item \strong{stats} : Estimates and jackknife Monte Carlo errors for
+\code{theta}, \code{sdboot}, \code{sdjack}, \code{z0}, \code{a}, plus big-A acceleration
+and SE stability (\code{A}, \code{sese})
+\item \strong{B.mean} : bootstrap sample size B and mean of replications
+\item \strong{equiv} : gbca coverage estimates showing \code{alpha} vs \code{alphatilda}
+(coverage-adjusted alpha); if BCa is exact these are equal.
+Also jackknife Monte Carlo standard deviations.
+\item \strong{seed} : the random number state for reproducibility
 }
 }
 \description{
-Compute nonparametric bca bootstrap confidence intervals
+This function computes nonparametric BCa confidence intervals using
+regression on bootstrap count vectors (same approach as \link{bcajack2})
+plus a generalized BCa (gbca) diagnostic that tests adequacy of the
+BCa approximation via warped normal comparison. Efron (1987) Sec 7.
 }

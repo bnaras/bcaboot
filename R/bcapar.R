@@ -1,4 +1,11 @@
 ## Version of May 30, 2018
+##
+## Parametric BCa confidence intervals for exponential families.
+## Takes pre-computed bootstrap replications tt and sufficient statistic
+## matrix bb (unlike bcajack/bcajack2 which do their own resampling).
+## Delegates core BCa computation to internal bca() function.
+## Optionally computes ABC (analytical) limits via abcpar().
+
 #' Compute parametric bootstrap confidence intervals
 #'
 #' @description bcapar computes parametric bootstrap confidence
@@ -82,8 +89,6 @@ bcapar <- function(t0, tt, bb,
         stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 
-    ## if(!missing(func)) adds abc limits and stats K=0 skips jackknifing computes
-    ## confidence density weights 'w' if cd=1
     alpha <- alpha[alpha < 0.5]
     alpha <- c(alpha, 0.5, rev(1 - alpha))
 
@@ -95,26 +100,29 @@ bcapar <- function(t0, tt, bb,
     call <- match.call()
     B <- length(tt)
     vl0 <- bca(t0, tt, bb = as.matrix(bb), alpha = alpha, trun = trun, pct = pct)
-    Stand <- vl0$thet[1] + vl0$sd.m[1] * stats::qnorm(alpha)
+    Stand <- vl0$theta_a_z0_A_az[1] + vl0$sd_sdd_mean_B[1] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Thsd <- matrix(0, 5, K)
     Sdmsd <- matrix(0, 4, K)
     Ustm <- matrix(0, 2, K)
-    for (k in 1:K) {
+    ## Internal SE via delete-d jackknife of the bootstrap.
+    ## Split B replications into J groups, recompute bca() leaving one group
+    ## out at a time. Repeat K times, average. Scale: (J-1)/sqrt(J).
+    for (k in seq_len(K)) {
         II <- sample(x = B, size = B)
         II <- matrix(II, ncol = J)
         lims <- matrix(0, length(alpha), J)
         th <- matrix(0, 5, J)
         sdm <- matrix(0, 4, J)
         usm <- matrix(0, 2, J)
-        for (j in 1:J) {
+        for (j in seq_len(J)) {
             iij <- c(II[, -j])
             bbj <- as.matrix(bb[iij, ])
             ttj <- tt[iij]
             vlj <- bca(t0, ttj, bb = bbj, alpha = alpha, trun = trun, pct = pct)
             lims[, j] <- vlj$lims[, 1]
-            th[, j] <- vlj$thet.a
-            sdm[, j] <- vlj$sd.s
+            th[, j] <- vlj$theta_a_z0_A_az
+            sdm[, j] <- vlj$sd_sdd_mean_B
             usm[, j] <- vlj$ustats
         }
 
@@ -130,29 +138,28 @@ bcapar <- function(t0, tt, bb,
     ustsd <- rowMeans(Ustm)
     lim0 <- vl0$lims
     lim0 <- cbind(lim0[, 1], limsd, lim0[, 2:3])
+    ## Standardized column order: bca, jacksd, std, pct (matching bcajack/bcajack2)
     dimnames(lim0) <- list(alpha, c("bca", "jacksd", "pct", "std"))
-    th0 <- vl0$thet
+    lim0 <- lim0[, c("bca", "jacksd", "std", "pct")]
+    th0 <- vl0$theta_a_z0_A_az
     th0 <- rbind(th0, thsd)
     dimnames(th0) <- list(c("est", "jsd"), c("theta", "a", "z0", "A", "az"))
-    sdm0 <- vl0$sd.s
+    sdm0 <- vl0$sd_sdd_mean_B
     sdm0 <- rbind(sdm0, sdmsd)
     dimnames(sdm0) <- list(c("est", "jsd"), c("sd", "sdd", "mean", "B"))
     ust0 <- vl0$ustats
     ust0 <- rbind(ust0, ustsd)
     ust0 <- cbind(ust0, c(B, 0))
     dimnames(ust0) <- list(c("est", "jsd"), c("ustat", "sdu", "B"))
-    ## lims <- round(lim0, roun)
-    ## th0 <- round(th0, roun)
-    ## sdm0 <- round(sdm0, roun)
-    ## ust0 <- round(ust0, roun)
     lims <- lim0
-    th0 <- th0
     stats <- cbind(th0, sdm0)
     stats <- stats[, c(1, 6, 2, 5, 3, 4, 7, 8)]
 
     vl <- list(call = call, lims = lims, stats = stats, ustats = ust0, seed = seed)
     if (length(trun) > 1)
         vl$amat <- vl0$amat
+    ## Confidence density weights: ratio of BCa density to standard normal density.
+    ## See Efron & Hastie (2016) Sec 11.6.
     if (cd == 1) {
         a <- stats[1, 4]
         z0 <- stats[1, 5]
@@ -168,8 +175,6 @@ bcapar <- function(t0, tt, bb,
     if (!missing(func)) {
         vla <- abcpar(func, bb, alpha = alpha[alpha < 0.5])
         abc <- vla$lims[, 1]
-        ## vl$lims <- round(cbind(vl$lims, abclims), roun)
-        ## abcstats <- round(vla$a.z0.cq[1:2], roun)
         vl$lims <- cbind(vl$lims, abc)
         abcstats <- vla$a.z0.cq[1:2]
         names(abcstats) <- c("a", "z0")

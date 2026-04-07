@@ -1,4 +1,9 @@
 ## Version of June 1, 2018
+##
+## Nonparametric BCa via classical jackknife.
+## Estimates the acceleration 'a' by delete-one (or delete-group) jackknife
+## influence values, as opposed to bcajack2/bcanon which use regression on
+## bootstrap count vectors.
 
 #'
 #' @title Nonparametric bias-corrected and accelerated bootstrap
@@ -119,8 +124,6 @@
 #' @export
 bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
                     alpha = c(0.025, 0.05, 0.1, 0.16),  verbose = TRUE) {
-    ## x is nxp data matrix, func is statistic thetahat=func(x) can enter #bootsize B
-    ## for bootsim vector tt (which is calculated)
 
     call <- match.call()
     ## Save rng state
@@ -136,27 +139,31 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     if (ttind == 1) {
         tt <- B
         B <- length(tt)
-    } else tt <- rep(0, B)
+    } else tt <- numeric(B)
     t0 <- func(x, ...)
     u <- numeric(length = m)
-    m1 <- sqrt(m * (m - 1))
+    jk_norm <- sqrt(m * (m - 1))
 
     if (m == n) {
+        ## Full jackknife: u[i] = func(x with row i deleted)
         for (i in seq_len(n)) {
             u[i] <- func(x[-i, ], ...)
         }
-        t. <- (mean(u) - u) * (m - 1)
-        a <- (1 / 6) * sum(t.^3) / (sum(t.^2))^1.5
-        sdjack <- sqrt(sum(t.^2)) / m1
-    }
-
-    if (m < n) {
-        ##aa <- ssj <- rep(0, mr)
+        ## Jackknife pseudo-values (scaled influence function estimates)
+        ## Efron (1987) Sec 6
+        jack_infl <- (mean(u) - u) * (m - 1)
+        ## Acceleration: skewness of influence distribution. Efron (1987) Sec 6
+        a <- (1 / 6) * sum(jack_infl^3) / (sum(jack_infl^2))^1.5
+        ## Delete-d jackknife standard error
+        sdjack <- sqrt(sum(jack_infl^2)) / jk_norm
+    } else if (m < n) {
+        ## Grouped jackknife: partition n observations into m groups,
+        ## delete one group at a time. Average over mr random partitions
+        ## to reduce dependence on grouping. Efron & Narasimhan (2020) Sec 3
         aa <- ssj <- numeric(mr)
         r <- n %% m
         seq_len_m <- seq_len(m)
         for (k in seq_len(mr)) {
-            ##Imat <- matrix(sample(1:n, n - r), m)
             Imat <- sapply(seq_len_m, sample.int, n = n, size = n - r)
             Iout <- setdiff(seq_len(n), Imat)
             for (j in seq_len_m) {
@@ -164,33 +171,43 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
                 ij <- c(c(Imat[Ij, ], Iout))
                 u[j] <- func(x[ij, ])
             }
-            t. <- (mean(u) - u) * (m - 1)
-            aa[k] <- (1/6) * sum(t.^3)/(sum(t.^2))^1.5
-            ssj[k] <- sqrt(sum(t.^2))/m1
+            ## Jackknife pseudo-values and acceleration for this partition
+            jack_infl <- (mean(u) - u) * (m - 1)
+            aa[k] <- (1/6) * sum(jack_infl^3)/(sum(jack_infl^2))^1.5
+            ssj[k] <- sqrt(sum(jack_infl^2))/jk_norm
         }
+        ## Average acceleration and SE over mr random partitions
         a <- mean(aa)
         sdjack <- mean(ssj)
+    } else {
+        stop("m must be <= n")
     }
 
     if (ttind == 0) {
-        tY. <- Y. <- rep(0, n)
+        ## Bootstrap loop: draw n observations with replacement B times
+        ## boot_wt_sum accumulates tt[j]*Yj, boot_ct_sum accumulates count vectors Yj
+        boot_wt_sum <- boot_ct_sum <- numeric(n)
         if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
         for (j in seq_len(B)) {
             ij <- sample(x = n, size = n, replace = TRUE)
             Yj <- table(c(ij, 1:n)) - 1
             tt[j] <- func(x[ij, ], ...)
-            tY. <- tY. + tt[j] * Yj
-            Y. <- Y. + Yj
+            boot_wt_sum <- boot_wt_sum + tt[j] * Yj
+            boot_ct_sum <- boot_ct_sum + Yj
             if (verbose) utils::setTxtProgressBar(pb, j)
         }
         if (verbose) close(pb)
-        tt. <- mean(tt)
-        tY. <- tY./B
-        Y. <- Y./B
-        s. <- n * (tY. - tt. * Y.)
-        u. <- 2 * t. - s.
-        sdu <- sqrt(sum(u.^2))/n
-        ustat <- 2 * t0 - tt.
+        tt_mean <- mean(tt)
+        boot_wt_sum <- boot_wt_sum/B
+        boot_ct_sum <- boot_ct_sum/B
+        ## cov_infl = bootstrap covariance-based influence (n * Cov(tt, Y) estimate)
+        cov_infl <- n * (boot_wt_sum - tt_mean * boot_ct_sum)
+        ## Variance-stabilized influence: 2*jackknife - bootstrap_cov
+        ## Factor of 2 from double-bootstrap variance reduction. EN20 Sec 3
+        adj_infl <- 2 * jack_infl - cov_infl
+        sdu <- sqrt(sum(adj_infl^2))/n
+        ## Bias-corrected point estimate: 2*t0 - mean(tt)
+        ustat <- 2 * t0 - tt_mean
         ustats <- c(ustat, sdu)
         names(ustats) <- c("ustat", "sdu")
     }
@@ -199,76 +216,68 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
     alpha <- c(alpha, 0.5, rev(1 - alpha))
 
     zalpha <- stats::qnorm(alpha)
-    nal <- length(alpha)
+    n_alpha <- length(alpha)
 
-    sdboot0 <- stats::sd(tt)  # sdd=stats::sd(dd)
+    sdboot0 <- stats::sd(tt)
+    ## Bias-correction z0: proportion of bootstraps below t0, on normal scale
+    ## Efron (1987) Sec 2
     z00 <- stats::qnorm(sum(tt < t0)/B)
 
-    iles <- stats::pnorm(z00 + (z00 + zalpha)/(1 - a * (z00 + zalpha)))
-    ooo <- trunc(iles * B)
-    ooo <- pmin(pmax(ooo, 1), B)
-    lims0 <- sort(tt)[ooo]
+    ## BCa percentile formula. Efron (1987) Sec 2
+    bca_result <- compute_bca_limits(z00, a, zalpha, tt)
+    lims0 <- bca_result$limits
+    ## Standard (normal-theory) limits for comparison
     standard <- t0 + sdboot0 * stats::qnorm(alpha)
-    ## lims0 <- round(cbind(lims0, standard), rou)
-    lims0 <- cbind(lims0, standard)
-    dimnames(lims0) <- list(alpha, c("bca", "std"))
-    ## stats0 <- round(c(t0, sdboot0, z00, a, sdjack), rou)
+    lims0 <- cbind(lims0, NA_real_, standard, NA_real_)
+    dimnames(lims0) <- list(alpha, c("bca", "jacksd", "std", "pct"))
     stats0 <- c(t0, sdboot0, z00, a, sdjack)
     names(stats0) <- c("theta", "sdboot", "z0", "a", "sdjack")
-    vl0 <- list(lims = lims0, stats = stats0, B.mean = B.mean, call = call, seed = seed)
+    result0 <- list(lims = lims0, stats = stats0, B.mean = B.mean, call = call, seed = seed)
     if (K == 0)
-        bcaboot.return(vl0)
+        bcaboot.return(result0)
 
-    pct <- rep(0, nal)
-    ##for (i in 1:nal) pct[i] <- round(sum(tt <= lims0[i, 1])/B, 3)
-    for (i in 1:nal) pct[i] <- sum(tt <= lims0[i, 1])/B
-    Stand <- vl0$stats[1] + vl0$stats[2] * stats::qnorm(alpha)
+    pct <- numeric(n_alpha)
+    for (i in seq_len(n_alpha)) pct[i] <- sum(tt <= lims0[i, 1])/B
+    Stand <- result0$stats[1] + result0$stats[2] * stats::qnorm(alpha)
     Limsd <- matrix(0, length(alpha), K)
     Statsd <- matrix(0, 5, K)
 
-    for (k in 1:K) {
-        II <- sample(x = B, size = B)
-        II <- matrix(II, ncol = J)
+    ## Internal standard error via delete-d jackknife of the bootstrap.
+    ## Split B replications into J groups, recompute BCa leaving one group
+    ## out at a time. Repeat K times, average. Scale factor (J-1)/sqrt(J)
+    ## is the delete-d jackknife correction.
+    for (k in seq_len(K)) {
+        fold_idx <- sample(x = B, size = B)
+        fold_idx <- matrix(fold_idx, ncol = J)
         lims <- matrix(0, length(alpha), J)
         stats <- matrix(0, 5, J)
-        for (j in 1:J) {
-            iij <- c(II[, -j])
+        for (j in seq_len(J)) {
+            iij <- c(fold_idx[, -j])
             ttj <- tt[iij]
             Bj <- length(ttj)
             sdboot <- stats::sd(ttj)
             z0 <- stats::qnorm(sum(ttj < t0)/Bj)
 
-            iles <- stats::pnorm(z0 + (z0 + zalpha)/(1 - a * (z0 + zalpha)))
-            oo <- trunc(iles * Bj)
-            oo <- pmin(pmax(oo, 1), Bj)
-            li <- sort(ttj)[oo]
+            li <- compute_bca_limits(z0, a, zalpha, ttj)$limits
             standard <- t0 + sdboot * stats::qnorm(alpha)
-            ##sta <- round(c(t0, sdboot, z0, a, sdjack), rou)
             sta <- c(t0, sdboot, z0, a, sdjack)
             names(sta) <- c("theta", "sdboot", "z0", "a", "sdjack")
             lims[, j] <- li
             stats[, j] <- sta
         }
+        ## Delete-d jackknife scale correction: (J-1)/sqrt(J)
         Limsd[, k] <- apply(lims, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
-        ##if (verbose) cat("{", k, "}", sep = "")
     }
     limsd <- rowMeans(Limsd, 1)
     statsd <- rowMeans(Statsd, 1)
-    ##limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct), rou)
-    limits <- cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], pct)
+    limits <- cbind(result0$lims[, "bca"], limsd, result0$lims[, "std"], pct)
     dimnames(limits) <- list(alpha, c("bca", "jacksd", "std", "pct"))
-    ##stats <- round(rbind(stats0, statsd), rou)
     stats <- rbind(stats0, statsd)
     dimnames(stats) <- list(c("est", "jsd"), c("theta", "sdboot", "z0", "a", "sdjack"))
-    vl <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, seed = seed)
+    result <- list(call = call, lims = limits, stats = stats, B.mean = B.mean, seed = seed)
     if (ttind == 0) {
-        ##vl$ustats <- round(ustats, rou)
-        vl$ustats <- ustats
+        result$ustats <- ustats
     }
-    ## if (sw == 5) {
-    ##     vl$tt <- tt
-    ##     return(vl)
-    ## }
-    bcaboot.return(vl)
+    bcaboot.return(result)
 }

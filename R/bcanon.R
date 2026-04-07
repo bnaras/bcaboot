@@ -1,143 +1,157 @@
-#' Compute nonparametric bca bootstrap confidence intervals
-#' @param B number of bootstrap replications
+#' Compute nonparametric BCa bootstrap confidence intervals
+#'
+#' This function computes nonparametric BCa confidence intervals using
+#' regression on bootstrap count vectors (same approach as [bcajack2])
+#' plus a generalized BCa (gbca) diagnostic that tests adequacy of the
+#' BCa approximation via warped normal comparison. Efron (1987) Sec 7.
+#'
+#' @param B number of bootstrap replications, or a list with components
+#'   `Y` (count matrix), `tt` (bootstrap replicates), `t0` (original estimate)
 #' @param x data matrix of dimension \eqn{n\times p}, rows assumed mutually independent
 #' @param func R function, where \eqn{func(x, \ldots)} is the statistic of interest
-#' @param m number of units; if \eqn{m<n} then original units collected into groups each of size \eqn{n/m}; useful if \eqn{n} is very large
-#' @param pct proportion of original units used in finding gradient
-#' @param K controls jackknife standard error calculations (how exactly?)
-#' @param J controls jackknife standard error calculations (how exactly?)
+#' @param ... additional arguments for `func`
+#' @param m number of units; if \eqn{m<n} then original units collected into
+#'   groups each of size \eqn{n/m}; useful if \eqn{n} is very large
+#' @param pct proportion of nearby count vectors used in finding gradient
+#' @param K number of jackknife repetitions for internal standard error estimation
+#' @param J number of jackknife folds per repetition
 #' @param alpha percentiles of coverage probabilities for bootstrap intervals
-#' @param rou number of digits rounded to
-#' @param catj counts number of bootstrap replictions; a value of 0 suppresses count
-#' @param sw if nonzero, adds the replicates `tt` and `dd` to output; refer to the returned value below
-#' @return a named list containing:
+#' @param verbose logical for verbose progress messages
+#' @return a named list of class `bcaboot` containing:
 #'
-#' * __call__: the call
+#' * __call__: the matched call
 #'
-#' * __lims__ : Bca confidence limits (first column) and the standard
-#'     limits (third column). The second column, `jacksd`, are the
-#'     jackknife estimates of Monte Carlo error; `pct`, the third
-#'     column are the proportion of the replicates `tt` less than each
-#'     `bcalim` value
+#' * __lims__ : BCa confidence limits (`bca`), jackknife internal
+#'     standard errors (`jacksd`), standard limits (`std`), and
+#'     bootstrap percentiles (`pct`)
 #'
-#' * __stats__ : Estimates and their jackknife Monte Carlo errors:
-#'     `theta` = \eqn{\hat{\theta}}; `sd`, the bootstrap standard
-#'     deviation for \eqn{\hat{\theta}}; `a0` the acceleration
-#'     estimate; `A` the big-A measure of raw acceleration; `sese` of
-#'     standard error stablity
+#' * __stats__ : Estimates and jackknife Monte Carlo errors for
+#'     `theta`, `sdboot`, `sdjack`, `z0`, `a`, plus big-A acceleration
+#'     and SE stability (`A`, `sese`)
 #'
-#' * __equiv__ : shows the `gbca` coverage estimates
-#'     $\eqn{\tilde{\alpha}}$ corresponding to the nomimal bca
-#'     coverages \eqn{\alpha}; also their jacknife montecarlo standard
-#'     deviations.
+#' * __B.mean__ : bootstrap sample size B and mean of replications
+#'
+#' * __equiv__ : gbca coverage estimates showing `alpha` vs `alphatilda`
+#'     (coverage-adjusted alpha); if BCa is exact these are equal.
+#'     Also jackknife Monte Carlo standard deviations.
+#'
+#' * __seed__ : the random number state for reproducibility
+#'
+#' @importFrom stats approx smooth.spline
 #' @export
 bcanon <- function (B, x, func, ..., m = nrow(x), pct = .333, K = 2, J = 12,
                     alpha = c(0.025, 0.05, 0.1, 0.16),
-                    rou=3, catj=500, sw = 0) {
-  # B=number of bootstrap replications x =nxp data matrix, rows assumed mutually independent
-  # func = R function, func(x) the statistic of interest m=number of units; if m<n then
-  # original units collected into groups each of size n/m; useful if n is very large pct=
-  # proportion of original units used in finding gradient K,J controls jackknife standard
-  # error calculations alpha= percentiles of coverage probabilites for bootstrap intervals rou
-  # = number of digits rounded to catj counts number of bootstrap replictions; catj=0
-  # suppresses count sw=1 adds tt and dd to output
-  
-  # output: the call (includes B, the number of bootstrap replications) lims gives bootstrap
-  # and standard interval limts, and the jackknife montecarlo standard deviations for the boot
-  # limits pct if the percentiles of the B boots giving the boot limits stats gives estimates
-  # of theta, its bootstrap sd, z0, and a, measures A and sese of standard error stablity, as
-  # well as jackknife monte carlo sds for all of these equiv shows the gbca coverage estimates
-  # alphatildacorresponding to the nomimal bca coverages alpha; also their jacknife montecarlo
-  # sds
-  
-  call <- match.call()
-  alpha <- alpha[alpha < 0.5]
-  alpha <- c(alpha, 0.5, rev(1 - alpha))
-  
-  ## Save rng state
-  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
-    stats::runif(1)
-  seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
-  ##qbca2 <- function(Y, tt, t0, alpha = alpha, pct = pct, rou = rou, sw = sw) {
-  qbca2 <- function(Y, tt, t0) {    
+                    verbose = TRUE) {
+
+    call <- match.call()
+    alpha <- alpha[alpha < 0.5]
+    alpha <- c(alpha, 0.5, rev(1 - alpha))
+
+    ## Save rng state
+    if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        stats::runif(1)
+    seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+
+    ## Inner function: compute BCa quantities plus generalized BCa (gbca)
+    ## diagnostic. Uses regression on nearby count vectors (same approach as
+    ## bcajack2's qbca2) plus the gbca warping from Efron (1987) Sec 7.
+    ## Accesses alpha, pct from enclosing scope.
+    qbca2 <- function(Y, tt, t0) {
         m <- ncol(Y)
         B <- nrow(Y)
-        o1 <- rep(1, m)
-        D <- rep(0, B)
 
-        for (i in 1:B) {
-            Yi <- Y[i, ]
-            d <- 2 * Yi * log(Yi) - 2 * (Yi - 1)
-            d[Yi == 0] <- 2
-            D[i] <- sum(d)
-        }
-        Qd <- quantile(D, pct)
-        ip <- (1:B)[D <= Qd]
-        ty. <- as.vector(m * lm(tt[ip] ~ Y[ip, ] - 1)$coef)
-        ty. <- ty. - mean(ty.)
-        a <- (1/6) * sum(ty.^3)/sum(ty.^2)^1.5
-        if (sw == 3)
-            return(ty.)
+        ## Poisson/multinomial deviance of each count vector from uniform (1,...,1).
+        ## EN20 appendix.
+        kl_dist <- compute_kl_distance(Y)
+        ## Select the pct fraction of bootstrap samples closest to uniform
+        kl_cutoff <- quantile(kl_dist, pct)
+        nearby_idx <- (1:B)[kl_dist <= kl_cutoff]
+        ## Influence via local regression on nearby count vectors. EN20 appendix.
+        reg_infl <- as.vector(m * lm(tt[nearby_idx] ~ Y[nearby_idx, ] - 1)$coef)
+        reg_infl <- reg_infl - mean(reg_infl)
+        ## Acceleration: skewness of influence distribution. Efron (1987) Sec 6
+        a <- (1/6) * sum(reg_infl^3)/sum(reg_infl^2)^1.5
         s <- mean(tt)
         B.mean <- c(B, s)
         zalpha <- qnorm(alpha)
-        nal <- length(alpha)
+        n_alpha <- length(alpha)
         sdboot <- sd(tt)
-        sdjack <- sqrt(sum(ty.^2))/(m - 1)
+        ## Delete-d jackknife SE from regression-based influences
+        sdjack <- sqrt(sum(reg_infl^2))/(m - 1)
+        ## Bias-correction z0. Efron (1987) Sec 2
         z0 <- qnorm(sum(tt < t0)/B)
-        ## big-A acceleration
-        YY <- scale(Y, T, F)
-        dd <- as.vector(YY %*% ty.)/(m - 1)
-        dd <- dd/sd(dd)
-        DD <- (tt - mean(tt))/sdboot
-        A <- 0.5 * (sdboot/sdjack) * sum(DD^2 * dd)/B
-        Del <- cov(YY, DD^2)/2
+
+        ## Big-A raw acceleration via delta method. Efron (1987) Sec 7.
+        ## local_dir = normalized projection of centered counts onto influence direction.
+        ## A measures the rate of change of SE in a different sense than 'a'.
+        YY <- scale(Y, center = TRUE, scale = FALSE)
+        local_dir <- as.vector(YY %*% reg_infl)/(m - 1)
+        local_dir <- local_dir/sd(local_dir)
+        std_tt <- (tt - mean(tt))/sdboot
+        A <- 0.5 * (sdboot/sdjack) * sum(std_tt^2 * local_dir)/B
+        ## rms = RMS of covariance between centered counts and squared standardized
+        ## bootstrap replicates; measures stability of SE across data perturbations
+        Del <- cov(YY, std_tt^2)/2
         rms <- sqrt((m/(m - 1)) * sum(Del^2))
         sese <- c(A, rms)
         names(sese) <- c("A", "rms")
-        iles <- pnorm(z0 + (z0 + zalpha)/(1 - a * (z0 + zalpha)))
-        ooo <- trunc(iles * B)
-        ooo <- pmin(pmax(ooo, 1), B)
-        lims <- sort(tt)[ooo]
+
+        ## BCa percentile formula. Efron (1987) Sec 2
+        lims <- compute_bca_limits(z0, a, zalpha, tt)$limits
+        ## Standard (normal-theory) limits for comparison
         standard <- t0 + sdboot * qnorm(alpha)
-        lims <- round(cbind(lims, standard), rou)
-        dimnames(lims) <- list(alpha, c("bcalims", "std"))
-        stats <- round(c(t0, sdboot, z0, a, sdjack), rou)
+        lims <- cbind(lims, standard)
+        dimnames(lims) <- list(alpha, c("bca", "std"))
+        stats <- c(t0, sdboot, z0, a, sdjack)
         names(stats) <- c("thet", "sdboot", "z0", "a", "sdjack")
-        vl <- list(lims = lims, stats = stats, B.mean = B.mean, sese = sese, t0 = t0, tt = tt, dd = dd)
+        result <- list(lims = lims, stats = stats, B.mean = B.mean, sese = sese,
+                       t0 = t0, tt = tt, local_dir = local_dir)
 
+        ## ---------------------------------------------------------------
+        ## Generalized BCa (gbca) diagnostic. Efron (1987) Sec 7.
+        ## Tests adequacy of the BCa approximation by comparing with a
+        ## warped normal model. If BCa is exact, the diagnostic D(z)
+        ## should be constant = 1.
+        ## ---------------------------------------------------------------
+
+        ## Grid of standard normal quantiles for diagnostic evaluation
         zz <- seq(-2.5, 2.5, 0.05)
-        aa <- pnorm(zz)
-        na <- length(aa)
-        tta <- as.vector(quantile(tt, aa))
-        F. <- rep(0, na)
-        for (i in 1:na) F.[i] <- sum(dd[tt <= tta[i]])/B
-        H <- F./dnorm(zz)
-        D <- H/H[51]
-        Dsm <- smooth.spline(zz, D, df = 5)$y
-        DD <- cbind(D, Dsm)
-        dimnames(DD)[[2]] <- c("Diagnostic", "Smoothed")
+        cdf_grid <- pnorm(zz)
+        n_grid <- length(cdf_grid)  # 101 points; index 51 is the center (z=0)
+        tta <- as.vector(quantile(tt, cdf_grid))
+        ## ecdf_vals[i] = empirical CDF of local_dir up to the
+        ## bootstrap quantile at level cdf_grid[i]
+        ecdf_vals <- numeric(n_grid)
+        for (i in seq_len(n_grid)) ecdf_vals[i] <- sum(local_dir[tt <= tta[i]])/B
+        ## H = ratio of empirical CDF to normal density;
+        ## diag_raw = H normalized at center (z=0, index 51). D(z)=1 means BCa exact.
+        H <- ecdf_vals/dnorm(zz)
+        diag_raw <- H/H[51]
+        diag_smooth <- smooth.spline(zz, diag_raw, df = 5)$y
 
-        D9 <- DD[, 2]
-        Dmatrix <- cbind(zz, DD)
+        Dmatrix <- cbind(zz, diag_raw, diag_smooth)
         z0 <- stats[3]
         a0 <- stats[4]
-        ep <- a0/(1 - a0 * z0)
-        i0 <- 51
+        ## Scaled acceleration for warping: scaled_a = a0/(1-a0*z0)
+        scaled_a <- a0/(1 - a0 * z0)
+        i0 <- 51  # center index in zz grid
 
-        I <- (cumsum(1/D9) - 0.5/D9) * diff(zz)[1]
+        ## Warping transformation: integrates 1/diag_smooth (the inverse diagnostic)
+        ## to build a nonlinear scale on which the BCa approximation would
+        ## be exact. When |scaled_a| is near 0, ww ~ I (identity-like).
+        I <- (cumsum(1/diag_smooth) - 0.5/diag_smooth) * diff(zz)[1]
         I <- I - I[i0]
-        if (abs(ep) < 1e-06)
-            ww <- I else ww <- (exp(ep * I) - 1)/ep
+        if (abs(scaled_a) < 1e-06)
+            ww <- I else ww <- (exp(scaled_a * I) - 1)/scaled_a
 
-        z0 <- round(z0, 3)
-        a0 <- round(a0, 3)
-        aa <- pnorm(zz)
-        aabar <- 1 - aa
+        cdf_grid <- pnorm(zz)
 
+        ## BCa transformation on original scale
         Z <- z0 + (z0 + zz)/(1 - a0 * (z0 + zz))
         bet <- pnorm(Z)
 
+        ## Warping functions: wfun maps z -> warped scale,
+        ## winv is the inverse, Phitil = Phi(winv(w)) = CDF on warped scale
         wfun <- function(z) {
             approx(zz, ww, z, rule = 2, ties = mean)$y
         }
@@ -148,20 +162,23 @@ bcanon <- function (B, x, func, ..., m = nrow(x), pct = .333, K = 2, J = 12,
             pnorm(winv(w))
         }
 
+        ## Apply BCa formula on warped scale to get gbca coverage
         zt0 <- wfun(z0)
         zzt <- -wfun(rev(zz))
         Zt <- zt0 + (zt0 + zzt)/(1 - a0 * (zt0 + zzt))
         bett <- Phitil(Zt)
 
-        atil <- approx(bett, aa, bet, rule = 2, ties = mean)$y
+        ## equiv: alpha-tilde = gbca-adjusted coverage corresponding to
+        ## nominal BCa coverage alpha. If BCa is exact, alpha-tilde = alpha.
+        atil <- approx(bett, cdf_grid, bet, rule = 2, ties = mean)$y
         al <- alpha
-        altil <- approx(aa, atil, al, rule = 2, ties = mean)$y
-        equiv <- round(rbind(al, altil), 5)
+        altil <- approx(cdf_grid, atil, al, rule = 2, ties = mean)$y
+        equiv <- rbind(al, altil)
         dimnames(equiv)[[2]] <- rep(" ", length(alpha))
         dimnames(equiv)[[1]] <- c("alpha", "alphatil")
-        vl$equiv <- equiv
-        vl$Dmatrix <- cbind(zz, D9)
-        return(vl)
+        result$equiv <- equiv
+        result$Dmatrix <- cbind(zz, diag_smooth)
+        return(result)
     }
 
     if (is.list(B)) {
@@ -169,110 +186,106 @@ bcanon <- function (B, x, func, ..., m = nrow(x), pct = .333, K = 2, J = 12,
         tt <- B$tt
         t0 <- B$t0
         B <- length(tt)
-        vl0 <- qbca2(Y, tt, t0)
+        result0 <- qbca2(Y, tt, t0)
     } else {
         if (is.vector(x))
             x <- as.matrix(x)
         n <- nrow(x)
-        tt <- rep(0, B)
+        tt <- numeric(B)
         t0 <- func(x, ...)
 
         if (m == n) {
-            ii <- sample(1:n, n * B, T)
+            ii <- sample(1:n, n * B, TRUE)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, n)
-            for (k in 1:B) {
+            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
+            for (k in seq_len(B)) {
                 ik <- ii[k, ]
                 tt[k] <- func(x[ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:n)) - 1
-                if (catj > 0)
-                  if (k/catj == floor(k/catj))
-                    cat("{", k, "}", sep = "")
+                if (verbose) utils::setTxtProgressBar(pb, k)
             }
-            vl0 <- qbca2(Y, tt, t0)
-        }
-
-        if (m < n) {
+            if (verbose) close(pb)
+            result0 <- qbca2(Y, tt, t0)
+        } else if (m < n) {
             r <- n%%m
             Imat <- matrix(sample(1:n, n - r), m)
             Iout <- setdiff(1:n, Imat)
-            ii <- sample(1:m, m * B, T)
+            ii <- sample(1:m, m * B, TRUE)
             ii <- matrix(ii, B)
             Y <- matrix(0, B, m)
-            for (k in 1:B) {
+            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
+            for (k in seq_len(B)) {
                 ik <- ii[k, ]
                 Ik <- c(t(Imat[ik, ]))
                 Ik <- c(Ik, Iout)
                 tt[k] <- func(x[Ik, ], ...)
                 Y[k, ] <- table(c(ik, 1:m)) - 1
-                if (catj > 0)
-                  if (k/catj == floor(k/catj))
-                    cat("{", k, "}", sep = "")
+                if (verbose) utils::setTxtProgressBar(pb, k)
             }
-            vl0 <- qbca2(Y, tt, t0)
+            if (verbose) close(pb)
+            result0 <- qbca2(Y, tt, t0)
+        } else {
+            stop("m must be <= n")
         }
     }
-    vl0$call <- call
+    result0$call <- call
 
     if (K == 0)
-        return(vl0)
-    equiv <- vl0$equiv
-    nal <- length(alpha)
-    Pct <- rep(0, nal)
-    for (i in 1:nal) Pct[i] <- round(sum(tt <= vl0$lims[i, 1])/B, 3)
-    Stand <- vl0$stats[1] + vl0$stats[2] * qnorm(alpha)
-    Limsd <- matrix(0, length(alpha), K)
-    Statsd <- matrix(0, 5, K)
-    Eqsd <- matrix(0, nal, K)  ###**
+        return(result0)
+    equiv <- result0$equiv
+    n_alpha <- length(alpha)
+    Pct <- numeric(n_alpha)
+    for (i in seq_len(n_alpha)) Pct[i] <- sum(tt <= result0$lims[i, 1])/B
+    Stand <- result0$stats[1] + result0$stats[2] * qnorm(alpha)
+    Eqsd <- matrix(0, n_alpha, K)
 
+    ## Internal SE via delete-d jackknife of the bootstrap.
+    ## Split B replications into J groups, recompute qbca2 leaving one group
+    ## out at a time. Repeat K times, average. Scale: (J-1)/sqrt(J).
     Limbcsd <- matrix(0, length(alpha), K)
     Statsd <- matrix(0, 5, K)
     sesed <- matrix(0, 2, K)
-    for (k in 1:K) {
-        rr <- B%%J
-        II <- sample(B, B - rr)
-        II <- matrix(II, ncol = J)
+    for (k in seq_len(K)) {
+        remainder <- B%%J
+        fold_idx <- sample(B, B - remainder)
+        fold_idx <- matrix(fold_idx, ncol = J)
         limbc <- limst <- matrix(0, length(alpha), J)
         stats <- matrix(0, 5, J)
         armsd <- matrix(0, 2, J)
-        eqsd <- matrix(0, nal, J)
-        for (j in 1:J) {
-            iij <- c(II[, -j])
+        eqsd <- matrix(0, n_alpha, J)
+        for (j in seq_len(J)) {
+            iij <- c(fold_idx[, -j])
             Yj <- Y[iij, ]
             ttj <- tt[iij]
-            vlj <- qbca2(Yj, ttj, t0)
-            limbc[, j] <- vlj$lims[, 1]
-            limst[, j] <- vlj$lims[, 2]
-            stats[, j] <- vlj$stats
-            armsd[, j] <- vlj$sese
-            eqsd[, j] <- vlj$equiv[2, ]
+            fold_result <- qbca2(Yj, ttj, t0)
+            limbc[, j] <- fold_result$lims[, 1]
+            limst[, j] <- fold_result$lims[, 2]
+            stats[, j] <- fold_result$stats
+            armsd[, j] <- fold_result$sese
+            eqsd[, j] <- fold_result$equiv[2, ]
         }
+        ## Delete-d jackknife scale correction: (J-1)/sqrt(J)
         sesed[, k] <- apply(armsd, 1, sd) * (J - 1)/sqrt(J)
         Eqsd[, k] <- apply(eqsd, 1, sd) * (J - 1)/sqrt(J)
         Limbcsd[, k] <- apply(limbc, 1, sd) * (J - 1)/sqrt(J)
         Statsd[, k] <- apply(stats, 1, sd) * (J - 1)/sqrt(J)
-        if (catj >= 0)
-            cat("{", k, "}", sep = "")
     }
     Armjsd <- rowMeans(sesed, 1)
-    Armat <- rbind(vl0$sese, Armjsd)
-    Armat <- round(Armat, 3)
+    Armat <- rbind(result0$sese, Armjsd)
     dimnames(Armat) <- list(c("est", "jsd"), c("A", "sese"))
     eqjsd <- rowMeans(Eqsd, 1)
-    equiv <- round(rbind(equiv, eqjsd), rou)
+    equiv <- rbind(equiv, eqjsd)
     dimnames(equiv)[[1]] <- c("alpha", "alphatilda", "jacksd")
     limsd <- rowMeans(Limbcsd, 1)
     statsd <- rowMeans(Statsd, 1)
-    limits <- round(cbind(vl0$lims[, 1], limsd, vl0$lims[, 2], Pct), rou)
-    dimnames(limits) <- list(alpha, c("bcalims", "jacksd", "std", "Pct"))
-    stats <- round(rbind(vl0$stats, statsd), rou)
-    B.mean <- c(B, round(mean(tt), rou))
-    dimnames(stats) <- list(c("estimate", "jacksd"), c("thet", "sdboot", "z0", "a0", "sdbar"))
+    limits <- cbind(result0$lims[, 1], limsd, result0$lims[, 2], Pct)
+    dimnames(limits) <- list(alpha, c("bca", "jacksd", "std", "pct"))
+    stats <- rbind(result0$stats, statsd)
+    B.mean <- c(B, mean(tt))
+    dimnames(stats) <- list(c("estimate", "jacksd"), c("theta", "sdboot", "z0", "a", "sdjack"))
     stats <- cbind(stats[, c(1, 2, 5, 3, 4)], Armat)
-    vll <- list(call = call, lims = limits, stats = stats, equiv = equiv)
-    if (sw == 1) {
-        vll$tt <- tt
-        vll$dd <- vl0$dd
-    }
-    return(vll)
+    result <- list(call = call, lims = limits, stats = stats, B.mean = B.mean,
+                   equiv = equiv, seed = seed)
+    bcaboot.return(result)
 }

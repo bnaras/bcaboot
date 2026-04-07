@@ -7,6 +7,6 @@ bcaboot.return <- function(x) {
 print.bcaboot <- function (x, digits = getOption("digits"), ...) {
     result <- x
     result$seed <- NULL
-    print.default(result)
+    print.default(result, digits = digits)
     invisible(x)
 }

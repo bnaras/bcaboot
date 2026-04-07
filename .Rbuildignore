@@ -7,3 +7,5 @@
 ^docs$
 ^\.github$
 ^bugs$
+^CLAUDE\.md$
+^\.claude$

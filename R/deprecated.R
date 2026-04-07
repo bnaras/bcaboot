@@ -8,7 +8,7 @@
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' `bcajack()` was deprecated in bcaboot 0.4.0 in favour of [bca_nonpar()].
+#' `bcajack()` was deprecated in bcaboot 1.0 in favour of [bca_nonpar()].
 #' @inheritParams bca_nonpar
 #' @param m Number of groups (now `n_groups`).
 #' @param mr Group repetitions (now `group_reps`).
@@ -19,7 +19,7 @@
 #' @export
 bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
                     alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE) {
-    lifecycle::deprecate_warn("0.4.0", "bcajack()", "bca_nonpar()")
+    lifecycle::deprecate_warn("1.0", "bcajack()", "bca_nonpar()")
     ## Handle B as pre-computed vector (old bcajack overloading)
     boot_data <- NULL
     if (length(B) > 1) {
@@ -39,7 +39,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' `bcajack2()` was deprecated in bcaboot 0.4.0 in favour of [bca_nonpar()].
+#' `bcajack2()` was deprecated in bcaboot 1.0 in favour of [bca_nonpar()].
 #' @inheritParams bca_nonpar
 #' @param m Number of groups (now `n_groups`).
 #' @param mr Unused (included for compatibility).
@@ -51,7 +51,7 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
 #' @export
 bcajack2 <- function(x, B, func, ..., m = NULL, mr, pct = 0.333, K = 2, J = 12,
                      alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE) {
-    lifecycle::deprecate_warn("0.4.0", "bcajack2()", "bca_nonpar()")
+    lifecycle::deprecate_warn("1.0", "bcajack2()", "bca_nonpar()")
     if (!missing(mr))
         warning("'mr' argument is unused in bcajack2/bca_nonpar with regression acceleration")
     ## Handle B as Blist
@@ -70,7 +70,7 @@ bcajack2 <- function(x, B, func, ..., m = NULL, mr, pct = 0.333, K = 2, J = 12,
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' `bcapar()` was deprecated in bcaboot 0.4.0 in favour of [bca_par()].
+#' `bcapar()` was deprecated in bcaboot 1.0 in favour of [bca_par()].
 #' @inheritParams bca_par
 #' @param alpha Alpha levels (now use `conf.level`).
 #' @param K Jackknife repetitions (now `n_jack`).
@@ -83,7 +83,7 @@ bcajack2 <- function(x, B, func, ..., m = NULL, mr, pct = 0.333, K = 2, J = 12,
 bcapar <- function(t0, tt, bb,
                    alpha = c(0.025, 0.05, 0.1, 0.16),
                    J = 10, K = 6, trun = 0.001, pct = 0.333, cd = 0, func) {
-    lifecycle::deprecate_warn("0.4.0", "bcapar()", "bca_par()")
+    lifecycle::deprecate_warn("1.0", "bcapar()", "bca_par()")
     if (missing(func)) {
         bca_par(t0, tt, bb,
                 conf.level = 1 - 2 * alpha[alpha < 0.5],
@@ -104,14 +104,14 @@ bcapar <- function(t0, tt, bb,
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' `bcaplot()` was deprecated in bcaboot 0.4.0 in favour of
+#' `bcaplot()` was deprecated in bcaboot 1.0 in favour of
 #' `autoplot()`.
 #' @param vl Output of a bcaboot computation function.
 #' @param ... Additional arguments (ignored).
 #' @keywords internal
 #' @export
 bcaplot <- function(vl, ...) {
-    lifecycle::deprecate_warn("0.4.0", "bcaplot()", "autoplot()")
+    lifecycle::deprecate_warn("1.0", "bcaplot()", "autoplot()")
     if (requireNamespace("ggplot2", quietly = TRUE)) {
         print(ggplot2::autoplot(vl, ...))
     } else {

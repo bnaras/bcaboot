@@ -58,11 +58,12 @@ print.bcaboot <- function(x, digits = getOption("digits"), ...) {
     ## --- Header ---
     method_str <- x$method
     accel_str  <- x$accel
-    if (!is.null(method_str) && !is.null(accel_str)) {
-        cat("BCa Bootstrap Confidence Intervals\n")
-        cat(sprintf("  Method: %s (%s acceleration)\n", method_str, accel_str))
-    } else {
-        cat("BCa Bootstrap Confidence Intervals\n")
+    cat("BCa Bootstrap Confidence Intervals\n")
+    if (!is.null(method_str)) {
+        if (!is.null(accel_str) && !is.na(accel_str))
+            cat(sprintf("  Method: %s (%s acceleration)\n", method_str, accel_str))
+        else
+            cat(sprintf("  Method: %s\n", method_str))
     }
 
     ## Extract theta and sdboot from stats (vector or matrix)

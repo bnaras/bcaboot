@@ -19,8 +19,8 @@ bcaplot(
 )
 }
 \arguments{
-\item{vl}{output of \code{bcajack}, \code{bcajack2}, or
-\code{bcapar}}
+\item{vl}{output of \code{bcajack}, \code{bcajack2}, \code{bcanon},
+or \code{bcapar}}
 
 \item{main}{The main caption (can be empty)}
 
@@ -50,8 +50,8 @@ bca intervals}
 }
 \description{
 \code{bcaplot} uses the output of \code{bcajack},
-\code{bcajack2}, or \code{bcapar} to plot bca and standard
-confidence limits for the parameter of interest.
+\code{bcajack2}, \code{bcanon}, or \code{bcapar} to plot bca
+and standard confidence limits for the parameter of interest.
 }
 \details{
 confidence interval endpoints are plotted vertically versus

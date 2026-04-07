@@ -33,7 +33,7 @@ bcajack2(Blist) without need to enter the function \(func\)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">bcaboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@ bcajack2(Blist) without need to enter the function \(func\)."></head><body>
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/bcaboot.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/bnaras/bcaboot/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -205,35 +206,21 @@ and an estimate <code>sdu</code> of its sampling error</p></li>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">bcajack2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Xy</span>, B <span class="op">=</span> <span class="fl">1000</span>, func <span class="op">=</span> <span class="va">rfun</span>, m <span class="op">=</span> <span class="fl">40</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $call</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bcajack2(x = Xy, B = 1000, func = rfun, m = 40, verbose = FALSE)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`bcajack2()` was deprecated in bcaboot 1.0.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `bca_nonpar()` instead.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BCa Bootstrap Confidence Intervals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Method: nonpar (regression acceleration)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   B = 1000, theta = 0.5065603, sdboot = 0.03076788</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lims</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             bca      jacksd       std   pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.025 0.4289798 0.003371377 0.4462564 0.002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.05  0.4374506 0.006440959 0.4559517 0.006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.1   0.4533929 0.004038199 0.4671297 0.018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.16  0.4621266 0.003321927 0.4759630 0.037</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5   0.4950141 0.001790731 0.5065603 0.219</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.84  0.5255210 0.002355254 0.5371577 0.586</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.9   0.5357038 0.002870023 0.5459909 0.692</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.95  0.5459683 0.002031757 0.5571690 0.804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.975 0.5540292 0.003463861 0.5668642 0.877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Confidence limits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  conf.level    bca.lo    bca.hi    std.lo    std.hi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.95 0.4289798 0.5540292 0.4462564 0.5668642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.90 0.4374506 0.5459683 0.4559517 0.5571690</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.80 0.4533929 0.5357038 0.4671297 0.5459909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.68 0.4621266 0.5255210 0.4759630 0.5371577</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         theta       sdboot          z0             a      sdjack</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> est 0.5065603 0.0307678772 -0.38532047 -0.0109424195 0.031399281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> jsd 0.0000000 0.0007431751  0.03769735  0.0007008304 0.000282446</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $B.mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000.0000000    0.5189562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ustats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      ustat        sdu </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.49416441 0.03171256 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bcaboot"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostics:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   z0 = -0.3853205, a = -0.01094242, sdjack = 0.03139928</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

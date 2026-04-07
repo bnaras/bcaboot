@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bcaboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,7 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/bcaboot.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -67,7 +68,9 @@ and Balasubramanian Narasimhan</h4>
 </h2>
 <p>Bootstrap confidence intervals depend on three elements:</p>
 <ul>
-<li>the cdf of the bootstrap replications
+<li>the cdf of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+bootstrap replications
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>t</mi><mi>i</mi><mo>*</mo></msubsup><annotation encoding="application/x-tex">t_i^*</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1</mn><mi>…</mi><mi>B</mi></mrow><annotation encoding="application/x-tex">i=1\ldots B</annotation></semantics></math>
 </li>
@@ -87,15 +90,18 @@ the data changes.</li>
 <p>The first two of these depend only on the bootstrap distribution, and
 not how it is generated: parametrically or non-parametrically.</p>
 <p>Package <code>bcaboot</code> aims to make construction of bootstrap
-confidence intervals <em>almost</em> automatic. The three main functions
-for the user are:</p>
+confidence intervals <em>almost</em> automatic. The two main functions
+are:</p>
 <ul>
 <li>
-<code>bcajack</code> and <code>bcajack2</code> for nonparametric
-bootstrap</li>
+<code>bca_nonpar()</code> for nonparametric bootstrap</li>
 <li>
-<code>bcapar</code> for parametric bootstrap</li>
+<code>bca_par()</code> for parametric bootstrap</li>
 </ul>
+<p>All results are returned as <code>bcaboot</code> objects with a
+consistent structure and support <code>tidy()</code>,
+<code>glance()</code>, and <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> for integration with
+the tidyverse ecosystem.</p>
 <p>Further details are in the <span class="citation">Efron and
 Narasimhan (2018)</span> paper. Much of the theory behind the approach
 can be found in references <span class="citation">Efron (1987)</span>,
@@ -120,163 +126,103 @@ compute
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">X</span><span class="op">)</span> <span class="op">)</span><span class="op">$</span><span class="va">adj.r.squared</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Constructing bootstrap confidence intervals involves merely calling
-<code>bcajack</code>:</p>
+<code>bca_nonpar</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bcajack.html">bcajack</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Xy</span>, B <span class="op">=</span> <span class="fl">2000</span>, func <span class="op">=</span> <span class="va">rfun</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>The <code>result</code> contains several components. The confidence
-interval limits can be obtained via</p>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">bca_nonpar</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Xy</span>, B <span class="op">=</span> <span class="fl">2000</span>, func <span class="op">=</span> <span class="va">rfun</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>result</code> prints a clean summary:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">lims</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">bca</th>
-<th align="right">jacksd</th>
-<th align="right">std</th>
-<th align="right">pct</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">0.025</td>
-<td align="right">0.435</td>
-<td align="right">0.003</td>
-<td align="right">0.443</td>
-<td align="right">0.006</td>
-</tr>
-<tr class="even">
-<td align="left">0.05</td>
-<td align="right">0.443</td>
-<td align="right">0.006</td>
-<td align="right">0.453</td>
-<td align="right">0.015</td>
-</tr>
-<tr class="odd">
-<td align="left">0.1</td>
-<td align="right">0.454</td>
-<td align="right">0.001</td>
-<td align="right">0.465</td>
-<td align="right">0.035</td>
-</tr>
-<tr class="even">
-<td align="left">0.16</td>
-<td align="right">0.464</td>
-<td align="right">0.002</td>
-<td align="right">0.474</td>
-<td align="right">0.065</td>
-</tr>
-<tr class="odd">
-<td align="left">0.5</td>
-<td align="right">0.498</td>
-<td align="right">0.001</td>
-<td align="right">0.507</td>
-<td align="right">0.306</td>
-</tr>
-<tr class="even">
-<td align="left">0.84</td>
-<td align="right">0.531</td>
-<td align="right">0.002</td>
-<td align="right">0.539</td>
-<td align="right">0.685</td>
-</tr>
-<tr class="odd">
-<td align="left">0.9</td>
-<td align="right">0.540</td>
-<td align="right">0.002</td>
-<td align="right">0.548</td>
-<td align="right">0.778</td>
-</tr>
-<tr class="even">
-<td align="left">0.95</td>
-<td align="right">0.551</td>
-<td align="right">0.002</td>
-<td align="right">0.560</td>
-<td align="right">0.869</td>
-</tr>
-<tr class="odd">
-<td align="left">0.975</td>
-<td align="right">0.560</td>
-<td align="right">0.002</td>
-<td align="right">0.570</td>
-<td align="right">0.923</td>
-</tr>
-</tbody>
-</table>
-<p>The first column shows the estimated Bca confidence limits at the
-requested alpha percentiles which can be compared with the standard
-limits
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>±</mo><mover><mi>σ</mi><mo accent="true">̂</mo></mover><msub><mi>z</mi><mi>α</mi></msub></mrow><annotation encoding="application/x-tex">\theta \pm \hat{\sigma}z_{\alpha}</annotation></semantics></math>
-under the column titled <code>standard</code>. The <code>jacksd</code>
-column jacksd gives the internal standard errors for the Bca limits,
-quite small in this example. The <code>pct</code> column gives
-percentiles of the ordered <code>B</code> bootstrap replications
-corresponding to the Bca limits, e.g. the 91.85 percentile equals the
-the .975 Bca limit .5600968.</p>
-<p>Further details are provided by the <code>stats</code> component.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">stats</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">theta</th>
-<th align="right">sdboot</th>
-<th align="right">z0</th>
-<th align="right">a</th>
-<th align="right">sdjack</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">est</td>
-<td align="right">0.507</td>
-<td align="right">0.032</td>
-<td align="right">-0.253</td>
-<td align="right">-0.007</td>
-<td align="right">0.033</td>
-</tr>
-<tr class="even">
-<td align="left">jsd</td>
-<td align="right">0.000</td>
-<td align="right">0.001</td>
-<td align="right">0.031</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-</tr>
-</tbody>
-</table>
-<p>The first column <code>theta</code> is the original point estimate of
-the parameter of interest, <code>sdboot</code> is its bootstrap estimate
-of standard error. The quantity <code>z0</code> is the Bca bias
-correction value, in this case quite negative; <code>a</code> is the
-acceleration, a component of the Bca limits (nearly zero here). Finally,
-<code>sdjack</code> is the jackknife estimate of standard error for
-<code>theta</code>.</p>
-<p>The bottom line gives the internal standard errors for the five
-quantities above. This is substantial for <code>z0</code> above.</p>
-<p>The component <code>ustats</code> of the result provides the
-bias-corrected estimator and an estimate of its sampling error.</p>
+<code class="sourceCode R"><span><span class="va">result</span></span></code></pre></div>
+<pre><code><span><span class="co">## BCa Bootstrap Confidence Intervals</span></span>
+<span><span class="co">##   Method: nonpar (regression acceleration)</span></span>
+<span><span class="co">##   B = 2000, theta = 0.5065603, sdboot = 0.03245877</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Confidence limits:</span></span>
+<span><span class="co">##  conf.level    bca.lo    bca.hi    std.lo    std.hi</span></span>
+<span><span class="co">##        0.95 0.4221740 0.5613841 0.4429423 0.5701783</span></span>
+<span><span class="co">##        0.90 0.4392968 0.5507219 0.4531704 0.5599503</span></span>
+<span><span class="co">##        0.80 0.4541906 0.5387434 0.4649627 0.5481579</span></span>
+<span><span class="co">##        0.68 0.4647324 0.5298461 0.4742814 0.5388392</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Diagnostics:</span></span>
+<span><span class="co">##   z0 = -0.2676094, a = -0.005846673, sdjack = 0.03232833</span></span></code></pre>
+<div class="section level3">
+<h3 id="tidy-output">Tidy output<a class="anchor" aria-label="anchor" href="#tidy-output"></a>
+</h3>
+<p>The <code>tidy()</code> method returns a tibble with one row per
+(confidence level, method) combination, following the broom
+conventions:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">result</span><span class="op">$</span><span class="va">ustats</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="right">ustat</th>
-<th align="right">sdu</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td align="right">0.498</td>
-<td align="right">0.036</td>
-</tr></tbody>
-</table>
-<p>The resulting object can be plotted using <code>bcaplot</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/bcaplot.html">bcaplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
-<p><img src="bcaboot_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="700"></p>
+<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 8 × 7</span></span></span>
+<span><span class="co">##   conf.level method   estimate conf.low conf.high jacksd.low jacksd.high</span></span>
+<span><span class="co">##        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>       0.95 bca         0.507    0.422     0.561    0.007<span style="text-decoration: underline;">76</span>     0.002<span style="text-decoration: underline;">01</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>       0.95 standard    0.507    0.443     0.570   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>       0.9  bca         0.507    0.439     0.551    0.002<span style="text-decoration: underline;">80</span>     0.001<span style="text-decoration: underline;">73</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>       0.9  standard    0.507    0.453     0.560   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>       0.8  bca         0.507    0.454     0.539    0.002<span style="text-decoration: underline;">62</span>     0.001<span style="text-decoration: underline;">57</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>       0.8  standard    0.507    0.465     0.548   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span>       0.68 bca         0.507    0.465     0.530    0.001<span style="text-decoration: underline;">43</span>     0.001<span style="text-decoration: underline;">58</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">8</span>       0.68 standard    0.507    0.474     0.539   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span></span></span></code></pre>
+<p>The <code>glance()</code> method provides a one-row summary of the
+bootstrap run:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">glance</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 9</span></span></span>
+<span><span class="co">##   method accel      theta sdboot     z0        a sdjack     B boot_mean</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> nonpar regression 0.507 0.032<span style="text-decoration: underline;">5</span> -<span style="color: #BB0000;">0.268</span> -<span style="color: #BB0000;">0.005</span><span style="color: #BB0000; text-decoration: underline;">85</span> 0.032<span style="text-decoration: underline;">3</span>  <span style="text-decoration: underline;">2</span>000     0.515</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
+</h3>
+<p>When <code>ggplot2</code> is available, <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>
+produces a publication-ready plot of the confidence intervals:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
+<p><img src="bcaboot_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="672"></p>
+</div>
+<div class="section level3">
+<h3 id="acceleration-methods">Acceleration methods<a class="anchor" aria-label="anchor" href="#acceleration-methods"></a>
+</h3>
+<p>The <code>accel</code> argument controls how the acceleration
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+is estimated:</p>
+<ul>
+<li>
+<code>accel = "regression"</code> (default): uses local regression
+on bootstrap count vectors nearest to uniform. Also computes the gbca
+diagnostic.</li>
+<li>
+<code>accel = "jackknife"</code>: uses classical delete-one (or
+delete-group) jackknife influence values.</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">result_jk</span> <span class="op">&lt;-</span> <span class="fu">bca_nonpar</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Xy</span>, B <span class="op">=</span> <span class="fl">2000</span>, func <span class="op">=</span> <span class="va">rfun</span>,</span>
+<span>                        accel <span class="op">=</span> <span class="st">"jackknife"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">tidy</span><span class="op">(</span><span class="va">result_jk</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 8 × 7</span></span></span>
+<span><span class="co">##   conf.level method   estimate conf.low conf.high jacksd.low jacksd.high</span></span>
+<span><span class="co">##        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>       0.95 bca         0.507    0.435     0.560    0.003<span style="text-decoration: underline;">97</span>     0.001<span style="text-decoration: underline;">95</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>       0.95 standard    0.507    0.443     0.570   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>       0.9  bca         0.507    0.443     0.551    0.005<span style="text-decoration: underline;">64</span>     0.002<span style="text-decoration: underline;">79</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>       0.9  standard    0.507    0.453     0.560   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>       0.8  bca         0.507    0.454     0.540    0.001<span style="text-decoration: underline;">62</span>     0.002<span style="text-decoration: underline;">05</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>       0.8  standard    0.507    0.465     0.548   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span>       0.68 bca         0.507    0.464     0.531    0.002<span style="text-decoration: underline;">13</span>     0.002<span style="text-decoration: underline;">04</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">8</span>       0.68 standard    0.507    0.474     0.539   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span></span></span></code></pre>
+</div>
 </div>
 <div class="section level2">
 <h2 id="a-parametric-example">A Parametric Example<a class="anchor" aria-label="anchor" href="#a-parametric-example"></a>
 </h2>
 <p>A logistic regression was fit to data on 812 neonates at a large
 clinic. Here is a summary of the dataset.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">neonates</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 'data.frame':    812 obs. of  12 variables:</span></span>
 <span><span class="co">##  $ gest: num  -0.729 -0.729 1.156 -2.884 0.348 ...</span></span>
@@ -303,7 +249,7 @@ deaths versus non-deaths.</p>
 <div class="section level3">
 <h3 id="a-logistic-model">A Logistic Model<a class="anchor" aria-label="anchor" href="#a-logistic-model"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">neonates</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">y</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">glm_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">.</span>, family <span class="op">=</span> <span class="st">"binomial"</span>, weights <span class="op">=</span> <span class="va">weights</span>, data <span class="op">=</span> <span class="va">neonates</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">glm_model</span><span class="op">)</span></span></code></pre></div>
@@ -338,7 +284,7 @@ deaths versus non-deaths.</p>
 <p>Parametric bootstrapping in this context requires us to independently
 sample the response according to the estimated probabilities from
 regression model. As discussed in the paper accompanying this software,
-routine <code>bcapar</code> also requires sufficient statistics
+routine <code>bca_par</code> also requires sufficient statistics
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>=</mo><msup><mi>M</mi><mi>′</mi></msup><mi>y</mi></mrow><annotation encoding="application/x-tex">\hat{\beta} = M^\prime y</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
@@ -347,7 +293,7 @@ work. The function <code>glm_boot</code> below returns a list of the
 estimate
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\theta}</annotation></semantics></math>,
 the bootstrap estimates, and the sufficient statistics.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">glm_boot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">B</span>, <span class="va">glm_model</span>, <span class="va">weights</span>, <span class="va">var</span> <span class="op">=</span> <span class="st">"resp"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">pi_hat</span> <span class="op">&lt;-</span> <span class="va">glm_model</span><span class="op">$</span><span class="va">fitted.values</span></span>
 <span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">pi_hat</span><span class="op">)</span></span>
@@ -362,139 +308,52 @@ the bootstrap estimates, and the sufficient statistics.</p>
 <span>         suff_stat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">y_star</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="va">glm_model</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Now we can compute the bootstrap estimates using
-<code>bcapar</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code>bca_par</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">3891</span><span class="op">)</span></span>
 <span><span class="va">glm_boot_out</span> <span class="op">&lt;-</span> <span class="fu">glm_boot</span><span class="op">(</span>B <span class="op">=</span> <span class="fl">2000</span>, glm_model <span class="op">=</span> <span class="va">glm_model</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
-<span><span class="va">glm_bca</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bcapar.html">bcapar</a></span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">glm_boot_out</span><span class="op">$</span><span class="va">theta</span>,</span>
-<span>                  tt <span class="op">=</span> <span class="va">glm_boot_out</span><span class="op">$</span><span class="va">theta_star</span>,</span>
-<span>                  bb <span class="op">=</span> <span class="va">glm_boot_out</span><span class="op">$</span><span class="va">suff_stat</span><span class="op">)</span></span></code></pre></div>
-<p>We can examine the bootstrap limits and statistics.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">glm_bca</span><span class="op">$</span><span class="va">lims</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">bca</th>
-<th align="right">jacksd</th>
-<th align="right">std</th>
-<th align="right">pct</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">0.025</td>
-<td align="right">0.598</td>
-<td align="right">0.025</td>
-<td align="right">0.639</td>
-<td align="right">0.006</td>
-</tr>
-<tr class="even">
-<td align="left">0.05</td>
-<td align="right">0.655</td>
-<td align="right">0.019</td>
-<td align="right">0.688</td>
-<td align="right">0.016</td>
-</tr>
-<tr class="odd">
-<td align="left">0.1</td>
-<td align="right">0.717</td>
-<td align="right">0.011</td>
-<td align="right">0.745</td>
-<td align="right">0.040</td>
-</tr>
-<tr class="even">
-<td align="left">0.16</td>
-<td align="right">0.764</td>
-<td align="right">0.007</td>
-<td align="right">0.789</td>
-<td align="right">0.073</td>
-</tr>
-<tr class="odd">
-<td align="left">0.5</td>
-<td align="right">0.913</td>
-<td align="right">0.004</td>
-<td align="right">0.943</td>
-<td align="right">0.333</td>
-</tr>
-<tr class="even">
-<td align="left">0.84</td>
-<td align="right">1.067</td>
-<td align="right">0.005</td>
-<td align="right">1.097</td>
-<td align="right">0.710</td>
-</tr>
-<tr class="odd">
-<td align="left">0.9</td>
-<td align="right">1.114</td>
-<td align="right">0.009</td>
-<td align="right">1.142</td>
-<td align="right">0.797</td>
-</tr>
-<tr class="even">
-<td align="left">0.95</td>
-<td align="right">1.168</td>
-<td align="right">0.008</td>
-<td align="right">1.198</td>
-<td align="right">0.880</td>
-</tr>
-<tr class="odd">
-<td align="left">0.975</td>
-<td align="right">1.214</td>
-<td align="right">0.013</td>
-<td align="right">1.247</td>
-<td align="right">0.930</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">glm_bca</span><span class="op">$</span><span class="va">stats</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">theta</th>
-<th align="right">sd</th>
-<th align="right">a</th>
-<th align="right">az</th>
-<th align="right">z0</th>
-<th align="right">A</th>
-<th align="right">sdd</th>
-<th align="right">mean</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">est</td>
-<td align="right">0.943</td>
-<td align="right">0.155</td>
-<td align="right">-0.019</td>
-<td align="right">-0.001</td>
-<td align="right">-0.215</td>
-<td align="right">0.006</td>
-<td align="right">0.129</td>
-<td align="right">0.982</td>
-</tr>
-<tr class="even">
-<td align="left">jsd</td>
-<td align="right">0.000</td>
-<td align="right">0.002</td>
-<td align="right">0.007</td>
-<td align="right">0.010</td>
-<td align="right">0.027</td>
-<td align="right">0.025</td>
-<td align="right">0.005</td>
-<td align="right">0.004</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">glm_bca</span> <span class="op">&lt;-</span> <span class="fu">bca_par</span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">glm_boot_out</span><span class="op">$</span><span class="va">theta</span>,</span>
+<span>                   tt <span class="op">=</span> <span class="va">glm_boot_out</span><span class="op">$</span><span class="va">theta_star</span>,</span>
+<span>                   bb <span class="op">=</span> <span class="va">glm_boot_out</span><span class="op">$</span><span class="va">suff_stat</span><span class="op">)</span></span></code></pre></div>
+<p>We can examine the results using tidy methods:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">glm_bca</span></span></code></pre></div>
+<pre><code><span><span class="co">## BCa Bootstrap Confidence Intervals</span></span>
+<span><span class="co">##   Method: par</span></span>
+<span><span class="co">##   B = 2000, theta = 0.9430645, sdboot = 0.1549141</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Confidence limits:</span></span>
+<span><span class="co">##  conf.level    bca.lo   bca.hi    std.lo   std.hi</span></span>
+<span><span class="co">##        0.95 0.5981733 1.213676 0.6394385 1.246691</span></span>
+<span><span class="co">##        0.90 0.6549470 1.167789 0.6882535 1.197876</span></span>
+<span><span class="co">##        0.80 0.7169529 1.113660 0.7445341 1.141595</span></span>
+<span><span class="co">##        0.68 0.7635391 1.067160 0.7890090 1.097120</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Diagnostics:</span></span>
+<span><span class="co">##   z0 = -0.2147016, a = -0.01940269</span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">glm_bca</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 8 × 7</span></span></span>
+<span><span class="co">##   conf.level method   estimate conf.low conf.high jacksd.low jacksd.high</span></span>
+<span><span class="co">##        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>       0.95 bca         0.943    0.598      1.21    0.024<span style="text-decoration: underline;">7</span>      0.012<span style="text-decoration: underline;">5</span> </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>       0.95 standard    0.943    0.639      1.25   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>       0.9  bca         0.943    0.655      1.17    0.019<span style="text-decoration: underline;">3</span>      0.008<span style="text-decoration: underline;">48</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>       0.9  standard    0.943    0.688      1.20   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>       0.8  bca         0.943    0.717      1.11    0.010<span style="text-decoration: underline;">7</span>      0.009<span style="text-decoration: underline;">07</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>       0.8  standard    0.943    0.745      1.14   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span>       0.68 bca         0.943    0.764      1.07    0.006<span style="text-decoration: underline;">76</span>     0.005<span style="text-decoration: underline;">07</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">8</span>       0.68 standard    0.943    0.789      1.10   <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span></span></span></code></pre>
 <p>Our bootstrap standard error using
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>=</mo><mn>2000</mn></mrow><annotation encoding="application/x-tex">B=2000</annotation></semantics></math>
-samples for <code>resp</code> can be read off from the last table as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.943</mn><mo>±</mo><mn>0.155</mn></mrow><annotation encoding="application/x-tex">0.943\pm 0.155</annotation></semantics></math>.
-We can also see a small upward bias from the fact that 0.585 proportion
-of bootstrap replicates were above
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.943</mn><annotation encoding="application/x-tex">0.943</annotation></semantics></math>.
-This is also reflected in the bias-corrector term
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>z</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo>=</mo><mi>−</mi><mn>0.215</mn></mrow><annotation encoding="application/x-tex">\hat{z}_0= -0.215</annotation></semantics></math>
-in the table above with an internal standard error of $0.024.</p>
+samples for <code>resp</code> can be read off from the glance
+output:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">glance</span><span class="op">(</span><span class="va">glm_bca</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 9</span></span></span>
+<span><span class="co">##   method accel theta sdboot     z0       a sdjack     B boot_mean</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> par    <span style="color: #BB0000;">NA</span>    0.943  0.155 -<span style="color: #BB0000;">0.215</span> -<span style="color: #BB0000;">0.019</span><span style="color: #BB0000; text-decoration: underline;">4</span>     <span style="color: #BB0000;">NA</span>  <span style="text-decoration: underline;">2</span>000     0.982</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="a-penalized-logistic-model">A Penalized Logistic Model<a class="anchor" aria-label="anchor" href="#a-penalized-logistic-model"></a>
@@ -505,12 +364,12 @@ cross-validation to figure out a best fit, corresponding to a
 penalization parameter
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>
 (named <code>lambda.min</code>).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">neonates</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> ; <span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">neonates</span><span class="op">$</span><span class="va">y</span>;</span>
 <span><span class="va">glmnet_model</span> <span class="op">&lt;-</span> <span class="fu">glmnet</span><span class="fu">::</span><span class="fu"><a href="https://glmnet.stanford.edu/reference/cv.glmnet.html" class="external-link">cv.glmnet</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">X</span>, y <span class="op">=</span> <span class="va">Y</span>, family <span class="op">=</span> <span class="st">"binomial"</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span></code></pre></div>
 <p>We can examine the estimates at the <code>lambda.min</code> as
 follows.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coefs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">glmnet_model</span>, s <span class="op">=</span> <span class="va">glmnet_model</span><span class="op">$</span><span class="va">lambda.min</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coefs</span><span class="op">)</span>, coefficient <span class="op">=</span> <span class="va">coefs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -571,7 +430,7 @@ follows.</p>
 </table>
 <p>Following the lines above, we create a helper function to perform the
 bootstrap.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">glmnet_boot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">B</span>, <span class="va">X</span>, <span class="va">y</span>, <span class="va">glmnet_model</span>, <span class="va">weights</span>, <span class="va">var</span> <span class="op">=</span> <span class="st">"resp"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">lambda</span> <span class="op">&lt;-</span> <span class="va">glmnet_model</span><span class="op">$</span><span class="va">lambda.min</span></span>
 <span>    <span class="va">theta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">glmnet_model</span>, s <span class="op">=</span> <span class="va">lambda</span><span class="op">)</span><span class="op">)</span></span>
@@ -589,139 +448,18 @@ bootstrap.</p>
 <span>         suff_stat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">y_star</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">X</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>And off we go.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">glmnet_boot_out</span> <span class="op">&lt;-</span> <span class="fu">glmnet_boot</span><span class="op">(</span>B <span class="op">=</span> <span class="fl">2000</span>, <span class="va">X</span>, <span class="va">y</span>, <span class="va">glmnet_model</span>, <span class="va">weights</span><span class="op">)</span></span>
-<span><span class="va">glmnet_bca</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bcapar.html">bcapar</a></span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">glmnet_boot_out</span><span class="op">$</span><span class="va">theta</span>,</span>
-<span>                     tt <span class="op">=</span> <span class="va">glmnet_boot_out</span><span class="op">$</span><span class="va">theta_star</span>,</span>
-<span>                     bb <span class="op">=</span> <span class="va">glmnet_boot_out</span><span class="op">$</span><span class="va">suff_stat</span><span class="op">)</span></span></code></pre></div>
-<p>We can compare the output of this against what we got from
-<code>glm</code> above.</p>
-<p>We can examine the bootstrap limits and statistics.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">glmnet_bca</span><span class="op">$</span><span class="va">lims</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">bca</th>
-<th align="right">jacksd</th>
-<th align="right">std</th>
-<th align="right">pct</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">0.025</td>
-<td align="right">0.671</td>
-<td align="right">0.008</td>
-<td align="right">0.614</td>
-<td align="right">0.128</td>
-</tr>
-<tr class="even">
-<td align="left">0.05</td>
-<td align="right">0.715</td>
-<td align="right">0.004</td>
-<td align="right">0.655</td>
-<td align="right">0.206</td>
-</tr>
-<tr class="odd">
-<td align="left">0.1</td>
-<td align="right">0.757</td>
-<td align="right">0.006</td>
-<td align="right">0.702</td>
-<td align="right">0.325</td>
-</tr>
-<tr class="even">
-<td align="left">0.16</td>
-<td align="right">0.799</td>
-<td align="right">0.005</td>
-<td align="right">0.740</td>
-<td align="right">0.434</td>
-</tr>
-<tr class="odd">
-<td align="left">0.5</td>
-<td align="right">0.926</td>
-<td align="right">0.005</td>
-<td align="right">0.870</td>
-<td align="right">0.797</td>
-</tr>
-<tr class="even">
-<td align="left">0.84</td>
-<td align="right">1.047</td>
-<td align="right">0.011</td>
-<td align="right">1.000</td>
-<td align="right">0.966</td>
-</tr>
-<tr class="odd">
-<td align="left">0.9</td>
-<td align="right">1.092</td>
-<td align="right">0.015</td>
-<td align="right">1.037</td>
-<td align="right">0.982</td>
-</tr>
-<tr class="even">
-<td align="left">0.95</td>
-<td align="right">1.137</td>
-<td align="right">0.016</td>
-<td align="right">1.084</td>
-<td align="right">0.993</td>
-</tr>
-<tr class="odd">
-<td align="left">0.975</td>
-<td align="right">1.172</td>
-<td align="right">0.028</td>
-<td align="right">1.126</td>
-<td align="right">0.997</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">glmnet_bca</span><span class="op">$</span><span class="va">stats</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">theta</th>
-<th align="right">sd</th>
-<th align="right">a</th>
-<th align="right">az</th>
-<th align="right">z0</th>
-<th align="right">A</th>
-<th align="right">sdd</th>
-<th align="right">mean</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">est</td>
-<td align="right">0.87</td>
-<td align="right">0.131</td>
-<td align="right">-0.003</td>
-<td align="right">-0.025</td>
-<td align="right">0.415</td>
-<td align="right">-0.011</td>
-<td align="right">0.104</td>
-<td align="right">0.818</td>
-</tr>
-<tr class="even">
-<td align="left">jsd</td>
-<td align="right">0.00</td>
-<td align="right">0.002</td>
-<td align="right">0.010</td>
-<td align="right">0.012</td>
-<td align="right">0.023</td>
-<td align="right">0.034</td>
-<td align="right">0.004</td>
-<td align="right">0.003</td>
-</tr>
-</tbody>
-</table>
-<p>The shrinkage is evident; we now have the bootstrap estimate is now
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.862</mn><mo>±</mo><mn>0.127</mn></mrow><annotation encoding="application/x-tex">0.862\pm 0.127</annotation></semantics></math>.
-In fact, we now have only 0.339 proportion of bootstrap replicates above
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.862</mn><annotation encoding="application/x-tex">0.862</annotation></semantics></math>.
-Therefore, the bias corrector is large:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>z</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo>=</mo><mn>0.411</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">\hat{z}_0 =
-0.411.</annotation></semantics></math></p>
-<p>Finally, we can plot both the <code>glm</code> and
-<code>glmnet</code> results side-by-side.</p>
-<p><img src="bcaboot_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="768"></p>
+<span><span class="va">glmnet_bca</span> <span class="op">&lt;-</span> <span class="fu">bca_par</span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">glmnet_boot_out</span><span class="op">$</span><span class="va">theta</span>,</span>
+<span>                      tt <span class="op">=</span> <span class="va">glmnet_boot_out</span><span class="op">$</span><span class="va">theta_star</span>,</span>
+<span>                      bb <span class="op">=</span> <span class="va">glmnet_boot_out</span><span class="op">$</span><span class="va">suff_stat</span><span class="op">)</span></span></code></pre></div>
+<p>We can compare both models side-by-side:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">glm_bca</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"glm model"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="bcaboot_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="672"></p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">glmnet_bca</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"glmnet model"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="bcaboot_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level2">
@@ -745,9 +483,9 @@ theory yields exact limits:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="prefix">(</mo><mi>α</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mover><mi>θ</mi><mo accent="true">̂</mo></mover><msubsup><mi>F</mi><mrow><msub><mi>n</mi><mn>1</mn></msub><mo>,</mo><msub><mi>n</mi><mn>2</mn></msub></mrow><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow></msubsup></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
 \hat{\theta}(\alpha) = \frac{\hat{\theta}}{F_{n_1,n_2}^{1-\alpha}}.
 </annotation></semantics></math></p>
-<p>We can apply <code>bcapar</code> to this problem. As before, here are
-our helper functions.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<p>We can apply <code>bca_par</code> to this problem. As before, here
+are our helper functions.</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ratio_boot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">B</span>, <span class="va">v1</span>, <span class="va">v2</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">s1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">v1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">rchisq</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">B</span>, df <span class="op">=</span> <span class="va">n1</span><span class="op">)</span>  <span class="op">/</span> <span class="va">n1</span></span>
 <span>    <span class="va">s2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">v2</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">rchisq</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">B</span>, df <span class="op">=</span> <span class="va">n2</span><span class="op">)</span>  <span class="op">/</span> <span class="va">n2</span></span>
@@ -765,18 +503,35 @@ our helper functions.</p>
 corresponds to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo stretchy="false" form="prefix">(</mo><msup><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>*</mo></msup><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\tau(\hat{\beta}^*)</annotation></semantics></math>
 in the paper. This is the function expressing the parameter of interest
-as as a function of the sample.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+as a function of the sample.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">16000</span>; <span class="va">n1</span> <span class="op">&lt;-</span> <span class="fl">10</span>; <span class="va">n2</span> <span class="op">&lt;-</span> <span class="fl">42</span></span>
 <span><span class="va">ratio_boot_out</span> <span class="op">&lt;-</span> <span class="fu">ratio_boot</span><span class="op">(</span><span class="va">B</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">ratio_bca</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bcapar.html">bcapar</a></span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">ratio_boot_out</span><span class="op">$</span><span class="va">theta</span>,</span>
-<span>                 tt <span class="op">=</span> <span class="va">ratio_boot_out</span><span class="op">$</span><span class="va">theta_star</span>,</span>
-<span>                 bb <span class="op">=</span> <span class="va">ratio_boot_out</span><span class="op">$</span><span class="va">suff_stat</span>, func <span class="op">=</span> <span class="va">funcF</span><span class="op">)</span></span></code></pre></div>
-<p>The limits obtained are shown below, along with the exact limits as
-the last column.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exact</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/Fdist.html" class="external-link">qf</a></span><span class="op">(</span>df1 <span class="op">=</span> <span class="va">n1</span>, df2 <span class="op">=</span> <span class="va">n2</span>, p <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">lims</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">lims</span>, exact <span class="op">=</span> <span class="va">exact</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ratio_bca</span> <span class="op">&lt;-</span> <span class="fu">bca_par</span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">ratio_boot_out</span><span class="op">$</span><span class="va">theta</span>,</span>
+<span>                     tt <span class="op">=</span> <span class="va">ratio_boot_out</span><span class="op">$</span><span class="va">theta_star</span>,</span>
+<span>                     bb <span class="op">=</span> <span class="va">ratio_boot_out</span><span class="op">$</span><span class="va">suff_stat</span>, func <span class="op">=</span> <span class="va">funcF</span><span class="op">)</span></span></code></pre></div>
+<p>The tidy output shows the BCa, standard, and ABC limits:</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 12 × 7</span></span></span>
+<span><span class="co">##    conf.level method   estimate conf.low conf.high jacksd.low jacksd.high</span></span>
+<span><span class="co">##         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>       0.95 abc             1   0.405       3.42   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>       0.95 bca             1   0.412       3.14    0.008<span style="text-decoration: underline;">24</span>      0.095<span style="text-decoration: underline;">7</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>       0.95 standard        1  -<span style="color: #BB0000;">0.052</span><span style="color: #BB0000; text-decoration: underline;">7</span>      2.05   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>       0.9  abc             1   0.472       2.73   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>       0.9  bca             1   0.475       2.57    0.007<span style="text-decoration: underline;">43</span>      0.042<span style="text-decoration: underline;">6</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>       0.9  standard        1   0.117       1.88   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>       0.8  abc             1   0.562       2.15   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>       0.8  bca             1   0.559       2.09    0.006<span style="text-decoration: underline;">87</span>      0.031<span style="text-decoration: underline;">6</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>       0.8  standard        1   0.312       1.69   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>       0.68 abc             1   0.646       1.81   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">11</span>       0.68 bca             1   0.639       1.77    0.006<span style="text-decoration: underline;">35</span>      0.024<span style="text-decoration: underline;">7</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">12</span>       0.68 standard        1   0.466       1.53   <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span></code></pre>
+<p>We can compare against exact F-distribution limits:</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">exact</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/Fdist.html" class="external-link">qf</a></span><span class="op">(</span>df1 <span class="op">=</span> <span class="va">n1</span>, df2 <span class="op">=</span> <span class="va">n2</span>, p <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">limits</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">limits</span>, exact <span class="op">=</span> <span class="va">exact</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left"></th>
@@ -784,7 +539,6 @@ the last column.</p>
 <th align="right">jacksd</th>
 <th align="right">std</th>
 <th align="right">pct</th>
-<th align="right">abc</th>
 <th align="right">exact</th>
 </tr></thead>
 <tbody>
@@ -794,7 +548,6 @@ the last column.</p>
 <td align="right">0.008</td>
 <td align="right">-0.053</td>
 <td align="right">0.068</td>
-<td align="right">0.405</td>
 <td align="right">0.422</td>
 </tr>
 <tr class="even">
@@ -802,8 +555,7 @@ the last column.</p>
 <td align="right">0.475</td>
 <td align="right">0.007</td>
 <td align="right">0.117</td>
-<td align="right">0.103</td>
-<td align="right">0.472</td>
+<td align="right">0.104</td>
 <td align="right">0.484</td>
 </tr>
 <tr class="odd">
@@ -812,7 +564,6 @@ the last column.</p>
 <td align="right">0.007</td>
 <td align="right">0.312</td>
 <td align="right">0.164</td>
-<td align="right">0.562</td>
 <td align="right">0.570</td>
 </tr>
 <tr class="even">
@@ -821,7 +572,6 @@ the last column.</p>
 <td align="right">0.006</td>
 <td align="right">0.466</td>
 <td align="right">0.228</td>
-<td align="right">0.646</td>
 <td align="right">0.650</td>
 </tr>
 <tr class="odd">
@@ -830,7 +580,6 @@ the last column.</p>
 <td align="right">0.006</td>
 <td align="right">1.000</td>
 <td align="right">0.570</td>
-<td align="right">1.057</td>
 <td align="right">1.053</td>
 </tr>
 <tr class="even">
@@ -839,7 +588,6 @@ the last column.</p>
 <td align="right">0.025</td>
 <td align="right">1.534</td>
 <td align="right">0.903</td>
-<td align="right">1.813</td>
 <td align="right">1.800</td>
 </tr>
 <tr class="odd">
@@ -848,7 +596,6 @@ the last column.</p>
 <td align="right">0.032</td>
 <td align="right">1.688</td>
 <td align="right">0.953</td>
-<td align="right">2.154</td>
 <td align="right">2.128</td>
 </tr>
 <tr class="even">
@@ -857,7 +604,6 @@ the last column.</p>
 <td align="right">0.043</td>
 <td align="right">1.883</td>
 <td align="right">0.985</td>
-<td align="right">2.726</td>
 <td align="right">2.655</td>
 </tr>
 <tr class="odd">
@@ -866,106 +612,171 @@ the last column.</p>
 <td align="right">0.096</td>
 <td align="right">2.053</td>
 <td align="right">0.996</td>
-<td align="right">3.416</td>
 <td align="right">3.247</td>
 </tr>
 </tbody>
 </table>
-<p>Clearly the bca limits match the exact values very well and suggests
-a large upward correction to the standard limits. Here the corrections
-are all positive as seen in the table below;
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>z</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo>=</mo><mn>0.093</mn></mrow><annotation encoding="application/x-tex">\hat{z}_0 = 0.093</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>a</mi><mo accent="true">̂</mo></mover><mo>=</mo><mn>0.092</mn></mrow><annotation encoding="application/x-tex">\hat{a} = 0.092</annotation></semantics></math>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">stats</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>Clearly the BCa limits match the exact values very well and suggests
+a large upward correction to the standard limits.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">)</span></span></code></pre></div>
+<p><img src="bcaboot_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="" width="672"></p>
+</div>
+<div class="section level2">
+<h2 id="migration">Migration from pre-1.0 API<a class="anchor" aria-label="anchor" href="#migration"></a>
+</h2>
+<p>Version 1.0 introduces a new API. The old functions continue to work
+but emit deprecation warnings. Here is how to migrate:</p>
+<div class="section level3">
+<h3 id="function-mapping">Function mapping<a class="anchor" aria-label="anchor" href="#function-mapping"></a>
+</h3>
 <table class="table">
+<colgroup>
+<col width="40%">
+<col width="40%">
+<col width="20%">
+</colgroup>
 <thead><tr class="header">
-<th align="left"></th>
-<th align="right">theta</th>
-<th align="right">sd</th>
-<th align="right">a</th>
-<th align="right">az</th>
-<th align="right">z0</th>
-<th align="right">A</th>
-<th align="right">sdd</th>
-<th align="right">mean</th>
+<th align="left">Old function</th>
+<th align="left">New function</th>
+<th align="left">Notes</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">est</td>
-<td align="right">1</td>
-<td align="right">0.537</td>
-<td align="right">0.098</td>
-<td align="right">0.089</td>
-<td align="right">0.088</td>
-<td align="right">0.509</td>
-<td align="right">0.504</td>
-<td align="right">1.054</td>
+<td align="left"><code>bcajack(x, B, func)</code></td>
+<td align="left"><code>bca_nonpar(x, B, func, accel = "jackknife")</code></td>
+<td align="left">Classical jackknife acceleration</td>
 </tr>
 <tr class="even">
-<td align="left">jsd</td>
-<td align="right">0</td>
-<td align="right">0.005</td>
-<td align="right">0.005</td>
-<td align="right">0.005</td>
-<td align="right">0.010</td>
-<td align="right">0.020</td>
-<td align="right">0.004</td>
-<td align="right">0.004</td>
+<td align="left"><code>bcajack2(x, B, func)</code></td>
+<td align="left"><code>bca_nonpar(x, B, func, accel = "regression")</code></td>
+<td align="left">Regression acceleration (default)</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>bcanon(B, x, func)</code></td>
+<td align="left"><code>bca_nonpar(x, B, func)</code></td>
+<td align="left">Removed; note argument order change</td>
+</tr>
+<tr class="even">
+<td align="left"><code>bcapar(t0, tt, bb)</code></td>
+<td align="left"><code>bca_par(t0, tt, bb)</code></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>bcaplot(result)</code></td>
+<td align="left"><code>autoplot(result)</code></td>
+<td align="left">Requires ggplot2</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">abcstats</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="parameter-mapping">Parameter mapping<a class="anchor" aria-label="anchor" href="#parameter-mapping"></a>
+</h3>
 <table class="table">
+<colgroup>
+<col width="21%">
+<col width="21%">
+<col width="56%">
+</colgroup>
 <thead><tr class="header">
-<th align="right">a</th>
-<th align="right">z0</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td align="right">0.1</td>
-<td align="right">0.1</td>
-</tr></tbody>
-</table>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">$</span><span class="va">ustats</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">ustat</th>
-<th align="right">sdu</th>
-<th align="right">B</th>
+<th align="left">Old</th>
+<th align="left">New</th>
+<th align="left">Description</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">est</td>
-<td align="right">0.946</td>
-<td align="right">0.490</td>
-<td align="right">16000</td>
+<td align="left"><code>alpha</code></td>
+<td align="left"><code>conf.level</code></td>
+<td align="left">E.g., <code>alpha = 0.025</code> becomes
+<code>conf.level = 0.95</code>
+</td>
 </tr>
 <tr class="even">
-<td align="left">jsd</td>
-<td align="right">0.004</td>
-<td align="right">0.004</td>
-<td align="right">0</td>
+<td align="left"><code>m</code></td>
+<td align="left"><code>n_groups</code></td>
+<td align="left">Number of jackknife groups</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>mr</code></td>
+<td align="left"><code>group_reps</code></td>
+<td align="left">Random grouping repetitions</td>
+</tr>
+<tr class="even">
+<td align="left"><code>pct</code></td>
+<td align="left"><code>kl_fraction</code></td>
+<td align="left">Fraction of nearby count vectors</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>K</code></td>
+<td align="left"><code>n_jack</code></td>
+<td align="left">Delete-d jackknife repetitions</td>
+</tr>
+<tr class="even">
+<td align="left"><code>J</code></td>
+<td align="left"><code>jack_groups</code></td>
+<td align="left">Groups per jackknife fold</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>trun</code></td>
+<td align="left"><code>truncation</code></td>
+<td align="left">Truncation for acceleration</td>
+</tr>
+<tr class="even">
+<td align="left"><code>cd</code></td>
+<td align="left"><code>conf_density</code></td>
+<td align="left">Confidence density flag</td>
+</tr>
+<tr class="odd">
+<td align="left">
+<code>B</code> (as list)</td>
+<td align="left"><code>boot_data</code></td>
+<td align="left">Pre-computed bootstrap data</td>
 </tr>
 </tbody>
 </table>
-<p>The plot below shows that there is moderate amount of internal error
-in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mrow><mi>b</mi><mi>c</mi><mi>a</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mn>0.975</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\hat{\theta}_{bca}(0.975)</annotation></semantics></math>
-as shown by the red bar. The <code>pct</code> column suggests why:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>θ</mi><mo accent="true">̂</mo></mover><mrow><mi>b</mi><mi>c</mi><mi>a</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mn>0.975</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\hat{\theta}_{bca}(0.975)</annotation></semantics></math>
-occurs at the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.996</mn><annotation encoding="application/x-tex">0.996</annotation></semantics></math>-quantile
-of the 16,000 replications, i.e., at the 64th largest
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>θ</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\hat{\theta}</annotation></semantics></math>,
-where there is a limited amount of data for estimating the
-distribution.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/bcaplot.html">bcaplot</a></span><span class="op">(</span><span class="va">ratio_bca</span><span class="op">)</span></span></code></pre></div>
-<p><img src="bcaboot_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="return-structure">Return structure<a class="anchor" aria-label="anchor" href="#return-structure"></a>
+</h3>
+<p>The new objects use <code>$limits</code> (not <code>$lims</code>),
+<code>$B_mean</code> (not <code>$B.mean</code>), and <code>$stats</code>
+is always a 2-row matrix (never a named vector). Use <code>tidy()</code>
+and <code>glance()</code> instead of accessing list components
+directly:</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Old way</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">lims</span><span class="op">[</span>, <span class="st">"bca"</span><span class="op">]</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">stats</span><span class="op">[</span><span class="st">"theta"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">## New way</span></span>
+<span><span class="fu">tidy</span><span class="op">(</span><span class="va">result</span><span class="op">)</span>    <span class="co"># tibble of confidence limits</span></span>
+<span><span class="fu">glance</span><span class="op">(</span><span class="va">result</span><span class="op">)</span>  <span class="co"># tibble of summary statistics</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="deprecation-timeline">Deprecation timeline<a class="anchor" aria-label="anchor" href="#deprecation-timeline"></a>
+</h3>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Release</th>
+<th align="left">Status</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1.0</td>
+<td align="left">Old functions work with once-per-session warning</td>
+</tr>
+<tr class="even">
+<td align="left">1.1</td>
+<td align="left">Old functions error with migration message</td>
+</tr>
+<tr class="odd">
+<td align="left">2.0</td>
+<td align="left">Old functions removed</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

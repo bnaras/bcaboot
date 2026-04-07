@@ -13,7 +13,7 @@ reference below."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">bcaboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,7 @@ reference below."></head><body>
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/bcaboot.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/bnaras/bcaboot/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -160,36 +161,21 @@ Biometrika (1992) p231-245.</p>
 <span class="r-in"><span><span class="va">b.star</span> <span class="op">&lt;-</span> <span class="va">y.star</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">X</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">bcapar</span><span class="op">(</span>t0 <span class="op">=</span> <span class="va">t0</span>, tt <span class="op">=</span> <span class="va">tt</span>, bb <span class="op">=</span> <span class="va">b.star</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $call</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bcapar(t0 = t0, tt = tt, bb = b.star)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`bcapar()` was deprecated in bcaboot 1.0.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `bca_par()` instead.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BCa Bootstrap Confidence Intervals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Method: par</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   B = 1000, theta = 0.5065862, sdboot = 0.02803423</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lims</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             bca      jacksd       std         pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.025 0.4381990 0.002341223 0.4516401 0.003830962</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.05  0.4450255 0.004848555 0.4604740 0.009283766</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.1   0.4563314 0.004617185 0.4706589 0.023112906</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.16  0.4672079 0.004254129 0.4787074 0.043829941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.5   0.4982945 0.001549913 0.5065862 0.236788483</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.84  0.5248057 0.002077783 0.5344651 0.609615574</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.9   0.5317548 0.002141669 0.5425135 0.714395401</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.95  0.5423186 0.003042325 0.5526984 0.824103861</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.975 0.5514613 0.003300423 0.5615323 0.893981159</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Confidence limits:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  conf.level    bca.lo    bca.hi    std.lo    std.hi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.95 0.4381990 0.5514613 0.4516401 0.5615323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.90 0.4450255 0.5423186 0.4604740 0.5526984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.80 0.4563314 0.5317548 0.4706589 0.5425135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.68 0.4672079 0.5248057 0.4787074 0.5344651</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         theta           sd          a         az          z0           A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> est 0.5065862 0.0280342333 0.00191840 0.02616089 -0.35845879 -0.09253174</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> jsd 0.0000000 0.0006155659 0.01348908 0.01820656  0.04137849  0.04278145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           sdd         mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> est 0.0223013 0.5166007237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> jsd 0.0021603 0.0008568191</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ustats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            ustat         sdu    B</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> est 0.4965717116 0.023225426 1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> jsd 0.0008568191 0.004199193    0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bcaboot"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Diagnostics:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   z0 = -0.3584588, a = 0.0019184</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

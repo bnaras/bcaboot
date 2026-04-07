@@ -1,0 +1,27 @@
+Computation of bootstrap confidence intervals in an almost automatic
+fashion as described in Efron and Narasimhan (2020,
+\<[doi:10.1080/10618600.2020.1714633](https://doi.org/10.1080/10618600.2020.1714633)\>).
+
+# Package index
+
+## All functions
+
+- [`bcaboot-package`](bcaboot.md) [`bcaboot`](bcaboot.md) : Automatic
+  Construction of Bootstrap Confidence Intervals
+- [`bcajack()`](bcajack.md) : Nonparametric bias-corrected and
+  accelerated bootstrap confidence limits
+- [`bcajack2()`](bcajack2.md) : Nonparametric bias-corrected and
+  accelerated bootstrap confidence limits
+- [`bcanon()`](bcanon.md) : Compute nonparametric BCa bootstrap
+  confidence intervals
+- [`bcapar()`](bcapar.md) : Compute parametric bootstrap confidence
+  intervals
+- [`bcaplot()`](bcaplot.md) : Plots of bca confidence limits
+- [`diabetes`](diabetes.md) : Blood and other measurements in diabetics
+
+# Articles
+
+### All vignettes
+
+- [Automatic Construction of Bootstrap Confidence
+  Intervals](bcaboot.md):

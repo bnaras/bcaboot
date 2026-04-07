@@ -38,3 +38,8 @@ rsconnect/
 inst/examples
 
 bugs/
+
+^CLAUDE\.md$
+.claude/
+
+inst/stuff/

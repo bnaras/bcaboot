@@ -1,3 +1,6 @@
+template:
+  bootstrap: 5
+
 authors:
   Bradley Efron:
     href: https://efron.web.stanford.edu

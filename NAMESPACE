@@ -3,6 +3,7 @@
 S3method(print,bcaboot)
 export(bcajack)
 export(bcajack2)
+export(bcanon)
 export(bcapar)
 export(bcaplot)
 importFrom(graphics,abline)

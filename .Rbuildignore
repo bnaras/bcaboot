@@ -2,8 +2,8 @@
 ^README\.Rmd$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^inst/examples
+^inst/examples$
 ^_pkgdown\.yml$
-^\.travis\.yml$
 ^docs$
 ^\.github$
+^bugs$

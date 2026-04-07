@@ -1,6 +1,6 @@
 Package: bcaboot
 Title: Bias Corrected Bootstrap Confidence Intervals 
-Version: 0.3
+Version: 0.4.0
 VignetteBuilder: knitr
 Authors@R: c(person("Bradley", "Efron", role=c("aut"),
 	   	    email = "brad@stat.stanford.edu"),
@@ -16,10 +16,14 @@ LazyData: true
 RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Suggests:
+    ggplot2,
     glmnet,
     rmarkdown,
     knitr,
     tinytest
 Imports: graphics,
+    generics,
+    lifecycle,
     stats,
+    tibble,
     utils

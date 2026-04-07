@@ -103,8 +103,8 @@ autoplot.bcaboot <- function(object, ...) {
         ggplot2::theme_minimal(base_size = 13) +
         ggplot2::theme(
             legend.position    = "right",
-            panel.grid.minor   = element_blank(),
-            panel.grid.major.x = element_blank(),
+            panel.grid.minor   = ggplot2::element_blank(),
+            panel.grid.major.x = ggplot2::element_blank(),
             plot.caption       = ggplot2::element_text(colour = "grey50",
                                                        size = 9, hjust = 0),
             legend.title       = ggplot2::element_text(face = "bold", size = 10)

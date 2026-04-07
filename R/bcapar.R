@@ -89,8 +89,7 @@ bcapar <- function(t0, tt, bb,
         stats::runif(1)
     seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 
-    alpha <- alpha[alpha < 0.5]
-    alpha <- c(alpha, 0.5, rev(1 - alpha))
+    alpha <- expand_alpha(alpha)
 
     if (K == 0) {
         result <- bca(t0, tt, bb, alpha = alpha, trun = trun, pct = pct)

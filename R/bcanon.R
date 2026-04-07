@@ -44,8 +44,7 @@ bcanon <- function (B, x, func, ..., m = nrow(x), pct = .333, K = 2, J = 12,
                     verbose = TRUE) {
 
     call <- match.call()
-    alpha <- alpha[alpha < 0.5]
-    alpha <- c(alpha, 0.5, rev(1 - alpha))
+    alpha <- expand_alpha(alpha)
 
     ## Save rng state
     if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
@@ -60,33 +59,21 @@ bcanon <- function (B, x, func, ..., m = nrow(x), pct = .333, K = 2, J = 12,
         m <- ncol(Y)
         B <- nrow(Y)
 
-        ## Poisson/multinomial deviance of each count vector from uniform (1,...,1).
-        ## EN20 appendix.
-        kl_dist <- compute_kl_distance(Y)
-        ## Select the pct fraction of bootstrap samples closest to uniform
-        kl_cutoff <- quantile(kl_dist, pct)
-        nearby_idx <- (1:B)[kl_dist <= kl_cutoff]
-        ## Influence via local regression on nearby count vectors. EN20 appendix.
-        reg_infl <- as.vector(m * lm(tt[nearby_idx] ~ Y[nearby_idx, ] - 1)$coef)
-        reg_infl <- reg_infl - mean(reg_infl)
-        ## Acceleration: skewness of influence distribution. Efron (1987) Sec 6
-        a <- (1/6) * sum(reg_infl^3)/sum(reg_infl^2)^1.5
+        ra <- regression_accel(Y, tt, t0, pct)
+        reg_infl <- ra$reg_infl
+        a <- ra$a
+        sdjack <- ra$sdjack
+        local_dir <- ra$local_dir
+
         s <- mean(tt)
         B.mean <- c(B, s)
         zalpha <- qnorm(alpha)
         n_alpha <- length(alpha)
         sdboot <- sd(tt)
-        ## Delete-d jackknife SE from regression-based influences
-        sdjack <- sqrt(sum(reg_infl^2))/(m - 1)
         ## Bias-correction z0. Efron (1987) Sec 2
         z0 <- qnorm(sum(tt < t0)/B)
 
         ## Big-A raw acceleration via delta method. Efron (1987) Sec 7.
-        ## local_dir = normalized projection of centered counts onto influence direction.
-        ## A measures the rate of change of SE in a different sense than 'a'.
-        YY <- scale(Y, center = TRUE, scale = FALSE)
-        local_dir <- as.vector(YY %*% reg_infl)/(m - 1)
-        local_dir <- local_dir/sd(local_dir)
         std_tt <- (tt - mean(tt))/sdboot
         A <- 0.5 * (sdboot/sdjack) * sum(std_tt^2 * local_dir)/B
         ## rms = RMS of covariance between centered counts and squared standardized
@@ -181,54 +168,11 @@ bcanon <- function (B, x, func, ..., m = nrow(x), pct = .333, K = 2, J = 12,
         return(result)
     }
 
-    if (is.list(B)) {
-        Y <- B$Y
-        tt <- B$tt
-        t0 <- B$t0
-        B <- length(tt)
-        result0 <- qbca2(Y, tt, t0)
-    } else {
-        if (is.vector(x))
-            x <- as.matrix(x)
-        n <- nrow(x)
-        tt <- numeric(B)
-        t0 <- func(x, ...)
-
-        if (m == n) {
-            ii <- sample(1:n, n * B, TRUE)
-            ii <- matrix(ii, B)
-            Y <- matrix(0, B, n)
-            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
-            for (k in seq_len(B)) {
-                ik <- ii[k, ]
-                tt[k] <- func(x[ik, ], ...)
-                Y[k, ] <- table(c(ik, 1:n)) - 1
-                if (verbose) utils::setTxtProgressBar(pb, k)
-            }
-            if (verbose) close(pb)
-            result0 <- qbca2(Y, tt, t0)
-        } else if (m < n) {
-            r <- n%%m
-            Imat <- matrix(sample(1:n, n - r), m)
-            Iout <- setdiff(1:n, Imat)
-            ii <- sample(1:m, m * B, TRUE)
-            ii <- matrix(ii, B)
-            Y <- matrix(0, B, m)
-            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
-            for (k in seq_len(B)) {
-                ik <- ii[k, ]
-                Ik <- c(t(Imat[ik, ]))
-                Ik <- c(Ik, Iout)
-                tt[k] <- func(x[Ik, ], ...)
-                Y[k, ] <- table(c(ik, 1:m)) - 1
-                if (verbose) utils::setTxtProgressBar(pb, k)
-            }
-            if (verbose) close(pb)
-            result0 <- qbca2(Y, tt, t0)
-        } else {
-            stop("m must be <= n")
-        }
-    }
+    boot_data <- if (is.list(B)) B else NULL
+    bs <- bootstrap_resample(x, B, func, ..., m = m, verbose = verbose,
+                             boot_data = boot_data)
+    Y <- bs$Y; tt <- bs$tt; t0 <- bs$t0; B <- bs$B
+    result0 <- qbca2(Y, tt, t0)
     result0$call <- call
 
     if (K == 0)

@@ -141,47 +141,10 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
         B <- length(tt)
     } else tt <- numeric(B)
     t0 <- func(x, ...)
-    u <- numeric(length = m)
-    jk_norm <- sqrt(m * (m - 1))
-
-    if (m == n) {
-        ## Full jackknife: u[i] = func(x with row i deleted)
-        for (i in seq_len(n)) {
-            u[i] <- func(x[-i, ], ...)
-        }
-        ## Jackknife pseudo-values (scaled influence function estimates)
-        ## Efron (1987) Sec 6
-        jack_infl <- (mean(u) - u) * (m - 1)
-        ## Acceleration: skewness of influence distribution. Efron (1987) Sec 6
-        a <- (1 / 6) * sum(jack_infl^3) / (sum(jack_infl^2))^1.5
-        ## Delete-d jackknife standard error
-        sdjack <- sqrt(sum(jack_infl^2)) / jk_norm
-    } else if (m < n) {
-        ## Grouped jackknife: partition n observations into m groups,
-        ## delete one group at a time. Average over mr random partitions
-        ## to reduce dependence on grouping. Efron & Narasimhan (2020) Sec 3
-        aa <- ssj <- numeric(mr)
-        r <- n %% m
-        seq_len_m <- seq_len(m)
-        for (k in seq_len(mr)) {
-            Imat <- sapply(seq_len_m, sample.int, n = n, size = n - r)
-            Iout <- setdiff(seq_len(n), Imat)
-            for (j in seq_len_m) {
-                Ij <- setdiff(seq_len_m, j)
-                ij <- c(c(Imat[Ij, ], Iout))
-                u[j] <- func(x[ij, ])
-            }
-            ## Jackknife pseudo-values and acceleration for this partition
-            jack_infl <- (mean(u) - u) * (m - 1)
-            aa[k] <- (1/6) * sum(jack_infl^3)/(sum(jack_infl^2))^1.5
-            ssj[k] <- sqrt(sum(jack_infl^2))/jk_norm
-        }
-        ## Average acceleration and SE over mr random partitions
-        a <- mean(aa)
-        sdjack <- mean(ssj)
-    } else {
-        stop("m must be <= n")
-    }
+    jk <- jackknife_accel(x, func, ..., m = m, mr = mr)
+    a <- jk$a
+    sdjack <- jk$sdjack
+    jack_infl <- jk$jack_infl
 
     if (ttind == 0) {
         ## Bootstrap loop: draw n observations with replacement B times
@@ -205,15 +168,10 @@ bcajack <- function(x, B, func, ..., m = nrow(x), mr = 5, K = 2, J = 10,
         ## Variance-stabilized influence: 2*jackknife - bootstrap_cov
         ## Factor of 2 from double-bootstrap variance reduction. EN20 Sec 3
         adj_infl <- 2 * jack_infl - cov_infl
-        sdu <- sqrt(sum(adj_infl^2))/n
-        ## Bias-corrected point estimate: 2*t0 - mean(tt)
-        ustat <- 2 * t0 - tt_mean
-        ustats <- c(ustat, sdu)
-        names(ustats) <- c("ustat", "sdu")
+        ustats <- compute_ustats(t0, tt, adj_infl, n)
     }
     B.mean <- c(B, mean(tt))
-    alpha <- alpha[alpha < 0.5]
-    alpha <- c(alpha, 0.5, rev(1 - alpha))
+    alpha <- expand_alpha(alpha)
 
     zalpha <- stats::qnorm(alpha)
     n_alpha <- length(alpha)

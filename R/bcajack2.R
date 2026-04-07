@@ -102,37 +102,23 @@ bcajack2 <- function(x, B, func, ..., m = NULL, mr, pct = 0.333, K = 2, J = 12,
         m <- ncol(Y)
         B <- nrow(Y)
 
-        ## Poisson/multinomial deviance of each count vector from uniform (1,...,1).
-        ## EN20 appendix.
-        kl_dist <- compute_kl_distance(Y)
-        ## Select the pct fraction of bootstrap samples closest to uniform
-        kl_cutoff <- stats::quantile(kl_dist, pct)
-        nearby_idx <- seq_len(B)[kl_dist <= kl_cutoff]
-        ## Influence via local regression: regress tt on Y for nearby samples.
-        ## Coefficients estimate d(func)/d(observation_j). Scale by m. EN20 appendix.
-        reg_infl <- as.vector(m * stats::lm(tt[nearby_idx] ~ Y[nearby_idx, ] - 1)$coef)
-        reg_infl <- reg_infl - mean(reg_infl)
-        ## Acceleration: skewness of regression-based influence. Efron (1987) Sec 6
-        a <- (1/6) * sum(reg_infl^3)/sum(reg_infl^2)^1.5
+        ra <- regression_accel(Y, tt, t0, pct)
+        reg_infl <- ra$reg_infl
+        a <- ra$a
+        sdjack <- ra$sdjack
 
         s <- mean(tt)
         B.mean <- c(B, s)
 
         zalpha <- stats::qnorm(alpha)
         n_alpha <- length(alpha)
-        ## Bias-corrected point estimate: 2*t0 - mean(tt)
-        ustat <- 2 * t0 - s
         ## cov_infl = bootstrap covariance-based influence (m * Cov(tt, Y))
         cov_infl <- m * as.vector(stats::cov(tt, Y))
         ## Variance-stabilized influence: 2*regression - bootstrap_cov. EN20 Sec 3
         adj_infl <- 2 * reg_infl - cov_infl
-        sdu <- sum(adj_infl^2)^0.5/m
-        ustats <- c(ustat, sdu)
-        names(ustats) <- c("ustat", "sdu")
+        ustats <- compute_ustats(t0, tt, adj_infl, m)
 
         sdboot <- stats::sd(tt)
-        ## Delete-d jackknife SE from regression-based influences
-        sdjack <- sqrt(sum(reg_infl^2))/(m - 1)
         ## Bias-correction z0. Efron (1987) Sec 2
         z0 <- stats::qnorm(sum(tt < t0)/B)
 
@@ -147,58 +133,13 @@ bcajack2 <- function(x, B, func, ..., m = NULL, mr, pct = 0.333, K = 2, J = 12,
         list(lims = lims, stats = stats, B.mean = B.mean, ustats = ustats)
     }
 
-    alpha <- alpha[alpha < 0.5]
-    alpha <- c(alpha, 0.5, rev(1 - alpha))
+    alpha <- expand_alpha(alpha)
 
-    if (is.list(B)) {
-        Y <- B$Y
-        tt <- B$tt
-        t0 <- B$t0
-        B <- length(tt)
-        result0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
-    } else {
-        if (is.vector(x))
-            x <- as.matrix(x)
-        n <- nrow(x)
-        if (is.null(m)) m <- n
-        tt <- numeric(B)
-        t0 <- func(x, ...)
-
-        if (m == n) {
-            ii <- sample(x = seq_len(n), size = n * B, replace = TRUE)
-            ii <- matrix(ii, B)
-            Y <- matrix(0, B, n)
-            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
-            for (k in seq_len(B)) {
-                ik <- ii[k, ]
-                tt[k] <- func(x[ik, ], ...)
-                Y[k, ] <- table(c(ik, 1:n)) - 1
-                if (verbose) utils::setTxtProgressBar(pb, k)
-            }
-            if (verbose) close(pb)
-            result0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
-        } else if (m < n) {
-            r <- n%%m
-            Imat <- matrix(sample(x = seq_len(n), size = n - r), m)
-            Iout <- setdiff(1:n, Imat)
-            ii <- sample(x = seq_len(m), size = m * B, replace = TRUE)
-            ii <- matrix(ii, B)
-            Y <- matrix(0, B, m)
-            if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
-            for (k in seq_len(B)) {
-                ik <- ii[k, ]
-                Ik <- c(t(Imat[ik, ]))
-                Ik <- c(Ik, Iout)
-                tt[k] <- func(x[Ik, ], ...)
-                Y[k, ] <- table(c(ik, 1:m)) - 1
-                if (verbose) utils::setTxtProgressBar(pb, k)
-            }
-            if (verbose) close(pb)
-            result0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
-        } else {
-            stop("m must be <= n")
-        }
-    }
+    boot_data <- if (is.list(B)) B else NULL
+    bs <- bootstrap_resample(x, B, func, ..., m = m, verbose = verbose,
+                             boot_data = boot_data)
+    Y <- bs$Y; tt <- bs$tt; t0 <- bs$t0; B <- bs$B
+    result0 <- qbca2(Y, tt, t0, alpha = alpha, pct = pct)
     result0$call <- call
     result0$seed <- seed
 

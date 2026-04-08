@@ -21,12 +21,13 @@
 #' autoplot(result)
 #' }
 #'
-#' @export
+#' @exportS3Method ggplot2::autoplot
 autoplot.bcaboot <- function(object, ...) {
     if (!requireNamespace("ggplot2", quietly = TRUE)) {
-        stop("Package 'ggplot2' is required for autoplot(). ",
-             "Install it with install.packages('ggplot2').",
-             call. = FALSE)
+        cli::cli_abort(c(
+            "Package {.pkg ggplot2} is required for {.fun autoplot}.",
+            "i" = "Install it with {.code install.packages(\"ggplot2\")}."
+        ))
     }
 
     df <- tidy.bcaboot(object)

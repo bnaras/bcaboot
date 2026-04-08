@@ -34,6 +34,16 @@ regression_accel <- function(Y, tt, t0, pct) {
     kl_cutoff <- stats::quantile(kl_dist, pct)
     nearby_idx <- seq_len(B)[kl_dist <= kl_cutoff]
 
+    if (length(nearby_idx) < m) {
+        cli::cli_abort(c(
+            "Regression for acceleration estimation is underdetermined.",
+            "x" = "{length(nearby_idx)} nearby bootstrap samples but {m} columns in the count matrix.",
+            "i" = "Increase {.arg B} so that {.code B * kl_fraction > {m}}.",
+            "i" = "Increase {.arg kl_fraction} (currently {round(pct, 3)}).",
+            "i" = "Use {.code accel = \"jackknife\"} which avoids this regression."
+        ))
+    }
+
     ## Influence via local regression on nearby count vectors
     reg_infl <- as.vector(m * stats::lm(tt[nearby_idx] ~ Y[nearby_idx, ] - 1)$coef)
     reg_infl <- reg_infl - mean(reg_infl)
@@ -65,7 +75,7 @@ jackknife_accel <- function(x, func, ..., m, mr) {
 
     if (m == n) {
         for (i in seq_len(n)) {
-            u[i] <- func(x[-i, ], ...)
+            u[i] <- func(x[-i, , drop = FALSE], ...)
         }
         jack_infl <- (mean(u) - u) * (m - 1)
         a <- (1 / 6) * sum(jack_infl^3) / (sum(jack_infl^2))^1.5
@@ -75,12 +85,12 @@ jackknife_accel <- function(x, func, ..., m, mr) {
         r <- n %% m
         seq_len_m <- seq_len(m)
         for (k in seq_len(mr)) {
-            Imat <- sapply(seq_len_m, sample.int, n = n, size = n - r)
+            Imat <- matrix(sample.int(n, size = n - r), nrow = m)
             Iout <- setdiff(seq_len(n), Imat)
             for (j in seq_len_m) {
                 Ij <- setdiff(seq_len_m, j)
                 ij <- c(c(Imat[Ij, ], Iout))
-                u[j] <- func(x[ij, ])
+                u[j] <- func(x[ij, , drop = FALSE])
             }
             jack_infl <- (mean(u) - u) * (m - 1)
             aa[k] <- (1/6) * sum(jack_infl^3)/(sum(jack_infl^2))^1.5
@@ -91,7 +101,7 @@ jackknife_accel <- function(x, func, ..., m, mr) {
         ## Use the last partition's influence values (consistent with original bcajack)
         jack_infl <- (mean(u) - u) * (m - 1)
     } else {
-        stop("m must be <= n")
+        cli::cli_abort("{.arg n_groups} ({m}) must be <= number of observations ({n}).")
     }
 
     list(a = a, sdjack = sdjack, jack_infl = jack_infl)
@@ -123,7 +133,7 @@ bootstrap_resample <- function(x, B, func, ..., m, verbose, boot_data = NULL) {
         if (verbose) pb <- utils::txtProgressBar(min = 0, max = B, style = 3)
         for (k in seq_len(B)) {
             ik <- ii[k, ]
-            tt[k] <- func(x[ik, ], ...)
+            tt[k] <- func(x[ik, , drop = FALSE], ...)
             Y[k, ] <- table(c(ik, 1:n)) - 1
             if (verbose) utils::setTxtProgressBar(pb, k)
         }
@@ -140,13 +150,13 @@ bootstrap_resample <- function(x, B, func, ..., m, verbose, boot_data = NULL) {
             ik <- ii[k, ]
             Ik <- c(t(Imat[ik, ]))
             Ik <- c(Ik, Iout)
-            tt[k] <- func(x[Ik, ], ...)
+            tt[k] <- func(x[Ik, , drop = FALSE], ...)
             Y[k, ] <- table(c(ik, 1:m)) - 1
             if (verbose) utils::setTxtProgressBar(pb, k)
         }
         if (verbose) close(pb)
     } else {
-        stop("m must be <= n")
+        cli::cli_abort("{.arg n_groups} ({m}) must be <= number of observations ({n}).")
     }
 
     list(Y = Y, tt = tt, t0 = t0, B = B)

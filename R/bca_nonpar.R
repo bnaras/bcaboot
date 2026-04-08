@@ -114,7 +114,7 @@ bca_nonpar <- function(x, B, func, ...,
             for (j in seq_len(B)) {
                 ij <- sample(x = n, size = n, replace = TRUE)
                 Yj <- table(c(ij, 1:n)) - 1
-                tt[j] <- func(x[ij, ], ...)
+                tt[j] <- func(x[ij, , drop = FALSE], ...)
                 boot_wt_sum <- boot_wt_sum + tt[j] * Yj
                 boot_ct_sum <- boot_ct_sum + Yj
                 if (verbose) utils::setTxtProgressBar(pb, j)
@@ -154,8 +154,7 @@ bca_nonpar <- function(x, B, func, ...,
         diagnostic <- tryCatch(
             gbca_diagnostic(Y, tt, t0, a, sdjack, local_dir, alpha),
             error = function(e) {
-                warning("gbca diagnostic failed: ", conditionMessage(e),
-                        call. = FALSE)
+                cli::cli_warn("gbca diagnostic failed: {conditionMessage(e)}")
                 NULL
             }
         )

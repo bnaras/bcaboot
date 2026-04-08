@@ -39,6 +39,8 @@ inst/examples
 
 bugs/
 
+docs/
+
 ^CLAUDE\.md$
 .claude/
 

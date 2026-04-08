@@ -1,0 +1,13 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "The Automatic Construction of Bootstrap Confidence Intervals",
+  author   = c(person("Bradley", "Efron"),
+               person("Balasubramanian", "Narasimhan")),
+  journal  = "Journal of Computational and Graphical Statistics",
+  year     = "2020",
+  volume   = "29",
+  number   = "3",
+  pages    = "608--619",
+  doi      = "10.1080/10618600.2020.1714633",
+  publisher = "Taylor & Francis"
+)

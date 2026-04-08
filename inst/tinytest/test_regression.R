@@ -3,6 +3,7 @@
 ## saved baseline fixtures to prove numerical equivalence.
 
 library(bcaboot)
+library(generics)
 
 fixture_dir <- system.file("tinytest", "fixtures", package = "bcaboot")
 tol <- 1e-10
@@ -29,9 +30,9 @@ cur <- bca_nonpar(x = Xy, B = 1000, func = rfun,
                   verbose = FALSE)
 
 ## BCa and std limits must match exactly
-expect_equal(cur$limits[, "bca"], ref$lims[, "bca"], tolerance = tol,
+expect_equal(cur$limits[, "bca"], ref$limits[, "bca"], tolerance = tol,
              info = "bcajack equiv: bca limits match")
-expect_equal(cur$limits[, "std"], ref$lims[, "std"], tolerance = tol,
+expect_equal(cur$limits[, "std"], ref$limits[, "std"], tolerance = tol,
              info = "bcajack equiv: std limits match")
 ## Stats estimate row must match
 expect_equal(unname(cur$stats["est", ]), unname(ref$stats["est", ]),

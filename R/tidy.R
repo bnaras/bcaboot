@@ -28,7 +28,7 @@
 #' result <- bca_nonpar(Xy, 1000, rfun, n_groups = 34, verbose = FALSE)
 #' tidy(result)
 #'
-#' @export
+#' @exportS3Method generics::tidy
 tidy.bcaboot <- function(x, ...) {
     lims <- x$limits %||% x$lims
     stats <- x$stats
@@ -129,7 +129,7 @@ tidy.bcaboot <- function(x, ...) {
 #' result <- bca_nonpar(Xy, 1000, rfun, n_groups = 34, verbose = FALSE)
 #' glance(result)
 #'
-#' @export
+#' @exportS3Method generics::glance
 glance.bcaboot <- function(x, ...) {
     stats <- x$stats
     B_mean <- x$B_mean %||% x$B.mean

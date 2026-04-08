@@ -9,3 +9,5 @@
 ^bugs$
 ^CLAUDE\.md$
 ^\.claude$
+^pkgdown$
+^README_files$

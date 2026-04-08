@@ -8,6 +8,7 @@
 [![R-CMD-check](https://github.com/bnaras/bcaboot/workflows/R-CMD-check/badge.svg)](https://github.com/bnaras/bcaboot/actions)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bcaboot)](https://cran.r-project.org/package=bcaboot)
 [![](https://cranlogs.r-pkg.org/badges/bcaboot)](https://cloud.r-project.org/package=bcaboot)
+[![R-CMD-check](https://github.com/bnaras/bcaboot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bnaras/bcaboot/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 Bias-corrected and accelerated (BCa) bootstrap confidence intervals,
@@ -47,19 +48,11 @@ result <- bca_nonpar(Xy, B = 2000, func = rfun, verbose = FALSE)
 result
 ```
 
-    ## BCa Bootstrap Confidence Intervals
-    ##   Method: nonpar (regression acceleration)
-    ##   B = 2000, theta = 0.5065603, sdboot = 0.03245877
-    ## 
-    ## Confidence limits:
     ##  conf.level    bca.lo    bca.hi    std.lo    std.hi
     ##        0.95 0.4221740 0.5613841 0.4429423 0.5701783
     ##        0.90 0.4392968 0.5507219 0.4531704 0.5599503
     ##        0.80 0.4541906 0.5387434 0.4649627 0.5481579
     ##        0.68 0.4647324 0.5298461 0.4742814 0.5388392
-    ## 
-    ## Diagnostics:
-    ##   z0 = -0.2676094, a = -0.005846673, sdjack = 0.03232833
 
 ``` r
 tidy(result)

@@ -130,9 +130,10 @@ set.seed(1234)
 bcapar(t0 = t0, tt = tt, bb = b.star)
 #> Warning: `bcapar()` was deprecated in bcaboot 1.0.
 #> ℹ Please use `bca_par()` instead.
-#> BCa Bootstrap Confidence Intervals
-#>   Method: par
-#>   B = 1000, theta = 0.5065862, sdboot = 0.02803423
+#> 
+#> ── BCa Bootstrap Confidence Intervals 
+#> Method: par
+#> B = 1000, theta = 0.5065862, sdboot = 0.02803423
 #> 
 #> Confidence limits:
 #>  conf.level    bca.lo    bca.hi    std.lo    std.hi
@@ -142,5 +143,5 @@ bcapar(t0 = t0, tt = tt, bb = b.star)
 #>        0.68 0.4672079 0.5248057 0.4787074 0.5344651
 #> 
 #> Diagnostics:
-#>   z0 = -0.3584588, a = 0.0019184
+#> z0 = -0.3584588, a = 0.0019184
 ```

@@ -164,17 +164,18 @@ set.seed(1234)
 bcajack(x = Xy, B = 1000, func = rfun, m = 34, verbose = FALSE)
 #> Warning: `bcajack()` was deprecated in bcaboot 1.0.
 #> ℹ Please use `bca_nonpar()` instead.
-#> BCa Bootstrap Confidence Intervals
-#>   Method: nonpar (jackknife acceleration)
-#>   B = 1000, theta = 0.5065603, sdboot = 0.03287545
+#> 
+#> ── BCa Bootstrap Confidence Intervals 
+#> Method: nonpar (jackknife acceleration)
+#> B = 1000, theta = 0.5065603, sdboot = 0.03284722
 #> 
 #> Confidence limits:
 #>  conf.level    bca.lo    bca.hi    std.lo    std.hi
-#>        0.95 0.4349782 0.5615867 0.4421256 0.5709950
-#>        0.90 0.4425891 0.5527242 0.4524850 0.5606356
-#>        0.80 0.4545379 0.5408992 0.4644287 0.5486919
-#>        0.68 0.4643673 0.5312118 0.4738671 0.5392536
+#>        0.95 0.4238753 0.5582875 0.4421809 0.5709397
+#>        0.90 0.4342607 0.5496734 0.4525314 0.5605892
+#>        0.80 0.4513913 0.5388794 0.4644649 0.5486557
+#>        0.68 0.4617252 0.5305165 0.4738951 0.5392255
 #> 
 #> Diagnostics:
-#>   z0 = -0.2455895, a = -0.001290911, sdjack = 0.01864547
+#> z0 = -0.26112, a = -0.01143494, sdjack = 0.02985439
 ```

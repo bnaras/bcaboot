@@ -65,19 +65,11 @@ The `result` prints a clean summary:
 result
 ```
 
-    ## BCa Bootstrap Confidence Intervals
-    ##   Method: nonpar (regression acceleration)
-    ##   B = 2000, theta = 0.5065603, sdboot = 0.03245877
-    ## 
-    ## Confidence limits:
     ##  conf.level    bca.lo    bca.hi    std.lo    std.hi
     ##        0.95 0.4221740 0.5613841 0.4429423 0.5701783
     ##        0.90 0.4392968 0.5507219 0.4531704 0.5599503
     ##        0.80 0.4541906 0.5387434 0.4649627 0.5481579
     ##        0.68 0.4647324 0.5298461 0.4742814 0.5388392
-    ## 
-    ## Diagnostics:
-    ##   z0 = -0.2676094, a = -0.005846673, sdjack = 0.03232833
 
 ### Tidy output
 
@@ -147,13 +139,13 @@ tidy(result_jk)
     ## # A tibble: 8 × 7
     ##   conf.level method   estimate conf.low conf.high jacksd.low jacksd.high
     ##        <dbl> <chr>       <dbl>    <dbl>     <dbl>      <dbl>       <dbl>
-    ## 1       0.95 bca         0.507    0.435     0.560    0.00397     0.00195
+    ## 1       0.95 bca         0.507    0.435     0.560    0.00412     0.00155
     ## 2       0.95 standard    0.507    0.443     0.570   NA          NA      
-    ## 3       0.9  bca         0.507    0.443     0.551    0.00564     0.00279
+    ## 3       0.9  bca         0.507    0.443     0.551    0.00497     0.00224
     ## 4       0.9  standard    0.507    0.453     0.560   NA          NA      
-    ## 5       0.8  bca         0.507    0.454     0.540    0.00162     0.00205
+    ## 5       0.8  bca         0.507    0.454     0.540    0.00127     0.00158
     ## 6       0.8  standard    0.507    0.465     0.548   NA          NA      
-    ## 7       0.68 bca         0.507    0.464     0.531    0.00213     0.00204
+    ## 7       0.68 bca         0.507    0.464     0.531    0.00186     0.00177
     ## 8       0.68 standard    0.507    0.474     0.539   NA          NA
 
 ## A Parametric Example
@@ -269,19 +261,11 @@ We can examine the results using tidy methods:
 glm_bca
 ```
 
-    ## BCa Bootstrap Confidence Intervals
-    ##   Method: par
-    ##   B = 2000, theta = 0.9430645, sdboot = 0.1549141
-    ## 
-    ## Confidence limits:
     ##  conf.level    bca.lo   bca.hi    std.lo   std.hi
     ##        0.95 0.5981733 1.213676 0.6394385 1.246691
     ##        0.90 0.6549470 1.167789 0.6882535 1.197876
     ##        0.80 0.7169529 1.113660 0.7445341 1.141595
     ##        0.68 0.7635391 1.067160 0.7890090 1.097120
-    ## 
-    ## Diagnostics:
-    ##   z0 = -0.2147016, a = -0.01940269
 
 ``` r
 

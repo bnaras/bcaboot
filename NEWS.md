@@ -24,12 +24,39 @@
 ## Deprecations
 
 * `bcajack()`, `bcajack2()`, `bcapar()`, and `bcaplot()` are
- deprecated with `lifecycle` warnings (once per session). They will
+  deprecated with `lifecycle` warnings (once per session). They will
   continue to work through thin wrappers that translate to the new
   API.
 
+## Bug fixes
+
+* **Issue #2**: Fixed grouped jackknife (`n_groups < n`) using
+  `sapply(seq_len_m, sample.int, ...)` which accidentally passed
+  iteration values as the first positional arg, overriding the
+  `n=` keyword and enabling replacement. Replaced with
+  `matrix(sample.int(n, n-r), nrow=m)` for correct without-replacement
+  partition. (Reported by admash)
+
+* **Issue #7**: Fixed dimension drop when `x` is a single-column
+  matrix (vector input). `x[-i, ]` on an `n x 1` matrix returned a
+  vector instead of a matrix, causing type inconsistency between
+  jackknife and bootstrap code paths. Added `drop = FALSE` to all
+  matrix subsetting passed to `func`. (Reported by R180)
+
+* **Issue #4 / #1**: `regression_accel` now checks for underdetermined
+  regression (`nearby samples < ncol(Y)`) and errors with an
+  actionable message instead of silently returning NAs. Suggests
+  increasing `B`, increasing `kl_fraction`, or switching to
+  `accel = "jackknife"`. (Reported by Tim Pollington, Thomas Covert)
+
+* **PR #8**: Fixed missing `return()` in `K = 0` early-exit path of
+  `bcajack()`, `bcajack2()`, and `bcapar()`, which caused execution
+  to fall through to the `K > 0` code. In the rewrite, all early
+  exits use explicit `return(new_bcaboot(...))`. (Reported by Bettina
+  Gruen)
+
 ## New features
- 
+
 * `tidy()` method: returns a tibble with one row per (confidence
   level, method) pair, following broom conventions (`conf.level`,
   `method`, `estimate`, `conf.low`, `conf.high`).
@@ -47,9 +74,11 @@
 * `bca_nonpar()` always computes the gbca diagnostic when using
   `accel = "regression"` (with `tryCatch` for robustness).
 
+* All user-facing messages use `cli` for consistent formatting.
+
 ## Dependencies
 
-* Added `tibble`, `generics`, `lifecycle` to Imports.
+* Added `cli`, `tibble`, `generics`, `lifecycle` to Imports.
 * Added `ggplot2` to Suggests (for `autoplot()`).
 
 ## Internal

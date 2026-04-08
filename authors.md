@@ -2,11 +2,10 @@
 
 ## Authors
 
-- **[Bradley Efron](https://efron.web.stanford.edu)**. Author.
+- **[Bradley Efron](https://efron.ckirby.su.domains/)**. Author.
 
-- **[Balasubramanian
-  Narasimhan](https://statistics.stanford.edu/people/balasubramanian-narasimhan)**.
-  Author, maintainer.
+- **[Balasubramanian Narasimhan](https://naras.su.domains/)**. Author,
+  maintainer.
 
 ## Citation
 

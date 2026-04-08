@@ -2,6 +2,7 @@
 % Please edit documentation in R/bcaboot.R
 \docType{package}
 \name{bcaboot}
+\alias{bcaboot-package}
 \alias{bcaboot}
 \title{Automatic Construction of Bootstrap Confidence Intervals}
 \description{
@@ -14,4 +15,22 @@ distribution, and not how it is generated: parametrically or
 non-parametrically. Therefore, the only difference in a parametric
 bca analysis would lie in the nonparametric estimation of the
 acceleration, often a negligible error.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://bnaras.github.io/bcaboot/}
+  \item \url{https://github.com/bnaras/bcaboot}
+  \item Report bugs at \url{https://github.com/bnaras/bcaboot/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Balasubramanian Narasimhan \email{naras@stat.stanford.edu}
+
+Authors:
+\itemize{
+  \item Bradley Efron \email{brad@stat.stanford.edu}
+}
+
 }

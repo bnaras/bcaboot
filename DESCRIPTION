@@ -1,6 +1,6 @@
 Package: bcaboot
 Title: Bias Corrected Bootstrap Confidence Intervals 
-Version: 0.2-3
+Version: 1.0
 VignetteBuilder: knitr
 Authors@R: c(person("Bradley", "Efron", role=c("aut"),
 	   	    email = "brad@stat.stanford.edu"),
@@ -13,12 +13,17 @@ BugReports: https://github.com/bnaras/bcaboot/issues
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
-Suggests: 
+Suggests:
+    ggplot2,
     glmnet,
     rmarkdown,
-    knitr
+    knitr,
+    tinytest
 Imports: graphics,
+    generics,
+    lifecycle,
     stats,
+    tibble,
     utils

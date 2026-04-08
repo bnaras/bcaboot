@@ -10,7 +10,7 @@ bcajack2(
   B,
   func,
   ...,
-  m = nrow(x),
+  m = NULL,
   mr,
   pct = 0.333,
   K = 2,

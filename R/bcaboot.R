@@ -10,10 +10,9 @@
 #' bca analysis would lie in the nonparametric estimation of the
 #' acceleration, often a negligible error.
 #'
-#' @docType package
 #' @name bcaboot
 #'
-NULL
+"_PACKAGE"
 
 
 #' Blood and other measurements in diabetics

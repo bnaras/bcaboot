@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from the source: README.Rmd -->
 
-# bcaboot
+# bcaboot <img src="man/figures/logo.png" align="right" height="139" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/bnaras/bcaboot/workflows/R-CMD-check/badge.svg)](https://github.com/bnaras/bcaboot/actions)
@@ -12,25 +12,55 @@ output: github_document
 [![](https://cranlogs.r-pkg.org/badges/bcaboot)](https://cloud.r-project.org/package=bcaboot)
 <!-- badges: end -->
 
-Bootstrap confidence intervals depend on three elements:
+Bias-corrected and accelerated (BCa) bootstrap confidence intervals,
+computed almost automatically. The package provides two main functions:
 
-- the cdf of the bootstrap replications
-- the bias-correction number which depends on the proportion of
-  bootstrap estimates that are less than the original estimate
-- the acceleration number that measures the rate of
-  change in standard deviation of the estimate as the data changes.
+- `bca_nonpar()` for nonparametric bootstrap
+- `bca_par()` for parametric bootstrap
 
-The first two of these depend only on the bootstrap distribution, and
-not how it is generated: parametrically or
-non-parametrically. Therefore, the only difference in a parametric bca
-analysis would lie in the nonparametric estimation of the
-acceleration, often a negligible error. 
+Results integrate with the tidyverse via `tidy()`, `glance()`, and
+`autoplot()` methods.
 
-The package `bcaboot` provides functions to compute bootstrap
-confidence intervals in an (almost) automatic fashion. Further details
-may be found in the paper by Efron and Narasimhan below.
+## Installation
+
+```r
+# From CRAN
+install.packages("bcaboot")
+
+# Development version
+# install.packages("devtools")
+devtools::install_github("bnaras/bcaboot")
+```
+
+## Example
+
+```{r example, message=FALSE}
+library(bcaboot)
+
+data(diabetes)
+Xy <- cbind(diabetes$x, diabetes$y)
+rfun <- function(Xy) {
+    y <- Xy[, 11]; X <- Xy[, 1:10]
+    summary(lm(y ~ X))$adj.r.squared
+}
+
+set.seed(1234)
+result <- bca_nonpar(Xy, B = 2000, func = rfun, verbose = FALSE)
+result
+```
+
+```{r tidy}
+tidy(result)
+```
+
+```{r autoplot, fig.width=7, fig.height=5}
+library(ggplot2)
+autoplot(result)
+```
 
 ## References
 
-Efron, Bradley, and Balasubramanian Narasimhan. The Automatic
-Construction of Bootstrap Confidence Intervals. (2018)
+Efron, B., & Narasimhan, B. (2020). The Automatic Construction of
+Bootstrap Confidence Intervals. *Journal of Computational and Graphical
+Statistics*, 29(3), 608--619.
+https://doi.org/10.1080/10618600.2020.1714633

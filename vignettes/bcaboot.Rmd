@@ -30,7 +30,7 @@ library(bcaboot)
 
 Bootstrap confidence intervals depend on three elements:
 
-- the cdf of the \eqn{B} bootstrap replications $t_i^*$, $i=1\ldots B$
+- the cdf of the $B$ bootstrap replications $t_i^*$, $i=1\ldots B$
 - the bias-correction number $z_0 = \Phi(\sum_i^B I(t_i^* < t_0) / B )$
   where $t_0=f(x)$ is the original estimate
 - the acceleration number $a$ that measures the rate of
@@ -40,11 +40,14 @@ The first two of these depend only on the bootstrap distribution, and
 not how it is generated: parametrically or non-parametrically.
 
 Package `bcaboot` aims to make construction of bootstrap confidence
-intervals _almost_ automatic. The three main functions for the user
-are:
+intervals _almost_ automatic. The two main functions are:
 
-- `bcajack` and `bcajack2` for nonparametric bootstrap 
-- `bcapar` for parametric bootstrap
+- `bca_nonpar()` for nonparametric bootstrap
+- `bca_par()` for parametric bootstrap
+
+All results are returned as `bcaboot` objects with a consistent
+structure and support `tidy()`, `glance()`, and `autoplot()` for
+integration with the tidyverse ecosystem.
 
 Further details are in the @efronnaras2018 paper. Much of the theory
 behind the approach can be found in references @efron1987,
@@ -69,56 +72,58 @@ rfun <- function(Xy) {
 ```
 
 Constructing bootstrap confidence intervals involves merely calling
-`bcajack`:
+`bca_nonpar`:
 
 ```{r}
 set.seed(1234)
-result <- bcajack(x = Xy, B = 2000, func = rfun, verbose = FALSE)
+result <- bca_nonpar(x = Xy, B = 2000, func = rfun, verbose = FALSE)
 ```
 
-The `result` contains several components. The confidence interval
-limits can be obtained via
+The `result` prints a clean summary:
 
 ```{r}
-knitr::kable(result$lims, digits = 3)
+result
 ```
 
-The first column shows the estimated Bca confidence limits at the
-requested alpha percentiles which can be compared with the standard
-limits $\theta \pm \hat{\sigma}z_{\alpha}$ under the column titled
-`standard`. The `jacksd` column jacksd gives the internal standard
-errors for the Bca limits, quite small in this example. The `pct`
-column gives percentiles of the ordered `B` bootstrap replications
-corresponding to the Bca limits, e.g. the 91.85 percentile equals the
-the .975 Bca limit .5600968.
+### Tidy output
 
-Further details are provided by the `stats` component. 
+The `tidy()` method returns a tibble with one row per (confidence
+level, method) combination, following the broom conventions:
 
 ```{r}
-knitr::kable(result$stats, digits = 3)
+tidy(result)
 ```
 
-The first column `theta` is the original point estimate of the
-parameter of interest, `sdboot` is its bootstrap estimate of standard
-error. The quantity `z0` is the Bca bias correction value, in this
-case quite negative; `a` is the acceleration, a component of the Bca
-limits (nearly zero here). Finally, `sdjack` is the jackknife estimate
-of standard error for `theta`. 
-
-The bottom line gives the internal standard errors for the five
-quantities above. This is substantial for `z0` above.
-
-The component `ustats` of the result provides the bias-corrected
-estimator and an estimate of its sampling error.
+The `glance()` method provides a one-row summary of the bootstrap run:
 
 ```{r}
-knitr::kable(t(result$ustats), digits = 3)
+glance(result)
 ```
 
-The resulting object can be plotted using `bcaplot`.
+### Visualization
+
+When `ggplot2` is available, `autoplot()` produces a publication-ready
+plot of the confidence intervals:
+
+```{r fig.width = 7, fig.height = 5}
+library(ggplot2)
+autoplot(result)
+```
+
+### Acceleration methods
+
+The `accel` argument controls how the acceleration $a$ is estimated:
+
+- `accel = "regression"` (default): uses local regression on bootstrap
+  count vectors nearest to uniform. Also computes the gbca diagnostic.
+- `accel = "jackknife"`: uses classical delete-one (or delete-group)
+  jackknife influence values.
 
 ```{r}
-bcaplot(result)
+set.seed(1234)
+result_jk <- bca_nonpar(x = Xy, B = 2000, func = rfun,
+                        accel = "jackknife", verbose = FALSE)
+tidy(result_jk)
 ```
 
 ## A Parametric Example
@@ -154,7 +159,7 @@ summary(glm_model)
 Parametric bootstrapping in this context requires us to independently
 sample the response according to the estimated probabilities from
 regression model. As discussed in the paper accompanying this
-software, routine `bcapar` also requires sufficient statistics
+software, routine `bca_par` also requires sufficient statistics
 $\hat{\beta} = M^\prime y$ where $M$ is the model matrix. Therefore,
 it makes sense to have a function do the work. The function `glm_boot`
 below returns a list of the estimate $\hat{\theta}$, the bootstrap
@@ -176,33 +181,32 @@ glm_boot <- function(B, glm_model, weights, var = "resp") {
 }
 ```
 
-Now we can compute the bootstrap estimates using `bcapar`.
+Now we can compute the bootstrap estimates using `bca_par`.
 
 ```{r}
 set.seed(3891)
 glm_boot_out <- glm_boot(B = 2000, glm_model = glm_model, weights = weights)
-glm_bca <- bcapar(t0 = glm_boot_out$theta,
-                  tt = glm_boot_out$theta_star,
-                  bb = glm_boot_out$suff_stat)
+glm_bca <- bca_par(t0 = glm_boot_out$theta,
+                   tt = glm_boot_out$theta_star,
+                   bb = glm_boot_out$suff_stat)
 ```
 
-We can examine the bootstrap limits and statistics. 
+We can examine the results using tidy methods:
 
 ```{r}
-knitr::kable(glm_bca$lims, digits = 3)
+glm_bca
 ```
 
 ```{r}
-knitr::kable(glm_bca$stats, digits = 3)
+tidy(glm_bca)
 ```
 
 Our bootstrap standard error using $B=2000$ samples for `resp` can be
-read off from the last table as $0.943\pm 0.155$. We can also see a
-small upward bias from the fact that `r with(glm_boot_out,
-sum(theta_star > theta)/ 2000)` proportion of bootstrap replicates
-were above $0.943$. This is also reflected in the bias-corrector term
-$\hat{z}_0= -0.215$ in the table above with an internal standard error of
-$0.024.
+read off from the glance output:
+
+```{r}
+glance(glm_bca)
+```
 
 
 ### A Penalized Logistic Model
@@ -225,7 +229,7 @@ knitr::kable(data.frame(variable = rownames(coefs), coefficient = coefs[, 1]), r
 ```
 
 Following the lines above, we create a helper function to perform the
-bootstrap. 
+bootstrap.
 
 ```{r}
 glmnet_boot <- function(B, X, y, glmnet_model, weights, var = "resp") {
@@ -250,38 +254,19 @@ And off we go.
 
 ```{r}
 glmnet_boot_out <- glmnet_boot(B = 2000, X, y, glmnet_model, weights)
-glmnet_bca <- bcapar(t0 = glmnet_boot_out$theta,
-                     tt = glmnet_boot_out$theta_star,
-                     bb = glmnet_boot_out$suff_stat)
+glmnet_bca <- bca_par(t0 = glmnet_boot_out$theta,
+                      tt = glmnet_boot_out$theta_star,
+                      bb = glmnet_boot_out$suff_stat)
 ```
 
-We can compare the output of this against what we got from `glm`
-above.
+We can compare both models side-by-side:
 
-We can examine the bootstrap limits and statistics. 
-
-```{r}
-knitr::kable(glmnet_bca$lims, digits = 3)
+```{r fig.width = 7, fig.height = 5}
+autoplot(glm_bca) + ggtitle("glm model")
 ```
 
-```{r}
-knitr::kable(glmnet_bca$stats, digits = 3)
-```
-
-The shrinkage is evident; we now have the bootstrap estimate is now
-$0.862\pm 0.127$. In fact, we now have only `r with(glmnet_boot_out,
-sum(theta_star > theta)/ 2000)` proportion of bootstrap replicates
-above $0.862$. Therefore, the bias corrector is large: $\hat{z}_0 =
-0.411.$
-
-Finally, we can plot both the `glm` and `glmnet` results
-side-by-side. 
-
-```{r fig.width = 8, echo = FALSE}
-opar <- par(mfrow = c(1, 2))
-bcaplot(glm_bca)
-bcaplot(glmnet_bca)
-par(opar)
+```{r fig.width = 7, fig.height = 5}
+autoplot(glmnet_bca) + ggtitle("glmnet model")
 ```
 
 ## Ratio of Independent Variance Estimates
@@ -289,30 +274,30 @@ par(opar)
 Assume we have two independent estimates of variance from normal
 theory:
 
-\[
+$$
 \hat{\sigma}_1^2\sim\frac{\sigma_1^2\chi_{n_1}^2}{n_1},
-\]
+$$
 
-and 
+and
 
-\[
+$$
 \hat{\sigma}_2^2\sim\frac{\sigma_2^2\chi_{n_2}^2}{n_2}.
-\]
+$$
 
-Suppose now that our parameter of interest is 
+Suppose now that our parameter of interest is
 
-\[
+$$
 	\theta=\frac{\sigma_1^2}{\sigma_2^2}
-\]
+$$
 
 for which we wish to compute confidence limits. In this setting, theory yields exact limits:
 
-\[
+$$
 \hat{\theta}(\alpha) = \frac{\hat{\theta}}{F_{n_1,n_2}^{1-\alpha}}.
-\]
-	
-We can apply `bcapar` to this problem. As before, here are our helper
-functions. 
+$$
+
+We can apply `bca_par` to this problem. As before, here are our helper
+functions.
 
 ```{r}
 ratio_boot <- function(B, v1, v2) {
@@ -332,53 +317,89 @@ funcF <- function(beta) {
 
 Note that we have an additional function `funcF` which corresponds to
 $\tau(\hat{\beta}^*)$ in the paper. This is the function expressing
-the parameter of interest as as a function of the sample. 
+the parameter of interest as a function of the sample.
 
 ```{r}
 B <- 16000; n1 <- 10; n2 <- 42
 ratio_boot_out <- ratio_boot(B, 1, 1)
-ratio_bca <- bcapar(t0 = ratio_boot_out$theta,
-                 tt = ratio_boot_out$theta_star,
-                 bb = ratio_boot_out$suff_stat, func = funcF)
+ratio_bca <- bca_par(t0 = ratio_boot_out$theta,
+                     tt = ratio_boot_out$theta_star,
+                     bb = ratio_boot_out$suff_stat, func = funcF)
 ```
 
-The limits obtained are shown below, along with the exact limits as
-the last column.
+The tidy output shows the BCa, standard, and ABC limits:
 
 ```{r}
-exact <- 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(ratio_bca$lims)))
-knitr::kable(cbind(ratio_bca$lims, exact = exact), digits = 3)
+tidy(ratio_bca)
 ```
 
-Clearly the bca limits match the exact values very well and suggests a
-large upward correction to the standard limits. Here the corrections
-are all positive as seen in the table below; $\hat{z}_0 = 0.093$ and
-$\hat{a} = 0.092$. 
-
+We can compare against exact F-distribution limits:
 
 ```{r}
-knitr::kable(ratio_bca$stats, digits = 3)
+exact <- 1 / qf(df1 = n1, df2 = n2, p = 1 - as.numeric(rownames(ratio_bca$limits)))
+knitr::kable(cbind(ratio_bca$limits, exact = exact), digits = 3)
 ```
 
-```{r}
-knitr::kable(t(ratio_bca$abcstats), digits = 3)
+Clearly the BCa limits match the exact values very well and suggests a
+large upward correction to the standard limits.
+
+```{r fig.width = 7, fig.height = 5}
+autoplot(ratio_bca)
 ```
 
-```{r}
-knitr::kable(ratio_bca$ustats, digits = 3)
+## Migration from pre-1.0 API {#migration}
+
+Version 1.0 introduces a new API. The old functions continue to work
+but emit deprecation warnings. Here is how to migrate:
+
+### Function mapping
+
+| Old function | New function | Notes |
+|:-------------|:-------------|:------|
+| `bcajack(x, B, func)` | `bca_nonpar(x, B, func, accel = "jackknife")` | Classical jackknife acceleration |
+| `bcajack2(x, B, func)` | `bca_nonpar(x, B, func, accel = "regression")` | Regression acceleration (default) |
+| `bcanon(B, x, func)` | `bca_nonpar(x, B, func)` | Removed; note argument order change |
+| `bcapar(t0, tt, bb)` | `bca_par(t0, tt, bb)` | |
+| `bcaplot(result)` | `autoplot(result)` | Requires ggplot2 |
+
+### Parameter mapping
+
+| Old | New | Description |
+|:----|:----|:------------|
+| `alpha` | `conf.level` | E.g., `alpha = 0.025` becomes `conf.level = 0.95` |
+| `m` | `n_groups` | Number of jackknife groups |
+| `mr` | `group_reps` | Random grouping repetitions |
+| `pct` | `kl_fraction` | Fraction of nearby count vectors |
+| `K` | `n_jack` | Delete-d jackknife repetitions |
+| `J` | `jack_groups` | Groups per jackknife fold |
+| `trun` | `truncation` | Truncation for acceleration |
+| `cd` | `conf_density` | Confidence density flag |
+| `B` (as list) | `boot_data` | Pre-computed bootstrap data |
+
+### Return structure
+
+The new objects use `$limits` (not `$lims`), `$B_mean` (not
+`$B.mean`), and `$stats` is always a 2-row matrix (never a named
+vector). Use `tidy()` and `glance()` instead of accessing list
+components directly:
+
+```r
+## Old way
+result$lims[, "bca"]
+result$stats["theta"]
+
+## New way
+tidy(result)    # tibble of confidence limits
+glance(result)  # tibble of summary statistics
 ```
 
-The plot below shows that there is moderate amount of internal error
-in $\hat{\theta}_{bca}(0.975)$ as shown by the red bar. The `pct`
-column suggests why: $\hat{\theta}_{bca}(0.975)$ occurs at the
-$0.996$-quantile of the 16,000 replications, i.e., at the 64th largest
-$\hat{\theta}$, where there is a limited amount of data for estimating
-the distribution.
+### Deprecation timeline
 
-```{r}
-bcaplot(ratio_bca)
-```
+| Release | Status |
+|:--------|:-------|
+| 1.0 | Old functions work with once-per-session warning |
+| 1.1 | Old functions error with migration message |
+| 2.0 | Old functions removed |
 
 ## References
-
 

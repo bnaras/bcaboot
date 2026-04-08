@@ -201,7 +201,8 @@ bca_nonpar <- function(x, B, func, ...,
     if (accel == "jackknife") {
         ## bcajack-style: recompute BCa limits on subsets of tt
         for (k in seq_len(n_jack)) {
-            fold_idx <- matrix(sample(x = B, size = B), ncol = J)
+            remainder <- B %% J
+            fold_idx <- matrix(sample(x = B, size = B - remainder), ncol = J)
             fold_lims <- matrix(0, n_alpha, J)
             fold_stats <- matrix(0, 5, J)
             for (j in seq_len(J)) {

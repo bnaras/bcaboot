@@ -11,3 +11,4 @@
 ^\.claude$
 ^pkgdown$
 ^README_files$
+^revdep$

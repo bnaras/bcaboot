@@ -1,3 +1,13 @@
+# bcaboot 1.0.1
+
+## Bug fixes
+
+* Added `$.bcaboot` S3 method to alias legacy field names (`$lims` →
+  `$limits`, `$B.mean` → `$B_mean`). This restores backward
+  compatibility for packages (e.g., `risks`) that access the old
+  return structure via `$lims`. The deprecation warning from
+  `bcapar()` etc. still fires once per session.
+
 # bcaboot 1.0
 
 ## Breaking changes
@@ -8,7 +18,7 @@
 * All computation functions now return a canonical `"bcaboot"` object
   with consistent structure: `$limits` (9x4 matrix), `$stats` (2x5
   matrix), `$B_mean`, `$ustats`. The old field names (`$lims`,
-  `$B.mean`) are no longer used.
+  `$B.mean`) are aliased via `$.bcaboot` for backward compatibility.
 
 * User-facing parameter `conf.level` (e.g., `c(0.95, 0.90)`) replaces
   `alpha` (e.g., `c(0.025, 0.05)`). Internally, alpha expansion is

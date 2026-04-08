@@ -50,6 +50,13 @@ bcaboot.return <- function(x) {
 }
 
 #' @export
+`$.bcaboot` <- function(x, name) {
+    aliases <- c(lims = "limits", B.mean = "B_mean")
+    target <- if (name %in% names(aliases)) aliases[[name]] else name
+    .subset2(x, target)
+}
+
+#' @export
 print.bcaboot <- function(x, digits = getOption("digits"), ...) {
     ## Detect whether this is a new-style (has $limits) or old-style (has $lims) object
     lims <- x$limits %||% x$lims

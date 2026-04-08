@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bcaboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,11 +33,18 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.1" id="bcaboot-101">bcaboot 1.0.1<a class="anchor" aria-label="anchor" href="#bcaboot-101"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-1-0-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-1"></a></h3>
+<ul><li>Added <code>$.bcaboot</code> S3 method to alias legacy field names (<code>$lims</code> → <code>$limits</code>, <code>$B.mean</code> → <code>$B_mean</code>). This restores backward compatibility for packages (e.g., <code>risks</code>) that access the old return structure via <code>$lims</code>. The deprecation warning from <code><a href="../reference/bcapar.html">bcapar()</a></code> etc. still fires once per session.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0" id="bcaboot-10">bcaboot 1.0<a class="anchor" aria-label="anchor" href="#bcaboot-10"></a></h2>
 <div class="section level3">
 <h3 id="breaking-changes-1-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-0"></a></h3>
 <ul><li><p>New primary API: <code><a href="../reference/bca_nonpar.html">bca_nonpar()</a></code> replaces <code><a href="../reference/bcajack.html">bcajack()</a></code>, <code><a href="../reference/bcajack2.html">bcajack2()</a></code>, and <code>bcanon()</code>. <code><a href="../reference/bca_par.html">bca_par()</a></code> replaces <code><a href="../reference/bcapar.html">bcapar()</a></code>.</p></li>
-<li><p>All computation functions now return a canonical <code>"bcaboot"</code> object with consistent structure: <code>$limits</code> (9x4 matrix), <code>$stats</code> (2x5 matrix), <code>$B_mean</code>, <code>$ustats</code>. The old field names (<code>$lims</code>, <code>$B.mean</code>) are no longer used.</p></li>
+<li><p>All computation functions now return a canonical <code>"bcaboot"</code> object with consistent structure: <code>$limits</code> (9x4 matrix), <code>$stats</code> (2x5 matrix), <code>$B_mean</code>, <code>$ustats</code>. The old field names (<code>$lims</code>, <code>$B.mean</code>) are aliased via <code>$.bcaboot</code> for backward compatibility.</p></li>
 <li><p>User-facing parameter <code>conf.level</code> (e.g., <code>c(0.95, 0.90)</code>) replaces <code>alpha</code> (e.g., <code>c(0.025, 0.05)</code>). Internally, alpha expansion is unchanged.</p></li>
 <li><p>Descriptive parameter names: <code>n_groups</code> (was <code>m</code>), <code>group_reps</code> (was <code>mr</code>), <code>kl_fraction</code> (was <code>pct</code>), <code>n_jack</code> (was <code>K</code>), <code>jack_groups</code> (was <code>J</code>), <code>truncation</code> (was <code>trun</code>), <code>conf_density</code> (was <code>cd</code>), <code>boot_data</code> (was overloaded <code>B</code>).</p></li>
 <li><p><code>bcanon()</code> removed (was never on CRAN).</p></li>

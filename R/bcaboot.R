@@ -10,9 +10,21 @@
 #' bca analysis would lie in the nonparametric estimation of the
 #' acceleration, often a negligible error.
 #'
-#' @name bcaboot
-#'
+#' @importFrom generics tidy glance
+#' @importFrom rlang .data
+#' @importFrom lifecycle deprecate_warn deprecated
+#' @importFrom cli cli_abort cli_warn cli_text cli_h3
+#' @importFrom tibble tibble
+#' @importFrom stats sd qnorm pnorm dnorm lm cov var quantile approx smooth.spline runif
+#' @importFrom graphics abline lines plot points segments text
+#' @importFrom utils setTxtProgressBar txtProgressBar
 "_PACKAGE"
+
+#' @export
+generics::tidy
+
+#' @export
+generics::glance
 
 
 #' Blood and other measurements in diabetics

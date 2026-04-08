@@ -21,7 +21,7 @@
 #' autoplot(result)
 #' }
 #'
-#' @export
+#' @exportS3Method ggplot2::autoplot
 autoplot.bcaboot <- function(object, ...) {
     if (!requireNamespace("ggplot2", quietly = TRUE)) {
         cli::cli_abort(c(

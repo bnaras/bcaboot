@@ -3,6 +3,7 @@
 ## saved baseline fixtures to prove numerical equivalence.
 
 library(bcaboot)
+library(generics)
 
 fixture_dir <- system.file("tinytest", "fixtures", package = "bcaboot")
 tol <- 1e-10

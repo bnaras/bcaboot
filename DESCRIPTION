@@ -25,6 +25,7 @@ Imports: cli,
     graphics,
     generics,
     lifecycle,
+    rlang,
     stats,
     tibble,
     utils

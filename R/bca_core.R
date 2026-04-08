@@ -35,14 +35,13 @@ regression_accel <- function(Y, tt, t0, pct) {
     nearby_idx <- seq_len(B)[kl_dist <= kl_cutoff]
 
     if (length(nearby_idx) < m) {
-        stop(sprintf(
-            paste0("Regression for acceleration estimation is underdetermined: ",
-                   "%d nearby bootstrap samples but %d columns in the count matrix. ",
-                   "Possible fixes: (1) increase B so that B * kl_fraction > %d, ",
-                   "(2) increase kl_fraction (currently %.3f), or ",
-                   "(3) use accel = \"jackknife\" which avoids this regression entirely."),
-            length(nearby_idx), m, m, pct
-        ), call. = FALSE)
+        cli::cli_abort(c(
+            "Regression for acceleration estimation is underdetermined.",
+            "x" = "{length(nearby_idx)} nearby bootstrap samples but {m} columns in the count matrix.",
+            "i" = "Increase {.arg B} so that {.code B * kl_fraction > {m}}.",
+            "i" = "Increase {.arg kl_fraction} (currently {round(pct, 3)}).",
+            "i" = "Use {.code accel = \"jackknife\"} which avoids this regression."
+        ))
     }
 
     ## Influence via local regression on nearby count vectors
@@ -102,7 +101,7 @@ jackknife_accel <- function(x, func, ..., m, mr) {
         ## Use the last partition's influence values (consistent with original bcajack)
         jack_infl <- (mean(u) - u) * (m - 1)
     } else {
-        stop("m must be <= n")
+        cli::cli_abort("{.arg n_groups} ({m}) must be <= number of observations ({n}).")
     }
 
     list(a = a, sdjack = sdjack, jack_infl = jack_infl)
@@ -157,7 +156,7 @@ bootstrap_resample <- function(x, B, func, ..., m, verbose, boot_data = NULL) {
         }
         if (verbose) close(pb)
     } else {
-        stop("m must be <= n")
+        cli::cli_abort("{.arg n_groups} ({m}) must be <= number of observations ({n}).")
     }
 
     list(Y = Y, tt = tt, t0 = t0, B = B)

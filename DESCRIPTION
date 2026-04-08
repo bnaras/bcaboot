@@ -21,7 +21,8 @@ Suggests:
     rmarkdown,
     knitr,
     tinytest
-Imports: graphics,
+Imports: cli,
+    graphics,
     generics,
     lifecycle,
     stats,

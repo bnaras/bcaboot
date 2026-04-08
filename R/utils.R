@@ -58,12 +58,12 @@ print.bcaboot <- function(x, digits = getOption("digits"), ...) {
     ## --- Header ---
     method_str <- x$method
     accel_str  <- x$accel
-    cat("BCa Bootstrap Confidence Intervals\n")
+    cli::cli_h3("BCa Bootstrap Confidence Intervals")
     if (!is.null(method_str)) {
         if (!is.null(accel_str) && !is.na(accel_str))
-            cat(sprintf("  Method: %s (%s acceleration)\n", method_str, accel_str))
+            cli::cli_text("Method: {method_str} ({accel_str} acceleration)")
         else
-            cat(sprintf("  Method: %s\n", method_str))
+            cli::cli_text("Method: {method_str}")
     }
 
     ## Extract theta and sdboot from stats (vector or matrix)
@@ -75,9 +75,8 @@ print.bcaboot <- function(x, digits = getOption("digits"), ...) {
         sdboot <- stats[2]
     }
     B_mean <- x$B_mean %||% x$B.mean
-    cat(sprintf("  B = %g, theta = %s, sdboot = %s\n\n",
-                B_mean[1], format(theta, digits = digits),
-                format(sdboot, digits = digits)))
+    cli::cli_text("B = {B_mean[1]}, theta = {format(theta, digits = digits)}, sdboot = {format(sdboot, digits = digits)}")
+    cli::cli_text("")
 
     ## --- Confidence limits table ---
     ## Read alpha from rownames
@@ -100,15 +99,16 @@ print.bcaboot <- function(x, digits = getOption("digits"), ...) {
             tbl$std.hi <- lims[rev(hi_idx), std_col]
         }
 
-        cat("Confidence limits:\n")
+        cli::cli_text("{.strong Confidence limits:}")
         print(tbl, digits = digits, row.names = FALSE)
     } else {
-        cat("Limits:\n")
+        cli::cli_text("{.strong Limits:}")
         print(lims, digits = digits)
     }
 
     ## --- Diagnostics line ---
-    cat("\nDiagnostics:\n")
+    cli::cli_text("")
+    cli::cli_text("{.strong Diagnostics:}")
     if (is.matrix(stats)) {
         row <- if ("est" %in% rownames(stats)) "est" else rownames(stats)[1]
         z0 <- stats[row, "z0"]
@@ -120,12 +120,12 @@ print.bcaboot <- function(x, digits = getOption("digits"), ...) {
         sdjack <- stats["sdjack"]
     }
     diag_parts <- c(
-        sprintf("z0 = %s", format(z0, digits = digits)),
-        sprintf("a = %s", format(a, digits = digits))
+        paste0("z0 = ", format(z0, digits = digits)),
+        paste0("a = ", format(a, digits = digits))
     )
     if (!is.na(sdjack))
-        diag_parts <- c(diag_parts, sprintf("sdjack = %s", format(sdjack, digits = digits)))
-    cat(sprintf("  %s\n", paste(diag_parts, collapse = ", ")))
+        diag_parts <- c(diag_parts, paste0("sdjack = ", format(sdjack, digits = digits)))
+    cli::cli_text("  {paste(diag_parts, collapse = ', ')}")
 
     invisible(x)
 }

@@ -53,7 +53,7 @@ bcajack2 <- function(x, B, func, ..., m = NULL, mr, pct = 0.333, K = 2, J = 12,
                      alpha = c(0.025, 0.05, 0.1, 0.16), verbose = TRUE) {
     lifecycle::deprecate_warn("1.0", "bcajack2()", "bca_nonpar()")
     if (!missing(mr))
-        warning("'mr' argument is unused in bcajack2/bca_nonpar with regression acceleration")
+        cli::cli_warn("{.arg mr} is unused with regression acceleration.")
     ## Handle B as Blist
     boot_data <- if (is.list(B)) B else NULL
     if (is.null(m) && !is.list(B)) m <- nrow(x)
@@ -115,9 +115,10 @@ bcaplot <- function(vl, ...) {
     if (requireNamespace("ggplot2", quietly = TRUE)) {
         print(ggplot2::autoplot(vl, ...))
     } else {
-        warning("ggplot2 is required for plotting. ",
-                "Install it with install.packages('ggplot2').",
-                call. = FALSE)
+        cli::cli_warn(c(
+            "Package {.pkg ggplot2} is required for plotting.",
+            "i" = "Install it with {.code install.packages(\"ggplot2\")}."
+        ))
     }
     invisible(vl)
 }

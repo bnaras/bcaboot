@@ -29,7 +29,7 @@ abcpar <- function (func,bb,lambda = 0.001,alpha = c(0.025, 0.05, 0.1, 0.16), ..
     ## Derivatives are computed along eigenvectors (principal directions).
     eig <- eigen(S)
     if (any(eig$values <= 0))
-        stop("Covariance matrix of bb is singular or near-singular; ABC method requires full rank")
+        cli::cli_abort("Covariance matrix of {.arg bb} is singular or near-singular; ABC method requires full rank.")
     evals <- (eig$values)^0.5
     evecs <- as.matrix(eig$vectors)
     ## Numerical first (b.) and second (b..) derivatives of func along each

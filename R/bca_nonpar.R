@@ -154,8 +154,7 @@ bca_nonpar <- function(x, B, func, ...,
         diagnostic <- tryCatch(
             gbca_diagnostic(Y, tt, t0, a, sdjack, local_dir, alpha),
             error = function(e) {
-                warning("gbca diagnostic failed: ", conditionMessage(e),
-                        call. = FALSE)
+                cli::cli_warn("gbca diagnostic failed: {conditionMessage(e)}")
                 NULL
             }
         )

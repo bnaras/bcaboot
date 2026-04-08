@@ -36,11 +36,11 @@
 <h2 class="pkg-version" data-toc-text="1.0" id="bcaboot-10">bcaboot 1.0<a class="anchor" aria-label="anchor" href="#bcaboot-10"></a></h2>
 <div class="section level3">
 <h3 id="breaking-changes-1-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-0"></a></h3>
-<ul><li><p>New primary API: <code>bca_nonpar()</code> replaces <code><a href="../reference/bcajack.html">bcajack()</a></code>, <code><a href="../reference/bcajack2.html">bcajack2()</a></code>, and <code><a href="../reference/bcanon.html">bcanon()</a></code>. <code>bca_par()</code> replaces <code><a href="../reference/bcapar.html">bcapar()</a></code>.</p></li>
+<ul><li><p>New primary API: <code><a href="../reference/bca_nonpar.html">bca_nonpar()</a></code> replaces <code><a href="../reference/bcajack.html">bcajack()</a></code>, <code><a href="../reference/bcajack2.html">bcajack2()</a></code>, and <code>bcanon()</code>. <code><a href="../reference/bca_par.html">bca_par()</a></code> replaces <code><a href="../reference/bcapar.html">bcapar()</a></code>.</p></li>
 <li><p>All computation functions now return a canonical <code>"bcaboot"</code> object with consistent structure: <code>$limits</code> (9x4 matrix), <code>$stats</code> (2x5 matrix), <code>$B_mean</code>, <code>$ustats</code>. The old field names (<code>$lims</code>, <code>$B.mean</code>) are no longer used.</p></li>
 <li><p>User-facing parameter <code>conf.level</code> (e.g., <code>c(0.95, 0.90)</code>) replaces <code>alpha</code> (e.g., <code>c(0.025, 0.05)</code>). Internally, alpha expansion is unchanged.</p></li>
 <li><p>Descriptive parameter names: <code>n_groups</code> (was <code>m</code>), <code>group_reps</code> (was <code>mr</code>), <code>kl_fraction</code> (was <code>pct</code>), <code>n_jack</code> (was <code>K</code>), <code>jack_groups</code> (was <code>J</code>), <code>truncation</code> (was <code>trun</code>), <code>conf_density</code> (was <code>cd</code>), <code>boot_data</code> (was overloaded <code>B</code>).</p></li>
-<li><p><code><a href="../reference/bcanon.html">bcanon()</a></code> removed (was never on CRAN).</p></li>
+<li><p><code>bcanon()</code> removed (was never on CRAN).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="deprecations-1-0">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-1-0"></a></h3>
@@ -48,16 +48,24 @@
 <code><a href="../reference/bcajack.html">bcajack()</a></code>, <code><a href="../reference/bcajack2.html">bcajack2()</a></code>, <code><a href="../reference/bcapar.html">bcapar()</a></code>, and <code><a href="../reference/bcaplot.html">bcaplot()</a></code> are deprecated with <code>lifecycle</code> warnings (once per session). They will continue to work through thin wrappers that translate to the new API.</li>
 </ul></div>
 <div class="section level3">
+<h3 id="bug-fixes-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0"></a></h3>
+<ul><li><p><strong>Issue <a href="https://github.com/bnaras/bcaboot/issues/2" class="external-link">#2</a></strong>: Fixed grouped jackknife (<code>n_groups &lt; n</code>) using <code>sapply(seq_len_m, sample.int, ...)</code> which accidentally passed iteration values as the first positional arg, overriding the <code>n=</code> keyword and enabling replacement. Replaced with <code>matrix(sample.int(n, n-r), nrow=m)</code> for correct without-replacement partition. (Reported by admash)</p></li>
+<li><p><strong>Issue <a href="https://github.com/bnaras/bcaboot/issues/7" class="external-link">#7</a></strong>: Fixed dimension drop when <code>x</code> is a single-column matrix (vector input). <code>x[-i, ]</code> on an <code>n x 1</code> matrix returned a vector instead of a matrix, causing type inconsistency between jackknife and bootstrap code paths. Added <code>drop = FALSE</code> to all matrix subsetting passed to <code>func</code>. (Reported by R180)</p></li>
+<li><p><strong>Issue <a href="https://github.com/bnaras/bcaboot/issues/4" class="external-link">#4</a> / <a href="https://github.com/bnaras/bcaboot/issues/1" class="external-link">#1</a></strong>: <code>regression_accel</code> now checks for underdetermined regression (<code>nearby samples &lt; ncol(Y)</code>) and errors with an actionable message instead of silently returning NAs. Suggests increasing <code>B</code>, increasing <code>kl_fraction</code>, or switching to <code>accel = "jackknife"</code>. (Reported by Tim Pollington, Thomas Covert)</p></li>
+<li><p><strong>PR <a href="https://github.com/bnaras/bcaboot/issues/8" class="external-link">#8</a></strong>: Fixed missing <code><a href="https://rdrr.io/r/base/function.html" class="external-link">return()</a></code> in <code>K = 0</code> early-exit path of <code><a href="../reference/bcajack.html">bcajack()</a></code>, <code><a href="../reference/bcajack2.html">bcajack2()</a></code>, and <code><a href="../reference/bcapar.html">bcapar()</a></code>, which caused execution to fall through to the <code>K &gt; 0</code> code. In the rewrite, all early exits use explicit <code>return(new_bcaboot(...))</code>. (Reported by Bettina Gruen)</p></li>
+</ul></div>
+<div class="section level3">
 <h3 id="new-features-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-0"></a></h3>
-<ul><li><p><code>tidy()</code> method: returns a tibble with one row per (confidence level, method) pair, following broom conventions (<code>conf.level</code>, <code>method</code>, <code>estimate</code>, <code>conf.low</code>, <code>conf.high</code>).</p></li>
-<li><p><code>glance()</code> method: returns a one-row tibble summarizing the bootstrap run (<code>method</code>, <code>accel</code>, <code>theta</code>, <code>sdboot</code>, <code>z0</code>, <code>a</code>, <code>sdjack</code>, <code>B</code>, <code>boot_mean</code>).</p></li>
+<ul><li><p><code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code> method: returns a tibble with one row per (confidence level, method) pair, following broom conventions (<code>conf.level</code>, <code>method</code>, <code>estimate</code>, <code>conf.low</code>, <code>conf.high</code>).</p></li>
+<li><p><code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> method: returns a one-row tibble summarizing the bootstrap run (<code>method</code>, <code>accel</code>, <code>theta</code>, <code>sdboot</code>, <code>z0</code>, <code>a</code>, <code>sdjack</code>, <code>B</code>, <code>boot_mean</code>).</p></li>
 <li><p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> method: ggplot2 visualization of BCa vs standard confidence intervals. Requires ggplot2 (in Suggests).</p></li>
 <li><p>Improved <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>: formatted summary with confidence limits table instead of raw list dump.</p></li>
-<li><p><code>bca_nonpar()</code> always computes the gbca diagnostic when using <code>accel = "regression"</code> (with <code>tryCatch</code> for robustness).</p></li>
+<li><p><code><a href="../reference/bca_nonpar.html">bca_nonpar()</a></code> always computes the gbca diagnostic when using <code>accel = "regression"</code> (with <code>tryCatch</code> for robustness).</p></li>
+<li><p>All user-facing messages use <code>cli</code> for consistent formatting.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="dependencies-1-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-1-0"></a></h3>
-<ul><li>Added <code>tibble</code>, <code>generics</code>, <code>lifecycle</code> to Imports.</li>
+<ul><li>Added <code>cli</code>, <code>tibble</code>, <code>generics</code>, <code>lifecycle</code> to Imports.</li>
 <li>Added <code>ggplot2</code> to Suggests (for <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>).</li>
 </ul></div>
 <div class="section level3">

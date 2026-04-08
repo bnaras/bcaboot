@@ -11,16 +11,21 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/bnaras/bcaboot/blob/master/DESCRIPTION)
+[`inst/CITATION`](https://github.com/bnaras/bcaboot/blob/master/inst/CITATION)
 
-Efron B, Narasimhan B (2026). *bcaboot: Bias Corrected Bootstrap
-Confidence Intervals*. R package version 1.0,
-<https://bnaras.github.io/bcaboot/>.
+Efron B, Narasimhan B (2020). “The Automatic Construction of Bootstrap
+Confidence Intervals.” *Journal of Computational and Graphical
+Statistics*, **29**(3), 608–619.
+[doi:10.1080/10618600.2020.1714633](https://doi.org/10.1080/10618600.2020.1714633).
 
-    @Manual{,
-      title = {bcaboot: Bias Corrected Bootstrap Confidence Intervals},
+    @Article{,
+      title = {The Automatic Construction of Bootstrap Confidence Intervals},
       author = {Bradley Efron and Balasubramanian Narasimhan},
-      year = {2026},
-      note = {R package version 1.0},
-      url = {https://bnaras.github.io/bcaboot/},
+      journal = {Journal of Computational and Graphical Statistics},
+      year = {2020},
+      volume = {29},
+      number = {3},
+      pages = {608--619},
+      doi = {10.1080/10618600.2020.1714633},
+      publisher = {Taylor & Francis},
     }

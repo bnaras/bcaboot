@@ -6,15 +6,20 @@
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
-<url><loc>/reference/bcaboot.html</loc></url>
+<url><loc>/reference/autoplot.bcaboot.html</loc></url>
+<url><loc>/reference/bca_nonpar.html</loc></url>
+<url><loc>/reference/bca_par.html</loc></url>
+<url><loc>/reference/bcaboot-package.html</loc></url>
 <url><loc>/reference/bcajack.html</loc></url>
 <url><loc>/reference/bcajack2.html</loc></url>
-<url><loc>/reference/bcanon.html</loc></url>
 <url><loc>/reference/bcapar.html</loc></url>
 <url><loc>/reference/bcaplot.html</loc></url>
 <url><loc>/reference/compute_bca_limits.html</loc></url>
 <url><loc>/reference/compute_kl_distance.html</loc></url>
 <url><loc>/reference/diabetes.html</loc></url>
+<url><loc>/reference/glance.bcaboot.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/reexports.html</loc></url>
+<url><loc>/reference/tidy.bcaboot.html</loc></url>
 </urlset>
 

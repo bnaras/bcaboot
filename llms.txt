@@ -3,10 +3,12 @@
 Bias-corrected and accelerated (BCa) bootstrap confidence intervals,
 computed almost automatically. The package provides two main functions:
 
-- `bca_nonpar()` for nonparametric bootstrap
-- `bca_par()` for parametric bootstrap
+- [`bca_nonpar()`](reference/bca_nonpar.md) for nonparametric bootstrap
+- [`bca_par()`](reference/bca_par.md) for parametric bootstrap
 
-Results integrate with the tidyverse via `tidy()`, `glance()`, and
+Results integrate with the tidyverse via
+[`tidy()`](https://generics.r-lib.org/reference/tidy.html),
+[`glance()`](https://generics.r-lib.org/reference/glance.html), and
 [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
 methods.
 
@@ -39,19 +41,11 @@ result
 ```
 
 ``` R
-## BCa Bootstrap Confidence Intervals
-##   Method: nonpar (regression acceleration)
-##   B = 2000, theta = 0.5065603, sdboot = 0.03245877
-## 
-## Confidence limits:
 ##  conf.level    bca.lo    bca.hi    std.lo    std.hi
 ##        0.95 0.4221740 0.5613841 0.4429423 0.5701783
 ##        0.90 0.4392968 0.5507219 0.4531704 0.5599503
 ##        0.80 0.4541906 0.5387434 0.4649627 0.5481579
 ##        0.68 0.4647324 0.5298461 0.4742814 0.5388392
-## 
-## Diagnostics:
-##   z0 = -0.2676094, a = -0.005846673, sdjack = 0.03232833
 ```
 
 ``` r
@@ -90,18 +84,19 @@ Statistics*, 29(3), 608–619.
 
 ## All functions
 
-- [`bcaboot-package`](bcaboot.md) [`bcaboot`](bcaboot.md) : Automatic
-  Construction of Bootstrap Confidence Intervals
-- [`bcajack()`](bcajack.md) : Nonparametric bias-corrected and
-  accelerated bootstrap confidence limits
-- [`bcajack2()`](bcajack2.md) : Nonparametric bias-corrected and
-  accelerated bootstrap confidence limits
-- [`bcanon()`](bcanon.md) : Compute nonparametric BCa bootstrap
+- [`autoplot(`*`<bcaboot>`*`)`](autoplot.bcaboot.md) : Plot BCa
+  bootstrap confidence intervals
+- [`bca_nonpar()`](bca_nonpar.md) : Nonparametric BCa bootstrap
   confidence intervals
-- [`bcapar()`](bcapar.md) : Compute parametric bootstrap confidence
+- [`bca_par()`](bca_par.md) : Parametric BCa bootstrap confidence
   intervals
-- [`bcaplot()`](bcaplot.md) : Plots of bca confidence limits
+- [`bcaboot`](bcaboot-package.md)
+  [`bcaboot-package`](bcaboot-package.md) : Automatic Construction of
+  Bootstrap Confidence Intervals
 - [`diabetes`](diabetes.md) : Blood and other measurements in diabetics
+- [`glance(`*`<bcaboot>`*`)`](glance.bcaboot.md) : Glance at a bcaboot
+  result
+- [`tidy(`*`<bcaboot>`*`)`](tidy.bcaboot.md) : Tidy a bcaboot result
 
 # Articles
 

@@ -17,15 +17,18 @@ not how it is generated: parametrically or non-parametrically.
 Package `bcaboot` aims to make construction of bootstrap confidence
 intervals *almost* automatic. The two main functions are:
 
-- `bca_nonpar()` for nonparametric bootstrap
-- `bca_par()` for parametric bootstrap
+- [`bca_nonpar()`](../reference/bca_nonpar.md) for nonparametric
+  bootstrap
+- [`bca_par()`](../reference/bca_par.md) for parametric bootstrap
 
 All results are returned as `bcaboot` objects with a consistent
-structure and support `tidy()`, `glance()`, and
+structure and support
+[`tidy()`](https://generics.r-lib.org/reference/tidy.html),
+[`glance()`](https://generics.r-lib.org/reference/glance.html), and
 [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
 for integration with the tidyverse ecosystem.
 
-Further details are in the Efron and Narasimhan (2018) paper. Much of
+Further details are in the Efron and Narasimhan (2020) paper. Much of
 the theory behind the approach can be found in references Efron (1987),
 T. DiCiccio and Efron (1992), T. J. DiCiccio and Efron (1996), and Efron
 and Hastie (2016).
@@ -62,24 +65,17 @@ The `result` prints a clean summary:
 result
 ```
 
-    ## BCa Bootstrap Confidence Intervals
-    ##   Method: nonpar (regression acceleration)
-    ##   B = 2000, theta = 0.5065603, sdboot = 0.03245877
-    ## 
-    ## Confidence limits:
     ##  conf.level    bca.lo    bca.hi    std.lo    std.hi
     ##        0.95 0.4221740 0.5613841 0.4429423 0.5701783
     ##        0.90 0.4392968 0.5507219 0.4531704 0.5599503
     ##        0.80 0.4541906 0.5387434 0.4649627 0.5481579
     ##        0.68 0.4647324 0.5298461 0.4742814 0.5388392
-    ## 
-    ## Diagnostics:
-    ##   z0 = -0.2676094, a = -0.005846673, sdjack = 0.03232833
 
 ### Tidy output
 
-The `tidy()` method returns a tibble with one row per (confidence level,
-method) combination, following the broom conventions:
+The [`tidy()`](https://generics.r-lib.org/reference/tidy.html) method
+returns a tibble with one row per (confidence level, method)
+combination, following the broom conventions:
 
 ``` r
 tidy(result)
@@ -97,7 +93,8 @@ tidy(result)
     ## 7       0.68 bca         0.507    0.465     0.530    0.00143     0.00158
     ## 8       0.68 standard    0.507    0.474     0.539   NA          NA
 
-The `glance()` method provides a one-row summary of the bootstrap run:
+The [`glance()`](https://generics.r-lib.org/reference/glance.html)
+method provides a one-row summary of the bootstrap run:
 
 ``` r
 glance(result)
@@ -257,19 +254,11 @@ We can examine the results using tidy methods:
 glm_bca
 ```
 
-    ## BCa Bootstrap Confidence Intervals
-    ##   Method: par
-    ##   B = 2000, theta = 0.9430645, sdboot = 0.1549141
-    ## 
-    ## Confidence limits:
     ##  conf.level    bca.lo   bca.hi    std.lo   std.hi
     ##        0.95 0.5981733 1.213676 0.6394385 1.246691
     ##        0.90 0.6549470 1.167789 0.6882535 1.197876
     ##        0.80 0.7169529 1.113660 0.7445341 1.141595
     ##        0.68 0.7635391 1.067160 0.7890090 1.097120
-    ## 
-    ## Diagnostics:
-    ##   z0 = -0.2147016, a = -0.01940269
 
 ``` r
 tidy(glm_bca)
@@ -512,7 +501,9 @@ emit deprecation warnings. Here is how to migrate:
 
 The new objects use `$limits` (not `$lims`), `$B_mean` (not `$B.mean`),
 and `$stats` is always a 2-row matrix (never a named vector). Use
-`tidy()` and `glance()` instead of accessing list components directly:
+[`tidy()`](https://generics.r-lib.org/reference/tidy.html) and
+[`glance()`](https://generics.r-lib.org/reference/glance.html) instead
+of accessing list components directly:
 
 ``` r
 ## Old way
@@ -550,5 +541,7 @@ Efron, Bradley, and Trevor Hastie. 2016. *Computer Age Statistical
 Inference: Algorithms, Evidence, and Data Science*. 1st ed. New York,
 NY, USA: Cambridge University Press.
 
-Efron, Bradley, and Balasubramanian Narasimhan. 2018. “The Automatic
-Construction of Bootstrap Confidence Intervals.”
+Efron, Bradley, and Balasubramanian Narasimhan. 2020. “The Automatic
+Construction of Bootstrap Confidence Intervals.” *Journal of
+Computational and Graphical Statistics* 29 (3): 608–19.
+<https://doi.org/10.1080/10618600.2020.1714633>.

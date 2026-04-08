@@ -71,7 +71,7 @@ library(ggplot2)
 autoplot(result)
 ```
 
-![](README_files/figure-gfm/autoplot-1.png)
+![](reference/figures/README-autoplot-1.png)
 
 ## References
 

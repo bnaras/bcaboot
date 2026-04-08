@@ -81,6 +81,8 @@ JASA 82, 171-200.
 DiCiccio T and Efron B (1992). More accurate confidence
 intervals in exponential families. Biometrika, 231-245.
 
-Efron B and Narasimhan B (2020). Automatic construction
-of bootstrap confidence intervals. JASA 115, 1895-1905.
+Efron B and Narasimhan B (2020). The Automatic
+Construction of Bootstrap Confidence Intervals. Journal of
+Computational and Graphical Statistics, 29(3), 608-619.
+\doi{10.1080/10618600.2020.1714633}
 }

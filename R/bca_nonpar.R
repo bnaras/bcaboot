@@ -48,8 +48,10 @@
 #'
 #' @references Efron B (1987). Better bootstrap confidence intervals.
 #'   JASA 82, 171-200.
-#' @references Efron B and Narasimhan B (2020). Automatic construction
-#'   of bootstrap confidence intervals. JASA 115, 1895-1905.
+#' @references Efron B and Narasimhan B (2020). The Automatic
+#'   Construction of Bootstrap Confidence Intervals. Journal of
+#'   Computational and Graphical Statistics, 29(3), 608-619.
+#'   \doi{10.1080/10618600.2020.1714633}
 #'
 #' @examples
 #' data(diabetes, package = "bcaboot")

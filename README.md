@@ -5,7 +5,6 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/bnaras/bcaboot/workflows/R-CMD-check/badge.svg)](https://github.com/bnaras/bcaboot/actions)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bcaboot)](https://cran.r-project.org/package=bcaboot)
 [![](https://cranlogs.r-pkg.org/badges/bcaboot)](https://cloud.r-project.org/package=bcaboot)
 [![R-CMD-check](https://github.com/bnaras/bcaboot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bnaras/bcaboot/actions/workflows/R-CMD-check.yaml)

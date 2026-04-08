@@ -1,13 +1,3 @@
-# bcaboot 1.0.1
-
-## Bug fixes
-
-* Added `$.bcaboot` S3 method to alias legacy field names (`$lims` →
-  `$limits`, `$B.mean` → `$B_mean`). This restores backward
-  compatibility for packages (e.g., `risks`) that access the old
-  return structure via `$lims`. The deprecation warning from
-  `bcapar()` etc. still fires once per session.
-
 # bcaboot 1.0
 
 ## Breaking changes
